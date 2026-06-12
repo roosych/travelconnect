@@ -1,0 +1,19 @@
+//
+// Header
+//
+
+// Desktop mode
+@include media-breakpoint-up(lg) {
+	.app-header { 
+		background-color: transparent;
+	}
+}
+
+// Tablet & mobile modes
+@include media-breakpoint-down(lg) {
+	.app-header { 
+		.page-title {
+            display: none !important;    
+        }
+	}
+}

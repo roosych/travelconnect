@@ -1,0 +1,160 @@
+<?php
+
+return [
+    'title' => 'Bronlar',
+
+    // Bron statusları (BookingStatus enum: agentlik və operator üçün ifadələr)
+    'status' => [
+        'agency' => [
+            'confirmed'        => 'Təsdiqlənib',
+            'awaiting_payment' => 'Ödəniş gözləyir',
+            'paid'             => 'Ödənilib',
+            'rescheduled'      => 'Tarixlər dəyişdi',
+            'in_progress'      => 'Səfərdə',
+            'completed'        => 'Tamamlandı',
+            'cancelled'        => 'Ləğv edilib',
+        ],
+        'operator' => [
+            'confirmed'        => 'Təsdiqlənib',
+            'awaiting_payment' => 'Ödəniş gözləyir',
+            'paid'             => 'Ödənilib',
+            'rescheduled'      => 'Təxirə salınıb',
+            'in_progress'      => 'Prosesdə',
+            'completed'        => 'Tamamlandı',
+            'cancelled'        => 'Ləğv edilib',
+        ],
+    ],
+
+    // Əlavə xidmətlər (common.services-dən kənar) marja bölgüsündə
+    'services' => [
+        'flight'    => 'Uçuş',
+        'insurance' => 'Sığorta',
+        'visa'      => 'Viza',
+    ],
+
+    // ── Siyahı (index) ─────────────────────────────────────────────────────
+    'index' => [
+        'search_ph' => 'Tur, sorğu, agentlik üzrə axtarış…',
+        'all'       => 'Hamısı',
+        'sort' => [
+            'newest'      => 'Əvvəlcə yeni',
+            'oldest'      => 'Əvvəlcə köhnə',
+            'travel_asc'  => 'Səfər tarixi ↑',
+            'travel_desc' => 'Səfər tarixi ↓',
+            'price_desc'  => 'Əvvəlcə bahalı',
+            'price_asc'   => 'Əvvəlcə ucuz',
+        ],
+        'load_error' => 'Bronları yükləmək alınmadı. Səhifəni yeniləyin.',
+        'empty'      => 'Bron tapılmadı.',
+        'quick_view' => 'Sürətli baxış',
+        'open'       => 'Aç',
+        'pagination' => ':from–:to / :total',
+        'cols' => [
+            'tour'         => 'Tur / İstiqamət',
+            'agency'       => 'Agentlik',
+            'amount'       => 'Məbləğ',
+            'travel_dates' => 'Səfər tarixləri',
+            'status'       => 'Status',
+            'confirmed'    => 'Təsdiqlənib',
+            'actions'      => 'Əməliyyatlar',
+        ],
+    ],
+
+    // ── Detal səhifəsi (show) ──────────────────────────────────────────────
+    'show' => [
+        'title'         => 'Bron detalları',
+        'breadcrumb'    => 'Bron #:id',
+        'proposal_card' => 'Kommersiya təklifi',
+        'request_card'  => 'Tur sorğusu',
+        'load_error'    => 'Bron detallarını yükləmək alınmadı.',
+        'for_agency'    => 'agentlik üçün: :amount',
+        'agency'        => 'Agentlik',
+        'cancelled_banner' => 'Bron ləğv edildi',
+
+        'toolbar' => [
+            'request_payment' => 'Hesab çıxar',
+            'mark_paid'       => 'Ödənilmiş kimi qeyd et',
+            'complete'        => 'Tamamla',
+            'cancel'          => 'Ləğv et',
+        ],
+        'stepper' => [
+            'confirmed'   => 'Təsdiqlənib',
+            'invoiced'    => 'Hesab çıxarılıb',
+            'paid'        => 'Ödənilib',
+            'in_progress' => 'Prosesdə',
+            'completed'   => 'Tamamlandı',
+        ],
+
+        'proposal_unavailable' => 'Təklif məlumatı əlçatan deyil.',
+        'proposal_label'       => 'Kommersiya təklifi',
+        'proposal_ref'         => 'Təklif #:id',
+        'view_proposal'        => 'Təklifə bax',
+
+        'request_unavailable' => 'Sorğu məlumatı əlçatan deyil.',
+        'request_ref'         => 'Sorğu #:id',
+        'deadline_label'      => 'Son tarix: :date',
+        'travellers'          => ':n turist',
+        'open_request'        => 'Sorğunu aç',
+
+        'prompt' => [
+            'complete' => 'Tamamlama qeydləri (məcburi):',
+            'cancel'   => 'Ləğv səbəbi (məcburi):',
+        ],
+        'err' => [
+            'notes_required'  => 'Qeyd əlavə etmək lazımdır.',
+            'reason_required' => 'Ləğv səbəbini göstərin.',
+        ],
+        'toast' => [
+            'payment_requested' => 'Hesab çıxarıldı. Ödəniş gözlənilir.',
+            'paid'              => 'Bron ödənilmiş kimi qeyd edildi.',
+            'completed'         => 'Bron tamamlandı.',
+            'cancelled'         => 'Bron ləğv edildi.',
+            'error'             => 'Xəta.',
+        ],
+
+        'drawer' => [
+            'title'                => 'Kommersiya təklifi',
+            'load_error'           => 'Təklifi yükləmək alınmadı.',
+            'request_label'        => 'Sorğu',
+            'expired'              => 'Vaxtı bitib',
+            'valid_until'          => ':date tarixinədək etibarlıdır',
+            'composed_by'          => 'Tərtib edən',
+            'created'              => 'Yaradılıb',
+            'description'          => 'Təsvir',
+            'composition'          => 'Təklifin tərkibi',
+            'positions'            => ':n mövqe',
+            'no_offers'            => 'Təklifdə xidmət yoxdur',
+            'supplier_price'       => 'təchizatçı: :price',
+            'in_supplier_currency' => 'təchizatçı valyutasında: :amount',
+            'service_ref'          => 'Xidmət #:id',
+        ],
+        'prop_status' => [
+            'draft'    => 'Qaralama',
+            'sent'     => 'Göndərilib',
+            'accepted' => 'Qəbul edilib',
+            'rejected' => 'Rədd edilib',
+        ],
+    ],
+
+    // ── Sürətli baxış paneli ───────────────────────────────────────────────
+    'drawer' => [
+        'title_ph'     => 'Bron',
+        'ref'          => 'Bron #:id',
+        'load_error'   => 'Bronu yükləmək alınmadı.',
+        'total'        => 'Yekun məbləğ',
+        'for_agency'   => '· agentlik üçün :amount',
+        'travel_dates' => 'Səfər tarixləri',
+        'pax'          => 'Turistlər',
+        'pax_unit'     => ':n nəfər',
+        'confirmed'    => 'Təsdiqlənib',
+        'destination'  => 'İstiqamət',
+        'margin_title' => 'Marja (bron zamanı snapşot)',
+        'net'          => 'Maya dəyəri',
+        'margin'       => 'Marja',
+        'sell'         => 'Satış',
+        'net_short'    => 'maya',
+        'notes'        => 'Qeydlər',
+        'open_full'    => 'Tam aç',
+        'proposal_ref' => 'Təklif #:id',
+    ],
+];

@@ -1,0 +1,1 @@
+- [B2B Travel RFQ UI Layer](project_ui_layer.md) — Full UI implementation: layouts, components, all pages, web routes, auth pattern, Keen template usage

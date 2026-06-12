@@ -1,0 +1,15 @@
+//
+// Custom
+//
+
+@include color-mode(dark) {
+	.card-custom {
+		background-color: var(--#{$prefix}card-bg) !important;
+		border: 1px solid var(--#{$prefix}card-border-color) !important;
+	}
+
+	.card-custom-2 {
+		background-color: var(--#{$prefix}gray-200) !important;
+	}
+}
+

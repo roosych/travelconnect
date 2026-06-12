@@ -1,0 +1,21 @@
+//
+// Root
+//
+
+// Light mode
+@include color-mode(light) {
+    // Text primary
+    --#{$prefix}text-primary: #{$text-primary};    
+    --#{$prefix}text-primary-light: #{$text-primary-light}; 
+    --#{$prefix}text-primary-inverse: #{$text-primary-inverse}; 
+    --#{$prefix}text-primary-active: #{$text-primary-active}; 
+} 
+
+// Dark mode
+@include color-mode(dark) {
+    // Text primary
+    --#{$prefix}text-primary: #{$text-primary};    
+    --#{$prefix}text-primary-light: #{$text-primary-light-dark}; 
+    --#{$prefix}text-primary-inverse: #{$text-primary-inverse}; 
+    --#{$prefix}text-primary-active: #{$text-primary-active}; 
+}

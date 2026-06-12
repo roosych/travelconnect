@@ -1,0 +1,160 @@
+<?php
+
+return [
+    'title' => 'Bookings',
+
+    // Booking statuses (BookingStatus enum: agency vs operator wording)
+    'status' => [
+        'agency' => [
+            'confirmed'        => 'Confirmed',
+            'awaiting_payment' => 'Awaiting payment',
+            'paid'             => 'Paid',
+            'rescheduled'      => 'Dates changed',
+            'in_progress'      => 'On the trip',
+            'completed'        => 'Completed',
+            'cancelled'        => 'Cancelled',
+        ],
+        'operator' => [
+            'confirmed'        => 'Confirmed',
+            'awaiting_payment' => 'Awaiting payment',
+            'paid'             => 'Paid',
+            'rescheduled'      => 'Rescheduled',
+            'in_progress'      => 'In progress',
+            'completed'        => 'Completed',
+            'cancelled'        => 'Cancelled',
+        ],
+    ],
+
+    // Extra service labels (beyond common.services) used in the margin breakdown
+    'services' => [
+        'flight'    => 'Flight',
+        'insurance' => 'Insurance',
+        'visa'      => 'Visa',
+    ],
+
+    // ── List (index) ───────────────────────────────────────────────────────
+    'index' => [
+        'search_ph' => 'Search by tour, request, agency…',
+        'all'       => 'All',
+        'sort' => [
+            'newest'      => 'Newest first',
+            'oldest'      => 'Oldest first',
+            'travel_asc'  => 'Travel date ↑',
+            'travel_desc' => 'Travel date ↓',
+            'price_desc'  => 'Most expensive first',
+            'price_asc'   => 'Cheapest first',
+        ],
+        'load_error' => 'Failed to load bookings. Please refresh the page.',
+        'empty'      => 'No bookings found.',
+        'quick_view' => 'Quick view',
+        'open'       => 'Open',
+        'pagination' => ':from–:to of :total',
+        'cols' => [
+            'tour'         => 'Tour / Destination',
+            'agency'       => 'Agency',
+            'amount'       => 'Amount',
+            'travel_dates' => 'Travel dates',
+            'status'       => 'Status',
+            'confirmed'    => 'Confirmed',
+            'actions'      => 'Actions',
+        ],
+    ],
+
+    // ── Detail page (show) ─────────────────────────────────────────────────
+    'show' => [
+        'title'         => 'Booking details',
+        'breadcrumb'    => 'Booking #:id',
+        'proposal_card' => 'Commercial proposal',
+        'request_card'  => 'Tour request',
+        'load_error'    => 'Failed to load booking details.',
+        'for_agency'    => 'for the agency: :amount',
+        'agency'        => 'Agency',
+        'cancelled_banner' => 'Booking cancelled',
+
+        'toolbar' => [
+            'request_payment' => 'Issue invoice',
+            'mark_paid'       => 'Mark as paid',
+            'complete'        => 'Complete',
+            'cancel'          => 'Cancel',
+        ],
+        'stepper' => [
+            'confirmed'   => 'Confirmed',
+            'invoiced'    => 'Invoice issued',
+            'paid'        => 'Paid',
+            'in_progress' => 'In progress',
+            'completed'   => 'Completed',
+        ],
+
+        'proposal_unavailable' => 'Proposal information is unavailable.',
+        'proposal_label'       => 'Commercial proposal',
+        'proposal_ref'         => 'Proposal #:id',
+        'view_proposal'        => 'View proposal',
+
+        'request_unavailable' => 'Request information is unavailable.',
+        'request_ref'         => 'Request #:id',
+        'deadline_label'      => 'Deadline: :date',
+        'travellers'          => ':n travellers',
+        'open_request'        => 'Open request',
+
+        'prompt' => [
+            'complete' => 'Completion notes (required):',
+            'cancel'   => 'Cancellation reason (required):',
+        ],
+        'err' => [
+            'notes_required'  => 'A note is required.',
+            'reason_required' => 'Provide a cancellation reason.',
+        ],
+        'toast' => [
+            'payment_requested' => 'Invoice issued. Awaiting payment.',
+            'paid'              => 'Booking marked as paid.',
+            'completed'         => 'Booking completed.',
+            'cancelled'         => 'Booking cancelled.',
+            'error'             => 'Error.',
+        ],
+
+        'drawer' => [
+            'title'                => 'Commercial proposal',
+            'load_error'           => 'Failed to load the proposal.',
+            'request_label'        => 'Request',
+            'expired'              => 'Expired',
+            'valid_until'          => 'Valid until :date',
+            'composed_by'          => 'Prepared by',
+            'created'              => 'Created',
+            'description'          => 'Description',
+            'composition'          => 'Proposal contents',
+            'positions'            => ':n items',
+            'no_offers'            => 'No services in the proposal',
+            'supplier_price'       => 'supplier: :price',
+            'in_supplier_currency' => 'in supplier currency: :amount',
+            'service_ref'          => 'Service #:id',
+        ],
+        'prop_status' => [
+            'draft'    => 'Draft',
+            'sent'     => 'Sent',
+            'accepted' => 'Accepted',
+            'rejected' => 'Rejected',
+        ],
+    ],
+
+    // ── Quick-view drawer ──────────────────────────────────────────────────
+    'drawer' => [
+        'title_ph'     => 'Booking',
+        'ref'          => 'Booking #:id',
+        'load_error'   => 'Failed to load the booking.',
+        'total'        => 'Total amount',
+        'for_agency'   => '· for the agency :amount',
+        'travel_dates' => 'Travel dates',
+        'pax'          => 'Travellers',
+        'pax_unit'     => ':n pax',
+        'confirmed'    => 'Confirmed',
+        'destination'  => 'Destination',
+        'margin_title' => 'Margin (snapshot at booking)',
+        'net'          => 'Cost',
+        'margin'       => 'Margin',
+        'sell'         => 'Sell',
+        'net_short'    => 'cost',
+        'notes'        => 'Notes',
+        'open_full'    => 'Open in full',
+        'proposal_ref' => 'Proposal #:id',
+    ],
+];
