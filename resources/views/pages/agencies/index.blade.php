@@ -84,10 +84,51 @@
             </div>
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
-                <button type="button" id="btn-save-agency" class="btn btn-primary">
+                <button type="button" id="btn-save-agency" class="btn btn-primary" data-kt-indicator="off">
                     <span class="indicator-label">{{ __('common.save') }}</span>
-                    <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    <span class="indicator-progress">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Credentials Modal (показывается один раз после создания) --}}
+<div class="modal fade" id="modal-credentials" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h2 class="fw-bold">{{ __('agencies.credentials.title') }}</h2>
+                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+                    <i class="ki-outline ki-cross fs-1"></i>
+                </div>
+            </div>
+            <div class="modal-body py-6 px-7">
+                <div class="alert alert-warning d-flex align-items-center mb-6">
+                    <i class="ki-outline ki-information-5 fs-2 me-3"></i>
+                    <span class="fs-7">{{ __('agencies.credentials.notice') }}</span>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-muted">{{ __('agencies.credentials.login') }}</label>
+                    <div class="input-group">
+                        <input type="text" id="cred-login" class="form-control form-control-solid" readonly />
+                        <button class="btn btn-icon btn-light" type="button" onclick="copyCred('cred-login')" title="{{ __('agencies.credentials.copied') }}">
+                            <i class="ki-outline ki-copy fs-3"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold text-muted">{{ __('agencies.credentials.password') }}</label>
+                    <div class="input-group">
+                        <input type="text" id="cred-password" class="form-control form-control-solid fw-bold" readonly />
+                        <button class="btn btn-icon btn-light" type="button" onclick="copyCred('cred-password')" title="{{ __('agencies.credentials.copied') }}">
+                            <i class="ki-outline ki-copy fs-3"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{ __('agencies.credentials.done') }}</button>
             </div>
         </div>
     </div>
@@ -112,9 +153,9 @@
             </div>
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
-                <button type="button" id="btn-update-agency" class="btn btn-primary">
+                <button type="button" id="btn-update-agency" class="btn btn-primary" data-kt-indicator="off">
                     <span class="indicator-label">{{ __('agencies.edit_modal.submit') }}</span>
-                    <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                    <span class="indicator-progress">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                 </button>
             </div>
         </div>
@@ -411,18 +452,31 @@
             currency_code: fd.get('currency_code') || null,
         };
 
-        setLoading(btn, true);
+        btnLoading(btn, true);
         errorEl.classList.add('d-none');
 
-        const res = await api.post('/agencies', payload);
-        setLoading(btn, false);
-
-        if (res.data?.id ?? res.id) {
-            bootstrap.Modal.getInstance(document.getElementById('modal-create-agency')).hide();
-            showToast(t.index.created);
-            await loadAgencies();
-        } else {
-            showFormError(errorEl, res);
+        try {
+            const res = await api.post('/agencies', payload);
+            const created = res.data ?? res;
+            if (created?.id) {
+                // Реквизиты показываем после полного закрытия формы — иначе бэкдропы наслаиваются.
+                const createEl = document.getElementById('modal-create-agency');
+                if (created.generated_password) {
+                    createEl.addEventListener('hidden.bs.modal',
+                        () => showCredentials(created.email, created.generated_password), { once: true });
+                }
+                bootstrap.Modal.getInstance(createEl).hide();
+                showToast(t.index.created);
+                currentSort = 'newest';
+                document.getElementById('agency-sort').value = 'newest';
+                await loadAgencies(1);
+            } else {
+                showFormError(errorEl, res);
+            }
+        } catch (err) {
+            showFormError(errorEl, err?.data ?? { message: t.index.error_generic });
+        } finally {
+            btnLoading(btn, false);
         }
     });
 
@@ -453,11 +507,11 @@
             currency_code: fd.get('currency_code') || null,
         };
 
-        setLoading(btn, true);
+        btnLoading(btn, true);
         errorEl.classList.add('d-none');
 
         const res = await api.patch(`/agencies/${id}`, payload);
-        setLoading(btn, false);
+        btnLoading(btn, false);
 
         if (res.data?.id ?? res.id) {
             bootstrap.Modal.getInstance(document.getElementById('modal-edit-agency')).hide();
@@ -477,10 +531,19 @@
     }
 
     // ---- Helpers ----
-    function setLoading(btn, state) {
-        btn.disabled = state;
-        btn.querySelector('.indicator-label').classList.toggle('d-none', state);
-        btn.querySelector('.indicator-progress').classList.toggle('d-none', !state);
+    // Реквизиты владельца: показываем один раз после создания (пароль виден только тут).
+    function showCredentials(login, password) {
+        if (!password) return;
+        document.getElementById('cred-login').value    = login ?? '';
+        document.getElementById('cred-password').value = password;
+        new bootstrap.Modal(document.getElementById('modal-credentials')).show();
+    }
+
+    function copyCred(id) {
+        const input = document.getElementById(id);
+        navigator.clipboard?.writeText(input.value)
+            .then(() => showToast(t.credentials.copied))
+            .catch(() => { input.select(); document.execCommand('copy'); });
     }
 
     function showFormError(el, res) {

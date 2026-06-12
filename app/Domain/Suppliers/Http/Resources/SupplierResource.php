@@ -26,6 +26,10 @@ class SupplierResource extends JsonResource
             'members_count'  => $this->when(isset($this->members_count), $this->members_count),
             'avatar_url'     => $this->getFirstMediaUrl('avatar') ?: null,
             'created_at'     => $this->created_at->toDateString(),
+            // Только в ответе на создание: одноразовый показ пароля владельца админу.
+            $this->mergeWhen(filled($this->resource->generated_password ?? null), fn () => [
+                'generated_password' => $this->resource->generated_password,
+            ]),
         ];
     }
 }

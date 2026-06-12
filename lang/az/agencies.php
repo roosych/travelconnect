@@ -175,4 +175,14 @@ return [
         'notes'        => 'Qeydlər',
         'open_request' => 'Sorğunu aç',
     ],
+
+    // Yaradıldıqdan sonra bir dəfə göstərilən giriş məlumatları modalı
+    'credentials' => [
+        'title'    => 'Agentlik yaradıldı',
+        'notice'   => 'Bu giriş məlumatlarını saxlayın — parol yalnız indi göstərilir və bir daha əlçatan olmayacaq.',
+        'login'    => 'Login (e-poçt)',
+        'password' => 'Parol',
+        'copied'   => 'Kopyalandı',
+        'done'     => 'Hazırdır',
+    ],
 ];

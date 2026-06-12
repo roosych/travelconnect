@@ -14,10 +14,14 @@ class SupplierService
     public function create(array $data): Supplier
     {
         return DB::transaction(function () use ($data) {
+            // Читаемый пароль владельца: показываем админу один раз в модалке
+            // (см. generated_password в SupplierResource), в БД хранится только хеш.
+            $password = Str::password(12, letters: true, numbers: true, symbols: false);
+
             $user = User::create([
                 'name'     => $data['name'],
                 'email'    => $data['email'],
-                'password' => Str::random(16),
+                'password' => $password,
                 'role'     => UserRole::Supplier,
             ]);
 
@@ -38,6 +42,9 @@ class SupplierService
                 'user_id'     => $user->id,
                 'role'        => 'owner',
             ]);
+
+            // Транзиентный атрибут — не колонка, наружу уходит только в ответе store().
+            $supplier->generated_password = $password;
 
             return $supplier;
         });

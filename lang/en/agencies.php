@@ -175,4 +175,14 @@ return [
         'notes'        => 'Notes',
         'open_request' => 'Open request',
     ],
+
+    // Sign-in details modal, shown once right after creation
+    'credentials' => [
+        'title'    => 'Agency created',
+        'notice'   => 'Save these sign-in details — the password is shown only now and won’t be available again.',
+        'login'    => 'Login (email)',
+        'password' => 'Password',
+        'copied'   => 'Copied',
+        'done'     => 'Done',
+    ],
 ];

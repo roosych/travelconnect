@@ -7,6 +7,16 @@ return [
     'select_none'     => '— göstərilməyib —',
     'select_country'  => '— ölkə seçin —',
 
+    // Yaradıldıqdan sonra bir dəfə göstərilən giriş məlumatları modalı
+    'credentials' => [
+        'title'    => 'Təchizatçı yaradıldı',
+        'notice'   => 'Bu giriş məlumatlarını saxlayın — parol yalnız indi göstərilir və bir daha əlçatan olmayacaq.',
+        'login'    => 'Login (e-poçt)',
+        'password' => 'Parol',
+        'copied'   => 'Kopyalandı',
+        'done'     => 'Hazırdır',
+    ],
+
     // Общая форма (_form: create/edit на index и show)
     'form' => [
         'name'           => 'Təchizatçının adı',

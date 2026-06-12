@@ -14,10 +14,14 @@ class AgencyService
     public function create(array $data): Agency
     {
         return DB::transaction(function () use ($data) {
+            // Читаемый пароль владельца: показываем админу один раз в модалке
+            // (см. generated_password в AgencyResource), в БД хранится только хеш.
+            $password = Str::password(12, letters: true, numbers: true, symbols: false);
+
             $user = User::create([
                 'name'     => $data['name'],
                 'email'    => $data['email'],
-                'password' => Str::random(16),
+                'password' => $password,
                 'role'     => UserRole::Agency,
             ]);
 
@@ -34,6 +38,9 @@ class AgencyService
                 'user_id'   => $user->id,
                 'role'      => 'owner',
             ]);
+
+            // Транзиентный атрибут — не колонка, наружу уходит только в ответе store().
+            $agency->generated_password = $password;
 
             return $agency;
         });

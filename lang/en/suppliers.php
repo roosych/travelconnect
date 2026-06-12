@@ -7,6 +7,16 @@ return [
     'select_none'     => '— not set —',
     'select_country'  => '— select a country —',
 
+    // Sign-in details modal, shown once right after creation
+    'credentials' => [
+        'title'    => 'Supplier created',
+        'notice'   => 'Save these sign-in details — the password is shown only now and won’t be available again.',
+        'login'    => 'Login (email)',
+        'password' => 'Password',
+        'copied'   => 'Copied',
+        'done'     => 'Done',
+    ],
+
     // Shared form (_form: create/edit on index and show)
     'form' => [
         'name'           => 'Supplier name',
