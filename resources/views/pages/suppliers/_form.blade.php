@@ -15,8 +15,8 @@
                placeholder="+62 812 345 6789" />
     </div>
     <div class="col-md-6">
-        <label class="form-label fw-semibold">{{ __('suppliers.form.currency') }}</label>
-        <select name="currency_code" class="form-select form-select-solid js-currency-select"></select>
+        <label class="form-label required fw-semibold">{{ __('suppliers.form.currency') }}</label>
+        <select name="currency_code" class="form-select form-select-solid js-currency-select" required></select>
     </div>
     <div class="col-md-6">
         <label class="form-label required fw-semibold">{{ __('suppliers.form.country') }}</label>

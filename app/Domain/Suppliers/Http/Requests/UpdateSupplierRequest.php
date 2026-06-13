@@ -20,7 +20,7 @@ class UpdateSupplierRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'country' => ['sometimes', 'required', 'string', 'size:2', 'exists:countries,code'],
-            'currency_code' => ['nullable', 'string', 'size:3', 'exists:currencies,code,is_active,1'],
+            'currency_code' => ['sometimes', 'required', 'string', 'size:3', 'exists:currencies,code,is_active,1'],
             'service_types' => ['nullable', 'array'],
             'service_types.*' => ['string', Rule::in(app(ServiceCatalog::class)->activeCodes())],
             'description' => ['nullable', 'string', 'max:2000'],

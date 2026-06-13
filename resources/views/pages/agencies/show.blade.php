@@ -647,6 +647,8 @@
         const btn = this;
         const form = document.getElementById('form-edit-agency-show');
         const errorEl = document.getElementById('edit-agency-show-error');
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
         const fd = new FormData(form);
         const payload = {
             name: fd.get('name'), email: fd.get('email') || null,
@@ -660,20 +662,27 @@
         btn.querySelector('.indicator-progress').classList.remove('d-none');
         errorEl.classList.add('d-none');
 
-        const res = await api.patch(`/agencies/${agencyId}`, payload);
-
-        btn.disabled = false;
-        btn.querySelector('.indicator-label').classList.remove('d-none');
-        btn.querySelector('.indicator-progress').classList.add('d-none');
-
-        if (res.data?.id ?? res.id) {
-            bootstrap.Modal.getInstance(document.getElementById('modal-edit-agency-show')).hide();
-            showToast(t.edit_modal.updated);
-            await loadAgency();
-        } else {
-            const errors = res.errors ? Object.values(res.errors).flat().join(' ') : null;
-            errorEl.textContent = errors ?? res.message ?? t.edit_modal.error_generic;
+        const showError = (res) => {
+            const errors = res?.errors ? Object.values(res.errors).flat().join(' ') : null;
+            errorEl.textContent = errors ?? res?.message ?? t.edit_modal.error_generic;
             errorEl.classList.remove('d-none');
+        };
+
+        try {
+            const res = await api.patch(`/agencies/${agencyId}`, payload);
+            if (res.data?.id ?? res.id) {
+                bootstrap.Modal.getInstance(document.getElementById('modal-edit-agency-show')).hide();
+                showToast(t.edit_modal.updated);
+                await loadAgency();
+            } else {
+                showError(res);
+            }
+        } catch (err) {
+            showError(err?.data ?? null);
+        } finally {
+            btn.disabled = false;
+            btn.querySelector('.indicator-label').classList.remove('d-none');
+            btn.querySelector('.indicator-progress').classList.add('d-none');
         }
     });
 

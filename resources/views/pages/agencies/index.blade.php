@@ -499,6 +499,8 @@
         const errorEl = document.getElementById('edit-agency-error');
         const id = document.getElementById('edit-agency-id').value;
 
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
         const fd = new FormData(form);
         const payload = {
             name: fd.get('name'), email: fd.get('email') || null,
@@ -510,15 +512,19 @@
         btnLoading(btn, true);
         errorEl.classList.add('d-none');
 
-        const res = await api.patch(`/agencies/${id}`, payload);
-        btnLoading(btn, false);
-
-        if (res.data?.id ?? res.id) {
-            bootstrap.Modal.getInstance(document.getElementById('modal-edit-agency')).hide();
-            showToast(t.edit_modal.updated);
-            await loadAgencies(currentPage);
-        } else {
-            showFormError(errorEl, res);
+        try {
+            const res = await api.patch(`/agencies/${id}`, payload);
+            if (res.data?.id ?? res.id) {
+                bootstrap.Modal.getInstance(document.getElementById('modal-edit-agency')).hide();
+                showToast(t.edit_modal.updated);
+                await loadAgencies(currentPage);
+            } else {
+                showFormError(errorEl, res);
+            }
+        } catch (err) {
+            showFormError(errorEl, err?.data ?? { message: t.index.error_generic });
+        } finally {
+            btnLoading(btn, false);
         }
     });
 

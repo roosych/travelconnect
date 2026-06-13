@@ -21,7 +21,7 @@ class StoreSupplierRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:50'],
             'country' => ['required', 'string', 'size:2', 'exists:countries,code'],
-            'currency_code' => ['nullable', 'string', 'size:3', 'exists:currencies,code'],
+            'currency_code' => ['required', 'string', 'size:3', 'exists:currencies,code'],
             'service_types' => ['nullable', 'array'],
             'service_types.*' => ['string', Rule::in(app(ServiceCatalog::class)->activeCodes())],
             'description' => ['nullable', 'string', 'max:2000'],

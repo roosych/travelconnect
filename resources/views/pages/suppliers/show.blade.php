@@ -413,20 +413,27 @@
         btn.querySelector('.indicator-progress').classList.remove('d-none');
         errorEl.classList.add('d-none');
 
-        const res = await api.patch(`/suppliers/${supplierId}`, payload);
-
-        btn.disabled = false;
-        btn.querySelector('.indicator-label').classList.remove('d-none');
-        btn.querySelector('.indicator-progress').classList.add('d-none');
-
-        if (res.data?.id ?? res.id) {
-            bootstrap.Modal.getInstance(document.getElementById('modal-edit-supplier-show')).hide();
-            showToast(t.updated);
-            await loadSupplier();
-        } else {
-            const errors = res.errors ? Object.values(res.errors).flat().join(' ') : null;
-            errorEl.textContent = errors ?? res.message ?? t.index.error_generic;
+        const showError = (res) => {
+            const errors = res?.errors ? Object.values(res.errors).flat().join(' ') : null;
+            errorEl.textContent = errors ?? res?.message ?? t.index.error_generic;
             errorEl.classList.remove('d-none');
+        };
+
+        try {
+            const res = await api.patch(`/suppliers/${supplierId}`, payload);
+            if (res.data?.id ?? res.id) {
+                bootstrap.Modal.getInstance(document.getElementById('modal-edit-supplier-show')).hide();
+                showToast(t.updated);
+                await loadSupplier();
+            } else {
+                showError(res);
+            }
+        } catch (err) {
+            showError(err?.data ?? null);
+        } finally {
+            btn.disabled = false;
+            btn.querySelector('.indicator-label').classList.remove('d-none');
+            btn.querySelector('.indicator-progress').classList.add('d-none');
         }
     });
 

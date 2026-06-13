@@ -18,8 +18,8 @@ class StoreAgencyRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:50'],
-            'country' => ['nullable', 'string', 'size:2'],
-            'currency_code' => ['nullable', 'string', 'size:3', 'exists:currencies,code'],
+            'country' => ['required', 'string', 'size:2'],
+            'currency_code' => ['required', 'string', 'size:3', 'exists:currencies,code'],
         ];
     }
 }

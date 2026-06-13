@@ -15,14 +15,14 @@
                placeholder="+994 12 345 67 89" />
     </div>
     <div class="col-md-6">
-        <label class="form-label fw-semibold">{{ __('agencies.form.country') }}</label>
-        <select name="country" class="form-select form-select-solid js-country-select">
+        <label class="form-label required fw-semibold">{{ __('agencies.form.country') }}</label>
+        <select name="country" class="form-select form-select-solid js-country-select" required>
             <option value="">{{ __('agencies.select_none') }}</option>
         </select>
     </div>
     <div class="col-md-6">
-        <label class="form-label fw-semibold">{{ __('agencies.form.currency') }}</label>
-        <select name="currency_code" class="form-select form-select-solid js-currency-select">
+        <label class="form-label required fw-semibold">{{ __('agencies.form.currency') }}</label>
+        <select name="currency_code" class="form-select form-select-solid js-currency-select" required>
             <option value="">{{ __('agencies.select_none') }}</option>
         </select>
     </div>
