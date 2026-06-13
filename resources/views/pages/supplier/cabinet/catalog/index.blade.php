@@ -360,7 +360,7 @@ function resourceCard(r, meta) {
     const thumb  = photos.length
         ? `<img src="${esc(photos[0].url)}" class="rounded-top-2 w-100" style="height:130px;object-fit:cover" alt="">`
         : `<div class="rounded-top-2 w-100 bg-light d-flex align-items-center justify-content-center" style="height:130px">
-               <img src="/ui_template/assets/media/svg/files/blank-image.svg" style="height:64px;opacity:0.35" alt="">
+               <img src="/assets/media/svg/files/blank-image.svg" style="height:64px;opacity:0.35" alt="">
            </div>`;
 
     const rateHtml = (r.base_price && r.price_unit)

@@ -7,7 +7,7 @@
 
     {{-- Left branding panel --}}
     <div class="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-2 order-lg-1"
-         style="background-image: linear-gradient(145deg, rgba(13,19,40,.35) 0%, rgba(13,19,40,.10) 100%), url('{{ asset('ui_template/assets/media/misc/auth-bg.png') }}'); background-size: cover; background-position: center;">
+         style="background-image: linear-gradient(145deg, rgba(13,19,40,.35) 0%, rgba(13,19,40,.10) 100%), url('{{ asset('assets/media/misc/auth-bg.png') }}'); background-size: cover; background-position: center;">
         <div class="d-flex flex-column flex-center py-15 px-10 w-100">
 
             {{-- Brand --}}
@@ -20,7 +20,7 @@
 
             {{-- Logo --}}
             <div class="d-flex flex-center w-100">
-                <img src="{{ asset('ui_template/assets/media/auth/casp_transparent.png') }}"
+                <img src="{{ asset('assets/media/auth/casp_transparent.png') }}"
                      alt="{{ config('app.name') }}" class="img-fluid" style="max-width:270px;width:70%;" />
             </div>
 

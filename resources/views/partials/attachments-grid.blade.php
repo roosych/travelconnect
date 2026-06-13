@@ -17,7 +17,7 @@
 <script>
 window.AttachmentGrid = (function () {
     function svgFor(mimeType) {
-        const b = '/ui_template/assets/media/svg/files/';
+        const b = '/assets/media/svg/files/';
         let name = 'folder-document';
         if (mimeType) {
             if (mimeType === 'application/pdf')                                                              name = 'pdf';

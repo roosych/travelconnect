@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <title>@yield('title', 'B2B Travel') - {{ config('app.name') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('ui_template/assets/media/logos/fav-dark.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/media/logos/fav-dark.png') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link href="{{ asset('ui_template/assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('ui_template/assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('ui_template/assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     @stack('styles')
     <style>
         /* ════════════════════════════════════════════════════════════
@@ -205,7 +205,7 @@
         <div class="app-page flex-column flex-column-fluid" id="kt_app_page">
 
             {{-- ─── Stacked Header ─────────────────────────────────────────── --}}
-            <div id="kt_app_header" class="app-header" style="background-image: url('{{ asset('ui_template/assets/media/patterns/toolbar-bg.png') }}'); background-size: cover; background-position: center;">
+            <div id="kt_app_header" class="app-header" style="background-image: url('{{ asset('assets/media/patterns/toolbar-bg.png') }}'); background-size: cover; background-position: center;">
 
                 {{-- ════════════════════════════════════════════════════════════
                      Primary header: logo + notifications + quick links + chat
@@ -723,9 +723,9 @@
         </div>
     </div>
 
-    <script>var hostUrl = "{{ asset('ui_template/assets/') }}/";</script>
-    <script src="{{ asset('ui_template/assets/plugins/global/plugins.bundle.js') }}"></script>
-    <script src="{{ asset('ui_template/assets/js/scripts.bundle.js') }}"></script>
+    <script>var hostUrl = "{{ asset('assets/') }}/";</script>
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
 
     <script>
         window.api = {

@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>@yield('title', 'Sign In') - {{ config('app.name') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('ui_template/assets/media/logos/fav-dark.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/media/logos/fav-dark.png') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link href="{{ asset('ui_template/assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('ui_template/assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
 </head>
 <body id="kt_body" class="app-blank app-blank">
 
@@ -29,9 +29,9 @@
         @yield('content')
     </div>
 
-    <script>var hostUrl = "{{ asset('ui_template/assets/') }}/";</script>
-    <script src="{{ asset('ui_template/assets/plugins/global/plugins.bundle.js') }}"></script>
-    <script src="{{ asset('ui_template/assets/js/scripts.bundle.js') }}"></script>
+    <script>var hostUrl = "{{ asset('assets/') }}/";</script>
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

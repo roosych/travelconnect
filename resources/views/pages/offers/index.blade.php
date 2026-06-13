@@ -88,7 +88,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('ui_template/assets/plugins/custom/fslightbox/fslightbox.bundle.js') }}"></script>
+<script src="{{ asset('assets/plugins/custom/fslightbox/fslightbox.bundle.js') }}"></script>
 <script>
     // Shared helpers (statusBadge, formatDate, formatCurrency, escHtml) come from
     // partials/js-helpers.blade.php. SERVICE_META stays local (used by the drawer).

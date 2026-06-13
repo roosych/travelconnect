@@ -24,7 +24,7 @@
                 {{ $__currentLabel }}
                 @if (isset($__flags[$__current]))
                     <img class="w-15px h-15px rounded-1 ms-2"
-                         src="{{ asset('ui_template/assets/media/flags/' . $__flags[$__current]) }}" alt="" />
+                         src="{{ asset('assets/media/flags/' . $__flags[$__current]) }}" alt="" />
                 @endif
             </span>
         </span>
@@ -39,7 +39,7 @@
                     <span class="symbol symbol-20px me-4">
                         @if (isset($__flags[$__code]))
                             <img class="rounded-1"
-                                 src="{{ asset('ui_template/assets/media/flags/' . $__flags[$__code]) }}" alt="" />
+                                 src="{{ asset('assets/media/flags/' . $__flags[$__code]) }}" alt="" />
                         @endif
                     </span>{{ $__name }}
                 </a>
