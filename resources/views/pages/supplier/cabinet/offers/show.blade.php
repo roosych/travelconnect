@@ -1,19 +1,19 @@
 @extends('layouts.supplier')
 
-@section('title', 'Предложение')
-@section('page-title', 'Предложение')
+@section('title', __('suppliers.cabinet.offers.show.title'))
+@section('page-title', __('suppliers.cabinet.offers.show.title'))
 
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        <a href="{{ route('supplier.offers.index') }}" class="text-muted text-hover-primary">Мои предложения</a>
+        <a href="{{ route('supplier.offers.index') }}" class="text-muted text-hover-primary">{{ __('suppliers.cabinet.offers.title') }}</a>
     </li>
     <li class="breadcrumb-item"><i class="ki-outline ki-right fs-7 text-gray-700 mx-n1"></i></li>
-    <li class="breadcrumb-item text-muted" id="breadcrumb-title">Оффер #{{ $id }}</li>
+    <li class="breadcrumb-item text-muted" id="breadcrumb-title">{{ __('suppliers.cabinet.offers.show.breadcrumb', ['id' => $id]) }}</li>
 @endsection
 
 @section('toolbar-actions')
     <button id="btn-withdraw" class="btn btn-light-danger btn-sm d-none" onclick="withdrawOffer()">
-        <i class="ki-outline ki-cross-circle fs-4 me-1"></i>Отозвать предложение
+        <i class="ki-outline ki-cross-circle fs-4 me-1"></i>{{ __('suppliers.cabinet.offers.show.withdraw') }}
     </button>
 @endsection
 
@@ -31,7 +31,7 @@
 
             <div class="d-flex align-items-start justify-content-between gap-4 flex-wrap mb-3">
                 <div>
-                    <h2 class="fw-bold text-gray-900 mb-2">Оффер #{{ $id }}</h2>
+                    <h2 class="fw-bold text-gray-900 mb-2">{{ __('suppliers.cabinet.offers.show.breadcrumb', ['id' => $id]) }}</h2>
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                         <span id="offer-status-badge"></span>
                         <span class="text-muted fs-7" id="offer-created"></span>
@@ -52,7 +52,7 @@
                             <i class="ki-outline ki-document fs-4 text-primary"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Запрос</div>
+                            <div class="text-muted fs-8">{{ __('suppliers.cabinet.offers.show.rfq') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-rfq">—</div>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                             <i class="ki-outline ki-category fs-4 text-primary"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Услуга</div>
+                            <div class="text-muted fs-8">{{ __('suppliers.cabinet.offers.show.service') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-covered">—</div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                             <i class="ki-outline ki-archive fs-4 text-success"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Ресурс / описание</div>
+                            <div class="text-muted fs-8">{{ __('suppliers.cabinet.offers.show.resource') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-resource">—</div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                 <div class="d-flex align-items-start gap-3 bg-light rounded-2 p-4">
                     <i class="ki-outline ki-message-text-2 fs-3 text-gray-500 mt-1 flex-shrink-0"></i>
                     <div>
-                        <div class="text-muted fs-8 mb-1">Примечания</div>
+                        <div class="text-muted fs-8 mb-1">{{ __('suppliers.cabinet.offers.show.notes') }}</div>
                         <div class="text-gray-700 fs-7 lh-lg" id="info-notes"></div>
                     </div>
                 </div>
@@ -108,6 +108,8 @@
 <script>
 const offerId = {{ $id }};
 
+// Локализация (suppliers.cabinet.offers.show.*). :id/:date — через .replace().
+const L = @json(__('suppliers.cabinet.offers.show'));
 
 const SERVICE_LABELS = window.SERVICE_LABELS;
 
@@ -143,15 +145,15 @@ function serviceList(val) {
 }
 
 async function withdrawOffer() {
-    if (!confirm('Отозвать это предложение?')) return;
+    if (!confirm(L.withdraw_confirm)) return;
     const btn = document.getElementById('btn-withdraw');
     btn.disabled = true;
     try {
         await api.patch(`/offers/${offerId}/withdraw`);
-        showToast('Предложение отозвано');
+        showToast(L.withdrawn);
         window.location.reload();
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось отозвать предложение', 'error');
+        showToast(err?.message ?? L.withdraw_error, 'error');
         btn.disabled = false;
     }
 }
@@ -164,10 +166,10 @@ async function withdrawOffer() {
         document.getElementById('page-loader').innerHTML = `
             <div class="text-center py-20">
                 <i class="ki-outline ki-lock-2 fs-4x text-primary mb-4 d-block"></i>
-                <div class="fw-semibold fs-5 text-gray-700">Нет доступа к этому предложению</div>
-                <div class="text-muted fs-7 mt-2 mb-6">Предложение не найдено или принадлежит другому поставщику</div>
+                <div class="fw-semibold fs-5 text-gray-700">${L.no_access_title}</div>
+                <div class="text-muted fs-7 mt-2 mb-6">${L.no_access_sub}</div>
                 <a href="{{ route('supplier.offers.index') }}" class="btn btn-light btn-sm">
-                    <i class="ki-outline ki-arrow-left fs-5 me-1"></i>К предложениям
+                    <i class="ki-outline ki-arrow-left fs-5 me-1"></i>${L.back_to_list}
                 </a>
             </div>`;
         return;
@@ -179,25 +181,25 @@ async function withdrawOffer() {
     document.getElementById('page-loader').classList.add('d-none');
     document.getElementById('page-content').classList.remove('d-none');
 
-    document.getElementById('breadcrumb-title').textContent  = `Оффер #${offerId}`;
+    document.getElementById('breadcrumb-title').textContent  = L.breadcrumb.replace(':id', offerId);
     document.getElementById('offer-status-badge').innerHTML  = `<span class="badge ${o.status_badge_class} fs-7">${esc(o.status_label)}</span>`;
-    document.getElementById('offer-created').textContent     = o.created_at ? 'Создан ' + fmtDate(o.created_at) : '';
+    document.getElementById('offer-created').textContent     = o.created_at ? L.created_prefix.replace(':date', fmtDate(o.created_at)) : '';
     document.getElementById('offer-price').textContent       = fmtMoney(o.unit_price, o.currency);
 
     // Срок действия актуален только для активных офферов (получено/рассматривается).
     // У выбранного — срок неважен, показываем позитивную пометку вместо «(истёк)».
     const validEl = document.getElementById('offer-valid');
     if (o.status === 'selected') {
-        validEl.innerHTML = '<span class="text-success fw-semibold"><i class="ki-outline ki-check-circle fs-7 me-1"></i>Выбрано агентством</span>';
+        validEl.innerHTML = `<span class="text-success fw-semibold"><i class="ki-outline ki-check-circle fs-7 me-1"></i>${L.selected_by_agency}</span>`;
     } else if (o.status === 'received' || o.status === 'reviewed') {
-        validEl.textContent = o.valid_until ? `Действует до ${fmtDeadline(o.valid_until)}${o.is_expired ? ' (истёк)' : ''}` : '';
+        validEl.textContent = o.valid_until ? L.valid_until.replace(':date', fmtDeadline(o.valid_until)) + (o.is_expired ? L.expired_suffix : '') : '';
     } else if (o.status === 'expired') {
-        validEl.textContent = o.valid_until ? `Срок истёк ${fmtDeadline(o.valid_until)}` : 'Срок истёк';
+        validEl.textContent = o.valid_until ? L.expired_at.replace(':date', fmtDeadline(o.valid_until)) : L.expired;
     } else {
         validEl.textContent = '';   // отклонено / отозвано — срок неактуален
     }
 
-    document.getElementById('info-rfq').textContent          = o.rfq?.title ?? `Запрос #${o.rfq_id}`;
+    document.getElementById('info-rfq').textContent          = o.rfq?.title ?? L.rfq_fallback.replace(':id', o.rfq_id);
     // Оффер на один запрос = одна услуга, поэтому «Тип услуги» и «Покрываемые
     // услуги» совпадали — оставили одну ячейку «Услуга».
     document.getElementById('info-covered').textContent      = serviceList(o.covered_services) !== '—'

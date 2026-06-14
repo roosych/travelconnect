@@ -23,7 +23,7 @@
         <div class="card-title">
             <h3 class="card-label fw-bold fs-5 mb-0">
                 <i class="ki-outline ki-paper-clip fs-4 me-2 text-muted"></i>
-                Вложения
+                {{ __('attachments.title') }}
             </h3>
         </div>
         <div class="card-toolbar">
@@ -43,7 +43,7 @@
 
         <div id="attachments-list-{{ $entityType }}">
             <div class="text-center text-muted py-6 fs-7" id="attachments-empty-{{ $entityType }}">
-                Нет вложений
+                {{ __('attachments.empty') }}
             </div>
             <div class="d-flex flex-wrap gap-3" id="attachments-grid-{{ $entityType }}"></div>
         </div>
@@ -57,6 +57,9 @@
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <script>
     FilePond.registerPlugin(FilePondPluginFileValidateSize);
+
+    // Локализация компонента вложений (attachments.*).
+    const _AT = @json(__('attachments'));
 
     function _fmtDate(iso) {
         if (!iso) return '';
@@ -112,7 +115,7 @@
                     </a>
                     ${canDelete ? `
                     <button type="button" class="btn btn-icon btn-sm btn-active-color-danger ms-1"
-                            onclick="deleteAttachment(${a.id}, '${type}')" title="Удалить">
+                            onclick="deleteAttachment(${a.id}, '${type}')" title="${_AT.delete}">
                         <i class="ki-outline ki-cross fs-4"></i>
                     </button>` : ''}
                 </div>`;
@@ -137,11 +140,11 @@
                 credentials: 'same-origin',
                 headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
             });
-            if (!res.ok) { showToast('Ошибка открытия файла', 'error'); return; }
+            if (!res.ok) { showToast(_AT.open_error, 'error'); return; }
             const blob = await res.blob();
             window.open(URL.createObjectURL(blob), '_blank');
         } catch (e) {
-            showToast('Ошибка открытия файла', 'error');
+            showToast(_AT.open_error, 'error');
         }
     }
 
@@ -151,7 +154,7 @@
                 credentials: 'same-origin',
                 headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
             });
-            if (!res.ok) { showToast('Ошибка скачивания файла', 'error'); return; }
+            if (!res.ok) { showToast(_AT.download_error, 'error'); return; }
             const blob = await res.blob();
             const url  = URL.createObjectURL(blob);
             const a    = document.createElement('a');
@@ -159,12 +162,12 @@
             document.body.appendChild(a); a.click();
             document.body.removeChild(a); URL.revokeObjectURL(url);
         } catch (e) {
-            showToast('Ошибка скачивания файла', 'error');
+            showToast(_AT.download_error, 'error');
         }
     }
 
     async function deleteAttachment(attachmentId, type) {
-        if (!confirm('Удалить вложение?')) return;
+        if (!confirm(_AT.delete_confirm)) return;
         try {
             await api.delete(`/attachments/${attachmentId}`);
             document.querySelector(`[data-attachment-id="${attachmentId}"]`)?.remove();
@@ -175,7 +178,7 @@
                 document.getElementById('attachments-empty-' + type)?.style.removeProperty('display');
             }
         } catch (e) {
-            showToast('Ошибка удаления файла', 'error');
+            showToast(_AT.delete_error, 'error');
         }
     }
 
@@ -188,15 +191,14 @@
             maxFiles: 10,
             maxFileSize: '20MB',
             allowFileTypeValidation: false,
-            labelIdle: 'Перетащите файлы или <span class="filepond--label-action">выберите</span><br>'
-                     + '<span style="font-size:11px;color:#a1a5b7">PDF, Word, Excel, JPG, PNG · до 20 МБ</span>',
+            labelIdle: _AT.fp_idle,
             onprocessfile: (error, file) => {
                 if (!error) setTimeout(() => pond.removeFile(file), 1000);
             },
             server: {
                 process: (fieldName, file, metadata, load, error, progress, abort) => {
                     const entityId = entityIdGetter();
-                    if (!entityId) { error('ID не определён'); return; }
+                    if (!entityId) { error(_AT.id_undefined); return; }
 
                     const fd  = new FormData();
                     fd.append('file', file);
@@ -213,10 +215,10 @@
                             load(resp.data.id);
                             loadAttachments(type, entityId, canDelete);
                         } else {
-                            error('Ошибка загрузки');
+                            error(_AT.upload_error);
                         }
                     };
-                    xhr.onerror = () => error('Ошибка сети');
+                    xhr.onerror = () => error(_AT.net_error);
                     xhr.send(fd);
                     return { abort: () => { xhr.abort(); abort(); } };
                 },
@@ -226,7 +228,7 @@
                             document.querySelector(`[data-attachment-id="${uniqueFileId}"]`)?.remove();
                             load();
                         })
-                        .catch(() => error('Ошибка отмены'));
+                        .catch(() => error(_AT.revert_error));
                 },
             },
         });
