@@ -1,14 +1,14 @@
 @extends('layouts.agency')
 
-@section('title', 'Бронирование #' . $id)
-@section('page-title', 'Детали бронирования')
+@section('title', __('bookings.agency_show.breadcrumb', ['id' => $id]))
+@section('page-title', __('bookings.agency_show.title'))
 
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        <a href="{{ route('agency.bookings.index') }}" class="text-muted text-hover-primary">Бронирования</a>
+        <a href="{{ route('agency.bookings.index') }}" class="text-muted text-hover-primary">{{ __('nav.agency.bookings') }}</a>
     </li>
     <li class="breadcrumb-item"><i class="ki-outline ki-right fs-7 text-gray-700 mx-n1"></i></li>
-    <li class="breadcrumb-item text-muted">Бронирование #{{ $id }}</li>
+    <li class="breadcrumb-item text-muted">{{ __('bookings.agency_show.breadcrumb', ['id' => $id]) }}</li>
 @endsection
 
 @section('content')
@@ -25,7 +25,7 @@
             <div class="d-flex align-items-start justify-content-between flex-wrap gap-4">
                 <div>
                     <div class="d-flex align-items-center gap-3 mb-2">
-                        <h2 class="fw-bold text-gray-900 mb-0 fs-3">Бронирование #{{ $id }}</h2>
+                        <h2 class="fw-bold text-gray-900 mb-0 fs-3">{{ __('bookings.agency_show.breadcrumb', ['id' => $id]) }}</h2>
                         <span id="status-badge"></span>
                     </div>
                     <div class="d-flex align-items-center gap-4 flex-wrap">
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <div class="text-muted fs-7 mb-1">Итоговая сумма</div>
+                    <div class="text-muted fs-7 mb-1">{{ __('bookings.agency_show.total') }}</div>
                     <div class="fs-2hx fw-bold text-gray-900" id="header-price">—</div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
         <div class="col-lg-5">
             <div class="card card-flush h-100">
                 <div class="card-header pt-5 pb-0">
-                    <h4 class="card-title fw-bold text-gray-800 fs-6">Детали поездки</h4>
+                    <h4 class="card-title fw-bold text-gray-800 fs-6">{{ __('bookings.agency_show.trip_details') }}</h4>
                 </div>
                 <div class="card-body pt-4">
                     <div class="d-flex flex-column gap-4" id="trip-details"></div>
@@ -66,7 +66,7 @@
             <div class="card card-flush h-100">
                 <div class="card-header pt-5 pb-0">
                     <h4 class="card-title fw-bold text-gray-800 fs-6">
-                        Коммерческое предложение
+                        {{ __('bookings.agency_show.proposal_title') }}
                         <span id="proposal-badge" class="ms-2"></span>
                     </h4>
                 </div>
@@ -85,7 +85,7 @@
                 <div class="d-flex align-items-start gap-3">
                     <i class="ki-outline ki-information-5 fs-3 text-warning mt-1"></i>
                     <div>
-                        <div class="fw-bold text-gray-800 mb-1">Примечание</div>
+                        <div class="fw-bold text-gray-800 mb-1">{{ __('bookings.agency_show.note') }}</div>
                         <div class="text-gray-600 fs-6" id="notes-text"></div>
                     </div>
                 </div>
@@ -100,6 +100,10 @@
 @push('scripts')
 <script>
 const bookingId = {{ $id }};
+
+// Локализация (bookings.agency_show.*). :id/:n/:date — через .replace().
+const L  = @json(__('bookings.agency_show'));
+const PS = @json(__('bookings.show.prop_status'));
 
 
 const SERVICE_ICONS = {
@@ -135,7 +139,7 @@ function formatCurrency(v, currency = 'AZN') {
         render(b);
     } catch {
         document.getElementById('page-loader').innerHTML =
-            '<div class="alert alert-danger text-center">Не удалось загрузить данные.</div>';
+            `<div class="alert alert-danger text-center">${L.load_error}</div>`;
     }
 })();
 
@@ -150,14 +154,14 @@ function render(b) {
     document.getElementById('header-price').textContent = formatCurrency(b.final_price, b.currency);
 
     const confirmedStr = b.confirmed_at
-        ? 'Подтверждено ' + formatDate(b.confirmed_at) : '';
+        ? L.confirmed_prefix.replace(':date', formatDate(b.confirmed_at)) : '';
     document.getElementById('header-confirmed').textContent = confirmedStr;
 
     const req = b.proposal?.request;
     if (req?.id) {
         document.getElementById('header-request-link').innerHTML =
             `<a href="/agency/requests/${req.id}" class="d-flex align-items-center gap-1 text-primary fs-7 fw-semibold">
-                <i class="ki-outline ki-document fs-7"></i>${escHtml(req.title ?? 'Заявка #' + req.id)}
+                <i class="ki-outline ki-document fs-7"></i>${escHtml(req.title ?? L.request_fallback.replace(':id', req.id))}
                 <i class="ki-outline ki-arrow-up-right fs-8"></i>
             </a>`;
     }
@@ -173,7 +177,7 @@ function render(b) {
         loadProposal(b.proposal.id);
     } else {
         document.getElementById('proposal-body').innerHTML =
-            '<span class="text-muted fs-7">Нет данных о предложении.</span>';
+            `<span class="text-muted fs-7">${L.no_proposal}</span>`;
     }
 
     // Notes
@@ -191,7 +195,7 @@ function renderTimeline(b) {
         <div class="d-flex align-items-center gap-3 p-4 bg-light-danger rounded">
             <i class="ki-outline ki-cross-circle fs-2 text-danger"></i>
             <div>
-                <div class="fw-bold text-danger">Бронирование отменено</div>
+                <div class="fw-bold text-danger">${L.cancelled_banner}</div>
                 ${b.notes ? `<div class="text-muted fs-7 mt-1">${escHtml(b.notes)}</div>` : ''}
             </div>
         </div>`;
@@ -199,11 +203,11 @@ function renderTimeline(b) {
     }
 
     const ORDER = [
-        { key: 'confirmed',        label: 'Подтверждено' },
-        { key: 'awaiting_payment', label: 'Счёт выставлен' },
-        { key: 'paid',             label: 'Оплачено' },
-        { key: 'in_progress',      label: 'В пути' },
-        { key: 'completed',        label: 'Завершено' },
+        { key: 'confirmed',        label: L.stepper.confirmed },
+        { key: 'awaiting_payment', label: L.stepper.invoiced },
+        { key: 'paid',             label: L.stepper.paid },
+        { key: 'in_progress',      label: L.stepper.in_progress },
+        { key: 'completed',        label: L.stepper.completed },
     ];
     const isCompleted = b.status === 'completed';
     const idx = ORDER.findIndex(s => s.key === b.status);
@@ -223,17 +227,17 @@ function renderTripDetails(b) {
         ? `${formatDate(b.travel_date_from)} — ${formatDate(b.travel_date_to)}`
         : '—';
 
-    rows.push(detailRow('ki-calendar', 'Даты поездки', dates));
+    rows.push(detailRow('ki-calendar', L.trip.dates, dates));
 
     if (b.pax_count) {
-        rows.push(detailRow('ki-people', 'Туристы', `${b.pax_count} чел.`));
+        rows.push(detailRow('ki-people', L.trip.travellers, L.pax_unit.replace(':n', b.pax_count)));
     }
 
     if (b.operator?.name) {
-        rows.push(detailRow('ki-user', 'Оператор', escHtml(b.operator.name)));
+        rows.push(detailRow('ki-user', L.trip.operator, escHtml(b.operator.name)));
     }
 
-    rows.push(detailRow('ki-check-circle', 'Подтверждено', formatDate(b.confirmed_at ?? b.created_at)));
+    rows.push(detailRow('ki-check-circle', L.trip.confirmed, formatDate(b.confirmed_at ?? b.created_at)));
 
     document.getElementById('trip-details').innerHTML = rows.join('');
 }
@@ -258,15 +262,15 @@ async function loadProposal(proposalId) {
         renderProposal(p);
     } catch {
         document.getElementById('proposal-body').innerHTML =
-            '<div class="alert alert-danger">Не удалось загрузить предложение.</div>';
+            `<div class="alert alert-danger">${L.proposal_load_error}</div>`;
     }
 }
 
 function renderProposal(p) {
     const [sCls, sLabel] = {
-        sent:     ['badge-light-primary', 'Отправлено'],
-        accepted: ['badge-light-success', 'Принято'],
-        rejected: ['badge-light-danger',  'Отклонено'],
+        sent:     ['badge-light-primary', PS.sent],
+        accepted: ['badge-light-success', PS.accepted],
+        rejected: ['badge-light-danger',  PS.rejected],
     }[p.status] ?? ['badge-light-secondary', p.status];
 
     document.getElementById('proposal-badge').innerHTML =
@@ -278,7 +282,7 @@ function renderProposal(p) {
         const type     = o.rfq_service_type ?? 'other';
         const icon     = SERVICE_ICONS[type] ?? 'ki-tag';
         const iconCls  = SERVICE_COLORS[type] ?? 'bg-light text-gray-600';
-        const title    = o.rfq_title || `Услуга #${o.id}`;
+        const title    = o.rfq_title || L.service_fallback.replace(':id', o.id);
         const supplier = o.supplier?.name ?? '';
 
         return `
@@ -294,22 +298,22 @@ function renderProposal(p) {
     }).join('');
 
     const noOffers = !offers.length
-        ? `<div class="text-muted fs-7 py-4 text-center">Нет услуг в предложении.</div>` : '';
+        ? `<div class="text-muted fs-7 py-4 text-center">${L.no_offers}</div>` : '';
 
     document.getElementById('proposal-body').innerHTML = `
         ${p.description ? `<div class="text-gray-600 fs-7 mb-4 fst-italic">${escHtml(p.description)}</div>` : ''}
         ${p.valid_until ? `<div class="text-muted fs-8 mb-3">
             <i class="ki-outline ki-calendar fs-8 me-1"></i>
-            Действует до ${formatDate(p.valid_until)}
-            ${p.is_expired ? '<span class="badge badge-light-danger ms-2 fs-9">Срок истёк</span>' : ''}
+            ${L.valid_until.replace(':date', formatDate(p.valid_until))}
+            ${p.is_expired ? `<span class="badge badge-light-danger ms-2 fs-9">${L.expired}</span>` : ''}
         </div>` : ''}
         <div class="mb-2 text-gray-400 fs-8 fw-bold text-uppercase">
-            Состав
+            ${L.composition}
             ${offers.length ? `<span class="badge badge-light-secondary ms-1">${offers.length}</span>` : ''}
         </div>
         ${offerRows}${noOffers}
         <div class="d-flex align-items-center justify-content-between bg-light rounded p-4 mt-3">
-            <span class="text-gray-600 fw-semibold fs-7">Итого</span>
+            <span class="text-gray-600 fw-semibold fs-7">${L.total_line}</span>
             <span class="fw-bolder text-gray-900 fs-4">${formatCurrency(p.total_price, p.currency)}</span>
         </div>`;
 }

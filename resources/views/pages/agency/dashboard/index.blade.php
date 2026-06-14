@@ -1,10 +1,10 @@
 @extends('layouts.agency')
 
-@section('title', 'Главная')
-@section('page-title', 'Мой кабинет')
+@section('title', __('nav.dashboard'))
+@section('page-title', __('dashboard.agency.page_title'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Главная</li>
+    <li class="breadcrumb-item text-muted">{{ __('dashboard.agency.home') }}</li>
 @endsection
 
 @section('toolbar-actions')
@@ -19,14 +19,14 @@
 
     $deltaBadge = function ($d) {
         if ($d === null) {
-            return '<span class="badge badge-light-secondary fs-8">нов.</span>';
+            return '<span class="badge badge-light-secondary fs-8">' . __('common.new') . '</span>';
         }
         $cls   = $d > 0 ? 'success' : ($d < 0 ? 'danger' : 'secondary');
         $arrow = $d > 0 ? '↑' : ($d < 0 ? '↓' : '');
         return '<span class="badge badge-light-' . $cls . ' fs-8">' . $arrow . ' ' . number_format(abs($d), 1) . '%</span>';
     };
 
-    $periods = ['today' => 'Сегодня', 'week' => '7 дней', 'month' => 'Этот месяц'];
+    $periods = ['today' => __('dashboard.agency.period_today'), 'week' => __('dashboard.agency.period_week'), 'month' => __('dashboard.agency.period_month')];
 
     $reqTotal = max(1, $funnel['requests']);
     $pctProposal = round($funnel['with_proposal'] / $reqTotal * 100);
@@ -37,7 +37,7 @@
 
 {{-- ── Period toggle ───────────────────────────────────────────────────── --}}
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
-    <span class="text-muted fw-semibold fs-7">Сводка · {{ $periodLabel }}</span>
+    <span class="text-muted fw-semibold fs-7">{{ __('dashboard.agency.summary') }} · {{ $periodLabel }}</span>
     <div class="btn-group" role="group">
         @foreach ($periods as $key => $label)
             <a href="{{ route('agency.dashboard', ['period' => $key]) }}"
@@ -52,7 +52,7 @@
         <div class="card card-flush h-100">
             <div class="card-body py-7 px-7">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-gray-500 fw-semibold fs-7">Новые заявки</span>
+                    <span class="text-gray-500 fw-semibold fs-7">{{ __('dashboard.agency.kpi_requests') }}</span>
                     {!! $deltaBadge($kpi['d_requests']) !!}
                 </div>
                 <span class="fs-2hx fw-bold text-gray-900">{{ $kpi['requests'] }}</span>
@@ -64,11 +64,11 @@
         <div class="card card-flush h-100">
             <div class="card-body py-7 px-7">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-gray-500 fw-semibold fs-7">Получено КП</span>
+                    <span class="text-gray-500 fw-semibold fs-7">{{ __('dashboard.agency.kpi_proposals') }}</span>
                     {!! $deltaBadge($kpi['d_proposals']) !!}
                 </div>
                 <span class="fs-2hx fw-bold text-info">{{ $kpi['proposals'] }}</span>
-                <span class="text-muted fs-7 ms-1">шт</span>
+                <span class="text-muted fs-7 ms-1">{{ __('common.pcs') }}</span>
             </div>
         </div>
     </div>
@@ -76,11 +76,11 @@
         <div class="card card-flush h-100">
             <div class="card-body py-7 px-7">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-gray-500 fw-semibold fs-7">Бронирований</span>
+                    <span class="text-gray-500 fw-semibold fs-7">{{ __('dashboard.agency.kpi_bookings') }}</span>
                     {!! $deltaBadge($kpi['d_bookings']) !!}
                 </div>
                 <span class="fs-2hx fw-bold text-success">{{ $kpi['bookings'] }}</span>
-                <span class="text-muted fs-7 ms-1">шт</span>
+                <span class="text-muted fs-7 ms-1">{{ __('common.pcs') }}</span>
             </div>
         </div>
     </div>
@@ -88,7 +88,7 @@
         <div class="card card-flush h-100">
             <div class="card-body py-7 px-7">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-gray-500 fw-semibold fs-7">Расходы на туры</span>
+                    <span class="text-gray-500 fw-semibold fs-7">{{ __('dashboard.agency.kpi_spend') }}</span>
                     {!! $deltaBadge($kpi['d_spend']) !!}
                 </div>
                 <span class="fs-2hx fw-bold text-gray-900">{{ $money($kpi['spend']) }}</span>
@@ -100,7 +100,7 @@
 {{-- ── Action queue ────────────────────────────────────────────────────── --}}
 <div class="card card-flush mb-8">
     <div class="card-header pt-6">
-        <span class="fw-bold fs-4 text-gray-800">Требует вашего внимания</span>
+        <span class="fw-bold fs-4 text-gray-800">{{ __('dashboard.agency.attention') }}</span>
     </div>
     <div class="card-body pt-2">
         <div class="row g-4">
@@ -127,8 +127,8 @@
     <div class="col-xl-8">
         <div class="card card-flush h-100">
             <div class="card-header pt-6">
-                <span class="fw-bold fs-4 text-gray-800">Динамика бронирований</span>
-                <span class="text-muted fs-7 ms-2 align-self-center">последние 6 месяцев</span>
+                <span class="fw-bold fs-4 text-gray-800">{{ __('dashboard.agency.dynamics') }}</span>
+                <span class="text-muted fs-7 ms-2 align-self-center">{{ __('dashboard.agency.dynamics_sub') }}</span>
             </div>
             <div class="card-body">
                 <div id="dash-chart" style="min-height:300px"></div>
@@ -138,33 +138,33 @@
     <div class="col-xl-4">
         <div class="card card-flush h-100">
             <div class="card-header pt-6">
-                <span class="fw-bold fs-4 text-gray-800">Воронка</span>
-                <span class="text-muted fs-7 ms-2 align-self-center">за всё время</span>
+                <span class="fw-bold fs-4 text-gray-800">{{ __('dashboard.agency.funnel') }}</span>
+                <span class="text-muted fs-7 ms-2 align-self-center">{{ __('dashboard.agency.funnel_sub') }}</span>
             </div>
             <div class="card-body d-flex flex-column justify-content-center gap-6">
                 <div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-document fs-5 text-primary me-1"></i>Заявки</span>
+                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-document fs-5 text-primary me-1"></i>{{ __('dashboard.agency.funnel_requests') }}</span>
                         <span class="fw-bold text-gray-900">{{ $funnel['requests'] }}</span>
                     </div>
                     <div class="progress h-8px bg-light-primary"><div class="progress-bar bg-primary" style="width:100%"></div></div>
                 </div>
                 <div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-questionnaire-tablet fs-5 text-info me-1"></i>Получили КП</span>
+                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-questionnaire-tablet fs-5 text-info me-1"></i>{{ __('dashboard.agency.funnel_proposals') }}</span>
                         <span class="fw-bold text-gray-900">{{ $funnel['with_proposal'] }} <span class="text-muted fs-8">({{ $pctProposal }}%)</span></span>
                     </div>
                     <div class="progress h-8px bg-light-info"><div class="progress-bar bg-info" style="width:{{ $pctProposal }}%"></div></div>
                 </div>
                 <div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-calendar-tick fs-5 text-success me-1"></i>Забронировали</span>
+                        <span class="fw-semibold text-gray-700"><i class="ki-outline ki-calendar-tick fs-5 text-success me-1"></i>{{ __('dashboard.agency.funnel_booked') }}</span>
                         <span class="fw-bold text-gray-900">{{ $funnel['booked'] }} <span class="text-muted fs-8">({{ $pctBooked }}%)</span></span>
                     </div>
                     <div class="progress h-8px bg-light-success"><div class="progress-bar bg-success" style="width:{{ $pctBooked }}%"></div></div>
                 </div>
                 <div class="text-center border-top pt-4">
-                    <span class="text-muted fs-7">Конверсия заявка → бронь:</span>
+                    <span class="text-muted fs-7">{{ __('dashboard.agency.conversion') }}</span>
                     <span class="fw-bold fs-4 text-success ms-1">{{ $pctBooked }}%</span>
                 </div>
             </div>
@@ -179,7 +179,7 @@
     <div class="col-xl-4">
         <div class="card card-flush h-100">
             <div class="card-header pt-6">
-                <span class="fw-bold fs-4 text-gray-800">Ближайшие поездки</span>
+                <span class="fw-bold fs-4 text-gray-800">{{ __('dashboard.agency.upcoming') }}</span>
             </div>
             <div class="card-body pt-2">
                 @forelse ($upcoming as $t)
@@ -187,16 +187,16 @@
                        class="d-flex align-items-center gap-3 p-3 rounded mb-2 bg-hover-light text-hover-primary">
                         <div class="d-flex flex-column align-items-center justify-content-center w-45px h-45px rounded bg-light-success flex-shrink-0">
                             <span class="fw-bold fs-5 text-success lh-1">{{ \Illuminate\Support\Carbon::parse($t['date_from'])->format('d') }}</span>
-                            <span class="fs-9 text-success text-uppercase">{{ ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'][\Illuminate\Support\Carbon::parse($t['date_from'])->month - 1] }}</span>
+                            <span class="fs-9 text-success text-uppercase">{{ \Illuminate\Support\Carbon::parse($t['date_from'])->locale(app()->getLocale())->translatedFormat('M') }}</span>
                         </div>
                         <div class="flex-grow-1 min-w-0">
                             <div class="fw-semibold text-gray-800 text-truncate">{{ $t['title'] }}</div>
                             <div class="text-muted fs-8">
-                                @if ($t['days_until'] <= 0) сегодня
-                                @elseif ($t['days_until'] === 1) завтра
-                                @else через {{ $t['days_until'] }} дн.
+                                @if ($t['days_until'] <= 0) {{ __('dashboard.agency.trip_today') }}
+                                @elseif ($t['days_until'] === 1) {{ __('dashboard.agency.trip_tomorrow') }}
+                                @else {{ __('dashboard.agency.trip_in_days', ['n' => $t['days_until']]) }}
                                 @endif
-                                @if ($t['pax']) · {{ $t['pax'] }} чел. @endif
+                                @if ($t['pax']) · {{ $t['pax'] }} {{ __('dashboard.agency.pax_unit') }} @endif
                             </div>
                         </div>
                         <span class="badge {{ $t['status_badge'] }} fs-8 flex-shrink-0">{{ $t['status_label'] }}</span>
@@ -204,7 +204,7 @@
                 @empty
                     <div class="text-center py-10">
                         <i class="ki-outline ki-airplane fs-3x text-gray-300 mb-3 d-block"></i>
-                        <span class="text-muted fs-7">Запланированных поездок нет</span>
+                        <span class="text-muted fs-7">{{ __('dashboard.agency.upcoming_empty') }}</span>
                     </div>
                 @endforelse
             </div>
@@ -215,10 +215,10 @@
     <div class="col-xl-8">
         <div class="card card-flush h-100">
             <div class="card-header pt-6">
-                <span class="fw-bold fs-4 text-gray-800">Последние заявки</span>
+                <span class="fw-bold fs-4 text-gray-800">{{ __('dashboard.agency.recent') }}</span>
                 <div class="card-toolbar">
                     <a href="{{ route('agency.requests.index') }}" class="btn btn-sm btn-light-primary">
-                        Все заявки <i class="ki-outline ki-arrow-right fs-5 ms-1"></i>
+                        {{ __('dashboard.agency.all_requests') }} <i class="ki-outline ki-arrow-right fs-5 ms-1"></i>
                     </a>
                 </div>
             </div>
@@ -236,7 +236,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header border-0 pb-0">
-                <h2 class="fw-bold">Детали заявки</h2>
+                <h2 class="fw-bold">{{ __('dashboard.agency.qv_title') }}</h2>
                 <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
                     <i class="ki-outline ki-cross fs-1"></i>
                 </div>
@@ -257,41 +257,41 @@
                         <div class="bg-light rounded p-4 text-center h-100 d-flex flex-column justify-content-center">
                             <i class="ki-outline ki-people fs-2x text-primary mb-2 d-block"></i>
                             <div class="fw-bold fs-4" id="qv-pax">—</div>
-                            <div class="text-muted fs-7">Туристов</div>
+                            <div class="text-muted fs-7">{{ __('dashboard.agency.qv_pax') }}</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light rounded p-4 text-center h-100 d-flex flex-column justify-content-center">
                             <i class="ki-outline ki-calendar-2 fs-2x text-info mb-2 d-block"></i>
                             <div class="fw-bold fs-7 lh-sm" id="qv-dates">—</div>
-                            <div class="text-muted fs-7">Даты тура</div>
+                            <div class="text-muted fs-7">{{ __('dashboard.agency.qv_dates') }}</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light rounded p-4 text-center h-100 d-flex flex-column justify-content-center">
                             <i class="ki-outline ki-document fs-2x text-warning mb-2 d-block"></i>
                             <div class="fw-bold fs-4" id="qv-proposals">—</div>
-                            <div class="text-muted fs-7">КП получено</div>
+                            <div class="text-muted fs-7">{{ __('dashboard.agency.qv_proposals') }}</div>
                         </div>
                     </div>
                 </div>
                 <div class="mb-6">
-                    <div class="fw-bold text-gray-700 mb-2">Нужные услуги</div>
+                    <div class="fw-bold text-gray-700 mb-2">{{ __('dashboard.agency.qv_services') }}</div>
                     <div id="qv-services">—</div>
                 </div>
                 <div class="mb-4" id="qv-notes-section">
-                    <div class="fw-bold text-gray-700 mb-1">Примечания</div>
+                    <div class="fw-bold text-gray-700 mb-1">{{ __('dashboard.agency.qv_notes') }}</div>
                     <div class="text-gray-600 fs-6" id="qv-notes">—</div>
                 </div>
                 <div class="text-muted fs-7 border-top pt-4">
-                    <span class="me-4">Создана: <span id="qv-created-at">—</span></span>
-                    <span>Изменена: <span id="qv-updated-at">—</span></span>
+                    <span class="me-4">{{ __('dashboard.agency.qv_created') }} <span id="qv-created-at">—</span></span>
+                    <span>{{ __('dashboard.agency.qv_updated') }} <span id="qv-updated-at">—</span></span>
                 </div>
             </div>
             <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('dashboard.agency.close') }}</button>
                 <a id="qv-view-link" href="#" class="btn btn-primary">
-                    <i class="ki-outline ki-arrow-right fs-4 me-1"></i> Полный просмотр
+                    <i class="ki-outline ki-arrow-right fs-4 me-1"></i> {{ __('dashboard.agency.qv_full_view') }}
                 </a>
             </div>
         </div>
@@ -316,8 +316,8 @@ const RECENT = @json($recent);
     const nf = new Intl.NumberFormat('ru-RU');
     new ApexCharts(el, {
         series: [
-            { name: 'Расходы', type: 'area',   data: data.spend },
-            { name: 'Брони',   type: 'column', data: data.bookings },
+            { name: @json(__('dashboard.agency.series_spend')),    type: 'area',   data: data.spend },
+            { name: @json(__('dashboard.agency.series_bookings')), type: 'column', data: data.bookings },
         ],
         chart:      { height: 300, toolbar: { show: false }, fontFamily: 'inherit', stacked: false },
         colors:     ['#17C653', '#1B84FF'],
@@ -327,10 +327,10 @@ const RECENT = @json($recent);
         plotOptions:{ bar: { columnWidth: '35%', borderRadius: 4 } },
         xaxis:      { categories: data.categories },
         yaxis: [
-            { seriesName: 'Расходы', labels: { formatter: (v) => nf.format(Math.round(v)) } },
-            { seriesName: 'Брони', opposite: true, labels: { formatter: (v) => Math.round(v) }, min: 0 },
+            { seriesName: @json(__('dashboard.agency.series_spend')), labels: { formatter: (v) => nf.format(Math.round(v)) } },
+            { seriesName: @json(__('dashboard.agency.series_bookings')), opposite: true, labels: { formatter: (v) => Math.round(v) }, min: 0 },
         ],
-        tooltip:    { y: { formatter: (v, { seriesIndex }) => seriesIndex === 0 ? nf.format(Math.round(v)) + ' {{ $sym }}' : Math.round(v) + ' шт' } },
+        tooltip:    { y: { formatter: (v, { seriesIndex }) => seriesIndex === 0 ? nf.format(Math.round(v)) + ' {{ $sym }}' : Math.round(v) + ' ' + @json(__('common.pcs')) } },
         legend:     { show: true, position: 'top', horizontalAlign: 'left' },
         grid:       { borderColor: '#eff2f5', strokeDashArray: 4 },
     }).render();
@@ -344,8 +344,8 @@ const RECENT = @json($recent);
         wrap.innerHTML = `
             <div class="text-center py-10">
                 <i class="ki-outline ki-document fs-3x text-gray-300 mb-3 d-block"></i>
-                <span class="text-muted fs-7 d-block mb-3">Заявок пока нет.</span>
-                <a href="{{ route('agency.requests.create') }}" class="btn btn-sm btn-light-success">Подать первую заявку</a>
+                <span class="text-muted fs-7 d-block mb-3">{{ __('dashboard.agency.empty') }}</span>
+                <a href="{{ route('agency.requests.create') }}" class="btn btn-sm btn-light-success">{{ __('dashboard.agency.submit_first') }}</a>
             </div>`;
         return;
     }
@@ -370,10 +370,10 @@ const RECENT = @json($recent);
                 </td>
                 <td>${statusBadge(r)}</td>
                 <td class="text-end">
-                    <button type="button" onclick="quickView(${r.id})" class="btn btn-icon btn-sm btn-light-primary me-1" title="Быстрый просмотр">
+                    <button type="button" onclick="quickView(${r.id})" class="btn btn-icon btn-sm btn-light-primary me-1" title="${@json(__('dashboard.agency.quick_view'))}">
                         <i class="ki-outline ki-eye fs-4"></i>
                     </button>
-                    <a href="/agency/requests/${r.id}" class="btn btn-icon btn-sm btn-light-primary" title="Открыть">
+                    <a href="/agency/requests/${r.id}" class="btn btn-icon btn-sm btn-light-primary" title="${@json(__('common.open'))}">
                         <i class="ki-outline ki-arrow-right fs-4"></i>
                     </a>
                 </td>
@@ -384,11 +384,11 @@ const RECENT = @json($recent);
         <table class="table align-middle table-row-dashed fs-6 gy-3">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="min-w-200px">Заявка</th>
-                    <th class="min-w-150px">Период поездки</th>
-                    <th class="min-w-110px">Срок ответа</th>
-                    <th class="text-center">КП</th>
-                    <th class="min-w-90px">Статус</th>
+                    <th class="min-w-200px">${@json(__('dashboard.agency.col_request'))}</th>
+                    <th class="min-w-150px">${@json(__('dashboard.agency.col_period'))}</th>
+                    <th class="min-w-110px">${@json(__('dashboard.agency.col_deadline'))}</th>
+                    <th class="text-center">${@json(__('dashboard.agency.col_proposals'))}</th>
+                    <th class="min-w-90px">${@json(__('dashboard.agency.col_status'))}</th>
                     <th class="w-90px text-end"></th>
                 </tr>
             </thead>
@@ -417,7 +417,7 @@ function quickView(id) {
     const services = Array.isArray(r.services_needed) ? r.services_needed : [];
     document.getElementById('qv-services').innerHTML = services.length
         ? services.map(s => serviceBadge(s, true)).join('')
-        : '<span class="text-muted fs-7">Не указаны</span>';
+        : '<span class="text-muted fs-7">' + @json(__('dashboard.agency.qv_services_empty')) + '</span>';
 
     const notesSection = document.getElementById('qv-notes-section');
     if (r.notes) {

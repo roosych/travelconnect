@@ -120,4 +120,82 @@ return [
         'q_won_hint'             => 'Your offers were selected',
         'request_fallback'       => 'Request #:id',
     ],
+
+    // ── Agency dashboard ────────────────────────────────────────────────────
+    'agency' => [
+        'page_title'        => 'My dashboard',
+        'home'              => 'Home',
+        'summary'           => 'Summary',
+        'period_today'      => 'Today',
+        'period_week'       => '7 days',
+        'period_month'      => 'This month',
+
+        // KPI cards
+        'kpi_requests'      => 'New requests',
+        'kpi_proposals'     => 'Proposals received',
+        'kpi_bookings'      => 'Bookings',
+        'kpi_spend'         => 'Tour spend',
+
+        'attention'         => 'Needs your attention',
+        'dynamics'          => 'Bookings dynamics',
+        'dynamics_sub'      => 'last 6 months',
+        'funnel'            => 'Funnel',
+        'funnel_sub'        => 'all time',
+        'funnel_requests'   => 'Requests',
+        'funnel_proposals'  => 'Got a proposal',
+        'funnel_booked'     => 'Booked',
+        'conversion'        => 'Request → booking conversion:',
+
+        // Upcoming trips
+        'upcoming'          => 'Upcoming trips',
+        'upcoming_empty'    => 'No planned trips',
+        'trip_today'        => 'today',
+        'trip_tomorrow'     => 'tomorrow',
+        'trip_in_days'      => 'in :n days',
+        'pax_unit'          => 'pax',
+
+        'recent'            => 'Recent requests',
+        'all_requests'      => 'All requests',
+
+        // Quick-view modal
+        'qv_title'          => 'Request details',
+        'qv_pax'            => 'Travelers',
+        'qv_dates'          => 'Tour dates',
+        'qv_proposals'      => 'Proposals received',
+        'qv_services'       => 'Required services',
+        'qv_services_empty' => 'Not specified',
+        'qv_notes'          => 'Notes',
+        'qv_created'        => 'Created:',
+        'qv_updated'        => 'Updated:',
+        'qv_full_view'      => 'Full view',
+        'close'             => 'Close',
+
+        // Chart series
+        'series_spend'      => 'Spend',
+        'series_bookings'   => 'Bookings',
+
+        // "Recent requests" table (JS)
+        'empty'             => 'No requests yet.',
+        'submit_first'      => 'Submit your first request',
+        'col_request'       => 'Request',
+        'col_period'        => 'Travel period',
+        'col_deadline'      => 'Response deadline',
+        'col_proposals'     => 'Proposals',
+        'col_status'        => 'Status',
+        'quick_view'        => 'Quick view',
+
+        // periodLabel + action queue + fallback (from controller)
+        'period_label_today' => 'today',
+        'period_label_week'  => 'last 7 days',
+        'period_label_month' => 'this month',
+        'q_proposals_label'  => 'Proposals awaiting decision',
+        'q_proposals_hint'   => 'Choose a suitable option',
+        'q_deadline_label'   => 'Urgent deadlines',
+        'q_deadline_hint'    => 'Requests with a deadline ≤ 3 days',
+        'q_payment_label'    => 'Awaiting payment',
+        'q_payment_hint'     => 'Bookings awaiting payment',
+        'q_upcoming_label'   => 'Trips coming up',
+        'q_upcoming_hint'    => 'Starting within the next 14 days',
+        'booking_fallback'   => 'Booking #:id',
+    ],
 ];

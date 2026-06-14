@@ -2,6 +2,7 @@
 
 return [
     'subtitle'   => 'Hər bildiriş kateqoriyası üçün çatdırılma kanallarını seçin.',
+    'page_subtitle' => 'Hesabınız üçün bildiriş çatdırılma kanalları',
     'category'   => 'Kateqoriya',
     'load_error' => 'Bildiriş ayarlarını yükləmək alınmadı.',
     'saved'      => 'Bildiriş ayarları yadda saxlanıldı',
@@ -29,5 +30,18 @@ return [
         'unlink_confirm' => 'Telegram-ı ayırmaq? Telegram-da bildirişlər gəlməyəcək.',
         'unlinked'       => 'Telegram ayrıldı',
         'unlink_error'   => 'Ayırmaq alınmadı',
+    ],
+
+    // Bildiriş zəngi (in-app) — bütün kabinetlərdə ümumi partial
+    'bell' => [
+        'title'      => 'Bildirişlər',
+        'mark_all'   => 'Hamısını oxu',
+        'settings'   => 'Bildiriş parametrləri',
+        'empty'      => 'Bildiriş yoxdur',
+        'load_error' => 'Yükləmək alınmadı',
+        'just_now'   => 'indicə',
+        'min_ago'    => ':n dəq əvvəl',
+        'hour_ago'   => ':n saat əvvəl',
+        'day_ago'    => ':n gün əvvəl',
     ],
 ];

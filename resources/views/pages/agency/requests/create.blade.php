@@ -2,15 +2,15 @@
 
 @php($isEdit = (bool) ($editData ?? null))
 
-@section('title', $isEdit ? 'Редактировать заявку' : 'Новая заявка на тур')
-@section('page-title', $isEdit ? 'Редактировать заявку' : 'Новая заявка на тур')
+@section('title', $isEdit ? __('requests.agency_create.title_edit') : __('requests.agency_create.title_new'))
+@section('page-title', $isEdit ? __('requests.agency_create.title_edit') : __('requests.agency_create.title_new'))
 
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        <a href="{{ route('agency.requests.index') }}" class="text-muted text-hover-primary">Мои заявки</a>
+        <a href="{{ route('agency.requests.index') }}" class="text-muted text-hover-primary">{{ __('nav.agency.requests') }}</a>
     </li>
     <li class="breadcrumb-item"><i class="ki-outline ki-right fs-7 text-gray-700 mx-n1"></i></li>
-    <li class="breadcrumb-item text-muted">{{ $isEdit ? 'Редактирование' : 'Новая заявка' }}</li>
+    <li class="breadcrumb-item text-muted">{{ $isEdit ? __('requests.agency_create.bc_edit') : __('requests.agency_create.bc_new') }}</li>
 @endsection
 
 @section('content')
@@ -35,8 +35,8 @@
                                 <span class="stepper-number">1</span>
                             </div>
                             <div class="stepper-label">
-                                <h3 class="stepper-title fs-6">Основное</h3>
-                                <div class="stepper-desc fw-semibold fs-8">Название, гости, срок</div>
+                                <h3 class="stepper-title fs-6">{{ __('requests.agency_create.steps.s1_title') }}</h3>
+                                <div class="stepper-desc fw-semibold fs-8">{{ __('requests.agency_create.steps.s1_desc') }}</div>
                             </div>
                         </div>
                         <div class="stepper-line h-40px"></div>
@@ -49,8 +49,8 @@
                                 <span class="stepper-number">2</span>
                             </div>
                             <div class="stepper-label">
-                                <h3 class="stepper-title fs-6">Маршрут</h3>
-                                <div class="stepper-desc fw-semibold fs-8">Страны, даты, услуги</div>
+                                <h3 class="stepper-title fs-6">{{ __('requests.agency_create.steps.s2_title') }}</h3>
+                                <div class="stepper-desc fw-semibold fs-8">{{ __('requests.agency_create.steps.s2_desc') }}</div>
                             </div>
                         </div>
                         <div class="stepper-line h-40px"></div>
@@ -63,8 +63,8 @@
                                 <span class="stepper-number">3</span>
                             </div>
                             <div class="stepper-label">
-                                <h3 class="stepper-title fs-6">Файлы</h3>
-                                <div class="stepper-desc fw-semibold fs-8">Вложения — необязательно</div>
+                                <h3 class="stepper-title fs-6">{{ __('requests.agency_create.steps.s3_title') }}</h3>
+                                <div class="stepper-desc fw-semibold fs-8">{{ __('requests.agency_create.steps.s3_desc') }}</div>
                             </div>
                         </div>
                         <div class="stepper-line h-40px"></div>
@@ -77,8 +77,8 @@
                                 <span class="stepper-number">4</span>
                             </div>
                             <div class="stepper-label">
-                                <h3 class="stepper-title fs-6">Проверка</h3>
-                                <div class="stepper-desc fw-semibold fs-8">Подтверждение</div>
+                                <h3 class="stepper-title fs-6">{{ __('requests.agency_create.steps.s4_title') }}</h3>
+                                <div class="stepper-desc fw-semibold fs-8">{{ __('requests.agency_create.steps.s4_desc') }}</div>
                             </div>
                         </div>
                     </div>
@@ -93,26 +93,26 @@
                 {{-- Шаг 1: Основное --}}
                 <div class="current" data-kt-stepper-element="content">
                     <div class="w-100 mw-700px">
-                        <h2 class="fw-bold text-gray-900 mb-1">Основная информация</h2>
-                        <div class="text-muted fs-7 mb-8">Коротко опишите заявку и сроки.</div>
+                        <h2 class="fw-bold text-gray-900 mb-1">{{ __('requests.agency_create.step1.heading') }}</h2>
+                        <div class="text-muted fs-7 mb-8">{{ __('requests.agency_create.step1.subtitle') }}</div>
 
                         <div class="fv-row mb-7">
-                            <label class="fw-semibold fs-6 mb-2"><span class="required">Название заявки</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Краткое понятное название, по которому вы найдёте заявку в списке"></i></label>
+                            <label class="fw-semibold fs-6 mb-2"><span class="required">{{ __('requests.agency_create.step1.title_label') }}</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ __('requests.agency_create.step1.title_tip') }}"></i></label>
                             <input type="text" name="title" id="title"
                                    class="form-control form-control-solid"
-                                   placeholder="Например: Сафари-тур для 10 гостей — Кения, октябрь 2026"
+                                   placeholder="{{ __('requests.agency_create.step1.title_ph') }}"
                                    required />
                         </div>
 
                         <div class="row mb-7">
                             <div class="col-md-6 fv-row">
-                                <label class="fw-semibold fs-6 mb-2"><span class="required">Количество гостей</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Общее число туристов в группе"></i></label>
+                                <label class="fw-semibold fs-6 mb-2"><span class="required">{{ __('requests.agency_create.step1.pax_label') }}</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ __('requests.agency_create.step1.pax_tip') }}"></i></label>
                                 <input type="number" name="pax_count" id="pax_count"
                                        class="form-control form-control-solid"
-                                       min="1" placeholder="10" />
+                                       min="1" placeholder="{{ __('requests.agency_create.step1.pax_ph') }}" />
                             </div>
                             <div class="col-md-6 fv-row">
-                                <label class="fw-semibold fs-6 mb-2"><span class="required">Срок ответа</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="До какого момента ждёте предложения. Время в вашем поясе: {{ $userTimezone }}"></i></label>
+                                <label class="fw-semibold fs-6 mb-2"><span class="required">{{ __('requests.agency_create.step1.deadline_label') }}</span><i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ __('requests.agency_create.step1.deadline_tip', ['tz' => $userTimezone]) }}"></i></label>
                                 <input type="text" name="deadline_at" id="deadline_at"
                                        class="form-control form-control-solid"
                                        placeholder="{{ __('common.datetime_ph') }}" readonly />
@@ -120,10 +120,10 @@
                         </div>
 
                         <div class="fv-row">
-                            <label class="fw-semibold fs-6 mb-2">Примечания и особые пожелания<i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Любые особые требования и пожелания для оператора. Необязательно."></i></label>
+                            <label class="fw-semibold fs-6 mb-2">{{ __('requests.agency_create.step1.notes_label') }}<i class="ki-outline ki-information-5 fs-5 text-muted ms-1 align-middle" style="cursor:help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ __('requests.agency_create.step1.notes_tip') }}"></i></label>
                             <textarea name="notes" id="notes" rows="4"
                                       class="form-control form-control-solid"
-                                      placeholder="Любые особые требования, пожелания или примечания для оператора…"></textarea>
+                                      placeholder="{{ __('requests.agency_create.step1.notes_ph') }}"></textarea>
                         </div>
                     </div>
                 </div>
@@ -131,15 +131,15 @@
                 {{-- Шаг 2: Маршрут --}}
                 <div data-kt-stepper-element="content">
                     <div class="w-100">
-                        <h2 class="fw-bold text-gray-900 mb-1">Маршрут по странам</h2>
+                        <h2 class="fw-bold text-gray-900 mb-1">{{ __('requests.agency_create.step2.heading') }}</h2>
                         <div class="text-muted fs-7 mb-8">
-                            Добавьте страны по порядку. Для каждой — даты, направления и нужные услуги с требованиями.
+                            {{ __('requests.agency_create.step2.subtitle') }}
                         </div>
 
                         <div id="legs-container" class="d-flex flex-column gap-4"></div>
 
                         <button type="button" id="add-leg-btn" class="btn btn-light-primary btn-sm mt-4">
-                            <i class="ki-outline ki-plus fs-5 me-1"></i>Добавить страну
+                            <i class="ki-outline ki-plus fs-5 me-1"></i>{{ __('requests.agency_create.step2.add_country') }}
                         </button>
                     </div>
                 </div>
@@ -147,12 +147,12 @@
                 {{-- Шаг 3: Файлы --}}
                 <div data-kt-stepper-element="content">
                     <div class="w-100 mw-700px">
-                        <h2 class="fw-bold text-gray-900 mb-1">Вложения</h2>
-                        <div class="text-muted fs-7 mb-8">Программа, паспорта, пожелания — всё, что поможет оператору. Необязательно.</div>
+                        <h2 class="fw-bold text-gray-900 mb-1">{{ __('requests.agency_create.step3.heading') }}</h2>
+                        <div class="text-muted fs-7 mb-8">{{ __('requests.agency_create.step3.subtitle') }}</div>
 
                         {{-- Уже прикреплённые файлы (только в режиме редактирования) --}}
                         <div id="attach-existing-wrap" class="mb-5 d-none">
-                            <div class="text-muted fs-8 text-uppercase fw-bold mb-2">Прикреплённые файлы</div>
+                            <div class="text-muted fs-8 text-uppercase fw-bold mb-2">{{ __('requests.agency_create.step3.existing') }}</div>
                             <div id="attach-existing-list" class="d-flex flex-column gap-2"></div>
                         </div>
 
@@ -161,9 +161,9 @@
                              style="cursor:pointer;transition:border-color .15s">
                             <i class="ki-outline ki-paper-clip fs-2x text-gray-400 mb-2 d-block"></i>
                             <div class="text-muted fs-7">
-                                Перетащите файлы или <span class="text-primary fw-semibold">выберите</span>
+                                {{ __('requests.agency_create.step3.drop_hint') }} <span class="text-primary fw-semibold">{{ __('requests.agency_create.step3.drop_choose') }}</span>
                             </div>
-                            <div class="text-muted fs-8 mt-1">PDF, Word, Excel, JPG, PNG · до 20 МБ</div>
+                            <div class="text-muted fs-8 mt-1">{{ __('requests.agency_create.step3.file_types') }}</div>
                             <input type="file" id="attach-file-input" multiple
                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" class="d-none">
                         </div>
@@ -175,8 +175,8 @@
                 {{-- Шаг 4: Проверка --}}
                 <div data-kt-stepper-element="content">
                     <div class="w-100 mw-700px">
-                        <h2 class="fw-bold text-gray-900 mb-1">Проверьте заявку</h2>
-                        <div class="text-muted fs-7 mb-8">Убедитесь, что всё верно, и создайте заявку.</div>
+                        <h2 class="fw-bold text-gray-900 mb-1">{{ __('requests.agency_create.step4.heading') }}</h2>
+                        <div class="text-muted fs-7 mb-8">{{ __('requests.agency_create.step4.subtitle') }}</div>
                         <div id="review-container"></div>
                     </div>
                 </div>
@@ -185,27 +185,27 @@
                 <div class="d-flex flex-stack pt-10">
                     <div class="me-2">
                         <button type="button" class="btn btn-light" data-kt-stepper-action="previous">
-                            <i class="ki-outline ki-arrow-left fs-4 me-1"></i>Назад
+                            <i class="ki-outline ki-arrow-left fs-4 me-1"></i>{{ __('requests.agency_create.nav.back') }}
                         </button>
                     </div>
                     <div>
-                        <a href="{{ route('agency.requests.index') }}" class="btn btn-light me-2">Отмена</a>
+                        <a href="{{ route('agency.requests.index') }}" class="btn btn-light me-2">{{ __('common.cancel') }}</a>
                         <button type="button" id="btn-save-draft" class="btn btn-light me-2" data-kt-stepper-action="submit" data-submit-mode="draft" data-kt-indicator="off">
-                            <span class="indicator-label"><i class="ki-outline ki-file fs-4 me-1"></i>Сохранить черновик</span>
+                            <span class="indicator-label"><i class="ki-outline ki-file fs-4 me-1"></i>{{ __('requests.agency_create.nav.save_draft') }}</span>
                             <span class="indicator-progress">
-                                <span class="submit-progress-text">Сохранение…</span>
+                                <span class="submit-progress-text">{{ __('requests.agency_create.nav.saving') }}</span>
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>
                         <button type="button" id="btn-save-submit" class="btn btn-success" data-kt-stepper-action="submit" data-submit-mode="submit" data-kt-indicator="off">
-                            <span class="indicator-label"><i class="ki-outline ki-send fs-4 me-1"></i>{{ $isEdit ? 'Сохранить и подать' : 'Создать и подать' }}</span>
+                            <span class="indicator-label"><i class="ki-outline ki-send fs-4 me-1"></i>{{ $isEdit ? __('requests.agency_create.nav.save_submit') : __('requests.agency_create.nav.create_submit') }}</span>
                             <span class="indicator-progress">
-                                <span class="submit-progress-text">Отправка…</span>
+                                <span class="submit-progress-text">{{ __('requests.agency_create.nav.submitting') }}</span>
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>
                         <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
-                            Далее<i class="ki-outline ki-arrow-right fs-4 ms-1"></i>
+                            {{ __('requests.agency_create.nav.next') }}<i class="ki-outline ki-arrow-right fs-4 ms-1"></i>
                         </button>
                     </div>
                 </div>
@@ -220,6 +220,9 @@
 
 @push('scripts')
 <script>
+// Локализация формы (requests.agency_create.*). :n/:i/:label/:attr/:files — через .replace().
+const L = @json(__('requests.agency_create'));
+
 // ── Date pickers ──────────────────────────────────────────────────────────────
 function makeDatePicker(selector, extraOptions = {}) {
     return flatpickr(selector, {
@@ -309,7 +312,7 @@ function addLeg() {
 
     $(card).find('.leg-country')
         .select2({
-            placeholder: 'Выберите страну…',
+            placeholder: L.step2.country_ph,
             width: '100%',
             closeOnSelect: true,
             templateResult: formatCountry,
@@ -336,29 +339,29 @@ function legCardHtml() {
 
     return `
       <div class="d-flex align-items-center justify-content-between mb-4">
-          <span class="fw-bold text-gray-800 fs-5"><span class="leg-no"></span>. Страна маршрута</span>
+          <span class="fw-bold text-gray-800 fs-5"><span class="leg-no"></span>. ${escHtml(L.step2.leg_title)}</span>
           <div class="d-flex gap-2">
-              <button type="button" class="btn btn-icon btn-sm btn-light leg-up"     title="Выше"><i class="ki-outline ki-up fs-5"></i></button>
-              <button type="button" class="btn btn-icon btn-sm btn-light leg-down"   title="Ниже"><i class="ki-outline ki-down fs-5"></i></button>
-              <button type="button" class="btn btn-icon btn-sm btn-light-danger leg-remove" title="Удалить"><i class="ki-outline ki-trash fs-5"></i></button>
+              <button type="button" class="btn btn-icon btn-sm btn-light leg-up"     title="${escHtml(L.step2.move_up)}"><i class="ki-outline ki-up fs-5"></i></button>
+              <button type="button" class="btn btn-icon btn-sm btn-light leg-down"   title="${escHtml(L.step2.move_down)}"><i class="ki-outline ki-down fs-5"></i></button>
+              <button type="button" class="btn btn-icon btn-sm btn-light-danger leg-remove" title="${escHtml(L.step2.remove)}"><i class="ki-outline ki-trash fs-5"></i></button>
           </div>
       </div>
       <div class="row mb-4">
           <div class="col-md-6 fv-row mb-3 mb-md-0">
-              <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">Страна</span>${infoIcon('Страна сегмента маршрута. Каждую страну можно добавить только один раз.')}</label>
+              <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">${escHtml(L.step2.country_label)}</span>${infoIcon(L.step2.country_tip)}</label>
               <select class="form-select form-select-solid leg-country"><option></option>${countryOptions}</select>
           </div>
           <div class="col-md-6 fv-row">
-              <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">Даты пребывания</span>${infoIcon('Период в этой стране. Граничный день с соседней страной может совпадать — выезд и заезд в один день.')}</label>
+              <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">${escHtml(L.step2.dates_label)}</span>${infoIcon(L.step2.dates_tip)}</label>
               <input type="text" class="form-control form-control-solid leg-dates" placeholder="{{ __('common.date_range_ph') }}" readonly>
           </div>
       </div>
       <div class="fv-row mb-4">
-          <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">Направления</span>${infoIcon('Кликайте по направлениям в порядке маршрута — номер покажет последовательность.')}</label>
-          <div class="leg-destinations d-flex flex-wrap gap-2"><span class="text-muted fs-7">Сначала выберите страну.</span></div>
+          <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">${escHtml(L.step2.dest_label)}</span>${infoIcon(L.step2.dest_tip)}</label>
+          <div class="leg-destinations d-flex flex-wrap gap-2"><span class="text-muted fs-7">${escHtml(L.step2.dest_pick_country)}</span></div>
       </div>
       <div class="fv-row">
-          <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">Услуги</span>${infoIcon('Выбранные услуги относятся ко всем выбранным направлениям этой страны.')}</label>
+          <label class="fw-semibold fs-7 text-muted mb-1"><span class="required">${escHtml(L.step2.services_label)}</span>${infoIcon(L.step2.services_tip)}</label>
           <div class="d-flex flex-wrap gap-2 mb-3 leg-services">${svcChips}</div>
           <div class="leg-requirements d-flex flex-column gap-3"></div>
       </div>`;
@@ -368,10 +371,10 @@ function renderLegDestinations(card, code) {
     card._destOrder = []; // смена страны сбрасывает выбор/порядок направлений
     const wrap = card.querySelector('.leg-destinations');
     const c = countryByCode[code];
-    if (!c) { wrap.innerHTML = '<span class="text-muted fs-7">Сначала выберите страну.</span>'; return; }
+    if (!c) { wrap.innerHTML = `<span class="text-muted fs-7">${escHtml(L.step2.dest_pick_country)}</span>`; return; }
     wrap.innerHTML = (c.destinations || []).length
         ? c.destinations.map(d => `<button type="button" class="btn btn-sm btn-light dest-chip" data-id="${d.id}"><span class="dest-order fw-bold me-1"></span>${escHtml(d.name)}</button>`).join('')
-        : '<span class="text-muted fs-7">Направления для этой страны не заданы — запрос будет по стране в целом.</span>';
+        : `<span class="text-muted fs-7">${escHtml(L.step2.dest_none)}</span>`;
 }
 
 // Проставляет номера последовательности на выбранных чипах направлений.
@@ -439,11 +442,11 @@ function toggleRequirements(card, type, on) {
 // Generic-рендерер требований: строит поля из атрибутов каталога по input_type.
 function requirementsHtml(type) {
     const svc   = META.serviceTypes.find(s => s.value === type);
-    const head  = `<div class="fw-semibold text-gray-700 fs-7 mb-2">${escHtml(svc ? svc.label : '')} — требования</div>`;
+    const head  = `<div class="fw-semibold text-gray-700 fs-7 mb-2">${escHtml(svc ? svc.label : '')} ${escHtml(L.step2.req_suffix)}</div>`;
     const attrs = attrsOf(type);
 
     if (!attrs.length) {
-        return head + `<div class="text-muted fs-8">Без дополнительных требований.</div>`;
+        return head + `<div class="text-muted fs-8">${escHtml(L.step2.req_none)}</div>`;
     }
 
     return head + `<div class="row g-3">${attrs.map(fieldHtml).join('')}</div>`;
@@ -459,7 +462,7 @@ function fieldHtml(a) {
               <div class="col-sm-6">
                 <label class="fs-8 text-muted">${escHtml(a.label)}</label>
                 <select class="form-select form-select-sm form-select-solid req-field" data-key="${a.code}" data-input="select">
-                  <option value="">Выберите…</option>${optionsHtml(a.options)}
+                  <option value="">${escHtml(L.step2.select_ph)}</option>${optionsHtml(a.options)}
                 </select>
               </div>`;
 
@@ -623,7 +626,7 @@ function renderExistingAttachments() {
 }
 
 async function removeExistingAttachment(id, btn) {
-    if (!confirm('Удалить этот файл?')) return;
+    if (!confirm(L.step3.remove_confirm)) return;
     btn.disabled = true;
     try {
         await api.delete(`/attachments/${id}`);
@@ -631,7 +634,7 @@ async function removeExistingAttachment(id, btn) {
         renderExistingAttachments();
     } catch (e) {
         btn.disabled = false;
-        showToast?.('Не удалось удалить файл', 'error');
+        showToast?.(L.step3.remove_error, 'error');
     }
 }
 
@@ -717,12 +720,12 @@ function requirementError(card, type, n) {
         if (a.input_type === 'multiselect') {
             const grp = block.querySelector(`.req-multi[data-key="${a.code}"]`);
             if (!grp || !grp.querySelectorAll('.req-multi-opt:checked').length) {
-                return `Сегмент ${n}, ${label}: выберите «${a.label}».`;
+                return L.val.req_select.replace(':n', n).replace(':label', label).replace(':attr', a.label);
             }
         } else if (a.input_type !== 'boolean') {
             const el = block.querySelector(`.req-field[data-key="${a.code}"]`);
             if (!el || el.value.trim() === '') {
-                return `Сегмент ${n}, ${label}: укажите «${a.label}».`;
+                return L.val.req_fill.replace(':n', n).replace(':label', label).replace(':attr', a.label);
             }
         }
     }
@@ -735,32 +738,32 @@ function validateStep(i) {
     if (i === 1) {
         if (!document.getElementById('title').value.trim()) {
             document.getElementById('title').focus();
-            return stepError('Укажите название заявки.');
+            return stepError(L.val.title_req);
         }
         const pax = parseInt(document.getElementById('pax_count').value, 10);
         if (!pax || pax < 1) {
             document.getElementById('pax_count').focus();
-            return stepError('Укажите количество гостей.');
+            return stepError(L.val.pax_req);
         }
         if (!document.getElementById('deadline_at').value) {
-            return stepError('Укажите срок ответа.');
+            return stepError(L.val.deadline_req);
         }
     }
 
     if (i === 2) {
         const cards = [...legsContainer.querySelectorAll('[data-leg]')];
-        if (!cards.length) return stepError('Добавьте хотя бы одну страну в маршрут.');
+        if (!cards.length) return stepError(L.val.leg_req);
 
         for (let idx = 0; idx < cards.length; idx++) {
             const card = cards[idx], n = idx + 1;
             const code = card.querySelector('.leg-country').value;
-            if (!code) return stepError(`Сегмент ${n}: выберите страну.`);
-            if (!legDates(card).from) return stepError(`Сегмент ${n}: укажите даты пребывания.`);
-            if (!card.querySelectorAll('.svc-chip.btn-primary').length) return stepError(`Сегмент ${n}: выберите хотя бы одну услугу.`);
+            if (!code) return stepError(L.val.seg_country.replace(':n', n));
+            if (!legDates(card).from) return stepError(L.val.seg_dates.replace(':n', n));
+            if (!card.querySelectorAll('.svc-chip.btn-primary').length) return stepError(L.val.seg_service.replace(':n', n));
 
             const c = countryByCode[code];
             const hasDest = c && (c.destinations || []).length > 0;
-            if (hasDest && !(card._destOrder || []).length) return stepError(`Сегмент ${n}: выберите хотя бы одно направление.`);
+            if (hasDest && !(card._destOrder || []).length) return stepError(L.val.seg_dest.replace(':n', n));
 
             // Требования по каждой выбранной услуге.
             for (const chip of card.querySelectorAll('.svc-chip.btn-primary')) {
@@ -771,7 +774,7 @@ function validateStep(i) {
 
         // Уникальность стран
         const codes = cards.map(c => c.querySelector('.leg-country').value).filter(Boolean);
-        if (new Set(codes).size !== codes.length) return stepError('Каждая страна в маршруте должна быть только один раз.');
+        if (new Set(codes).size !== codes.length) return stepError(L.val.seg_unique);
 
         // Даты по ПОРЯДКУ МАРШРУТА (как расставлены карточки), без пересортировки:
         // следующая страна начинается не раньше выезда из предыдущей (граничный день общий — ок).
@@ -779,7 +782,7 @@ function validateStep(i) {
             .map(c => legDates(c))
             .filter(x => x.from && x.to);
         for (let k = 1; k < iv.length; k++) {
-            if (iv[k].from < iv[k - 1].to) return stepError('Даты должны идти по порядку маршрута: страна начинается не раньше выезда из предыдущей (общий граничный день допустим).');
+            if (iv[k].from < iv[k - 1].to) return stepError(L.val.seg_order);
         }
     }
     return true;
@@ -830,8 +833,8 @@ function renderReview() {
 
     const legsHtml = legs.map((l, i) => {
         const c     = countryByCode[l.country_code];
-        const dates = (l.date_from || l.date_to) ? `${formatDate(l.date_from)} — ${formatDate(l.date_to)}` : 'даты не указаны';
-        const dests = l.destination_ids.map(id => escHtml(destName(l.country_code, id))).filter(Boolean).join(', ') || 'по стране в целом';
+        const dates = (l.date_from || l.date_to) ? `${formatDate(l.date_from)} — ${formatDate(l.date_to)}` : L.step4.no_dates;
+        const dests = l.destination_ids.map(id => escHtml(destName(l.country_code, id))).filter(Boolean).join(', ') || L.step4.whole_country;
         const svcs  = l.services.map(svcSummary).join(', ') || '—';
         const flag  = c && c.flag ? `<img src="${c.flag}" class="rounded h-15px me-1" onerror="this.remove()">` : '';
         return `
@@ -846,27 +849,27 @@ function renderReview() {
     document.getElementById('review-container').innerHTML = `
         <div class="d-flex flex-column gap-5">
             <div>
-                <div class="text-muted fs-8 text-uppercase mb-1">Название</div>
+                <div class="text-muted fs-8 text-uppercase mb-1">${escHtml(L.step4.r_title)}</div>
                 <div class="fw-bold fs-5 text-gray-900">${escHtml(title) || '—'}</div>
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="text-muted fs-8 text-uppercase mb-1">Гостей</div>
+                    <div class="text-muted fs-8 text-uppercase mb-1">${escHtml(L.step4.r_pax)}</div>
                     <div class="fw-semibold">${pax || '—'}</div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="text-muted fs-8 text-uppercase mb-1">Срок ответа</div>
+                    <div class="text-muted fs-8 text-uppercase mb-1">${escHtml(L.step4.r_deadline)}</div>
                     <div class="fw-semibold">${deadline ? escHtml(deadline) + ' <span class="text-muted fw-normal">(' + escHtml(USER_TZ) + ')</span>' : '—'}</div>
                 </div>
             </div>
             <div>
-                <div class="text-muted fs-8 text-uppercase mb-2">Маршрут</div>
-                <div class="d-flex flex-column gap-3">${legsHtml || '<span class="text-muted">нет сегментов</span>'}</div>
+                <div class="text-muted fs-8 text-uppercase mb-2">${escHtml(L.step4.r_route)}</div>
+                <div class="d-flex flex-column gap-3">${legsHtml || `<span class="text-muted">${escHtml(L.step4.no_segments)}</span>`}</div>
             </div>
-            ${notes ? `<div><div class="text-muted fs-8 text-uppercase mb-1">Примечания</div><div class="fw-semibold">${escHtml(notes)}</div></div>` : ''}
+            ${notes ? `<div><div class="text-muted fs-8 text-uppercase mb-1">${escHtml(L.step4.r_notes)}</div><div class="fw-semibold">${escHtml(notes)}</div></div>` : ''}
             <div>
-                <div class="text-muted fs-8 text-uppercase mb-1">Файлы</div>
-                <div class="fw-semibold">${stagedFiles.length ? stagedFiles.length + ' шт.' : 'нет'}</div>
+                <div class="text-muted fs-8 text-uppercase mb-1">${escHtml(L.step4.r_files)}</div>
+                <div class="fw-semibold">${stagedFiles.length ? L.step4.files_count.replace(':n', stagedFiles.length) : L.step4.files_none}</div>
             </div>
         </div>`;
 }
@@ -909,7 +912,7 @@ async function doSubmit(mode, btn) {
             : await api.post('/requests', payload);
 
         if (!data?.success || !data?.data?.id) {
-            showError(data?.message ?? (data?.errors ? Object.values(data.errors).flat().join(' ') : 'Что-то пошло не так.'));
+            showError(data?.message ?? (data?.errors ? Object.values(data.errors).flat().join(' ') : L.submit.generic_error));
             return;
         }
 
@@ -918,7 +921,7 @@ async function doSubmit(mode, btn) {
         const failed = [];
         if (stagedFiles.length) {
             for (let i = 0; i < stagedFiles.length; i++) {
-                progressTxt.textContent = `Загрузка файлов… ${i + 1}/${stagedFiles.length}`;
+                progressTxt.textContent = L.submit.uploading.replace(':i', i + 1).replace(':n', stagedFiles.length);
                 const fd = new FormData();
                 fd.append('file', stagedFiles[i]);
                 try {
@@ -940,23 +943,23 @@ async function doSubmit(mode, btn) {
 
         // Файлы не долетели — заявку не подаём, оставляем черновиком.
         if (failed.length) {
-            showError('Заявка сохранена, но не загрузились файлы: ' + failed.join(', ') + '. Заявка не подана — откройте её и подайте вручную.');
+            showError(L.submit.files_failed.replace(':files', failed.join(', ')));
             return;
         }
 
         // «Сохранить и подать» — переводим черновик в «Подана».
         if (mode === 'submit') {
-            progressTxt.textContent = 'Подача заявки…';
+            progressTxt.textContent = L.submit.submitting;
             const sub = await api.patch(`/requests/${requestId}/submit`, {});
             if (!sub?.success) {
-                showError(sub?.message ?? 'Заявка сохранена, но подать не удалось. Откройте её и нажмите «Подать».');
+                showError(sub?.message ?? L.submit.submit_failed);
                 return;
             }
         }
 
         window.location.href = '/agency/requests/' + requestId;
     } catch (err) {
-        showError('Ошибка соединения. Попробуйте ещё раз.');
+        showError(L.submit.conn_error);
     }
 }
 

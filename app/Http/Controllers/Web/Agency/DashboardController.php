@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    private const RU_MONTHS = [1 => 'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-
     public function index(Request $request)
     {
         $agencyIds = $request->user()->agencies()->pluck('agencies.id');
@@ -69,17 +67,17 @@ class DashboardController extends Controller
             'today' => [
                 $now->copy()->startOfDay(), $now->copy()->endOfDay(),
                 $now->copy()->subDay()->startOfDay(), $now->copy()->subDay()->endOfDay(),
-                'сегодня',
+                __('dashboard.agency.period_label_today'),
             ],
             'week' => [
                 $now->copy()->subDays(6)->startOfDay(), $now->copy()->endOfDay(),
                 $now->copy()->subDays(13)->startOfDay(), $now->copy()->subDays(7)->endOfDay(),
-                'за 7 дней',
+                __('dashboard.agency.period_label_week'),
             ],
             default => [
                 $now->copy()->startOfMonth(), $now->copy()->endOfMonth(),
                 $now->copy()->subMonthNoOverflow()->startOfMonth(), $now->copy()->subMonthNoOverflow()->endOfMonth(),
-                'этот месяц',
+                __('dashboard.agency.period_label_month'),
             ],
         };
     }
@@ -146,22 +144,22 @@ class DashboardController extends Controller
 
         return [
             [
-                'label' => 'КП ждут решения', 'hint' => 'Выберите подходящий вариант',
+                'label' => __('dashboard.agency.q_proposals_label'), 'hint' => __('dashboard.agency.q_proposals_hint'),
                 'count' => $proposalsPending, 'urgency' => 'warning', 'icon' => 'ki-questionnaire-tablet',
                 'url' => route('agency.requests.index'),
             ],
             [
-                'label' => 'Горящие дедлайны', 'hint' => 'Заявки со сроком ответа ≤ 3 дней',
+                'label' => __('dashboard.agency.q_deadline_label'), 'hint' => __('dashboard.agency.q_deadline_hint'),
                 'count' => $dueSoon, 'urgency' => 'danger', 'icon' => 'ki-time',
                 'url' => route('agency.requests.index'),
             ],
             [
-                'label' => 'Ждут оплаты', 'hint' => 'Брони в ожидании оплаты',
+                'label' => __('dashboard.agency.q_payment_label'), 'hint' => __('dashboard.agency.q_payment_hint'),
                 'count' => $awaitingPayment, 'urgency' => 'primary', 'icon' => 'ki-wallet',
                 'url' => route('agency.bookings.index'),
             ],
             [
-                'label' => 'Поездки на подходе', 'hint' => 'Старт в ближайшие 14 дней',
+                'label' => __('dashboard.agency.q_upcoming_label'), 'hint' => __('dashboard.agency.q_upcoming_hint'),
                 'count' => $upcoming, 'urgency' => 'info', 'icon' => 'ki-airplane',
                 'url' => route('agency.bookings.index'),
             ],
@@ -218,7 +216,7 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $m   = Carbon::now()->subMonths($i);
             $key = $m->format('Y-m');
-            $categories[] = self::RU_MONTHS[(int) $m->format('n')] . ' ' . $m->format('y');
+            $categories[] = $m->locale(app()->getLocale())->translatedFormat('M') . ' ' . $m->format('y');
             $spend[]      = round((float) ($rows[$key]->spend ?? 0), 2);
             $bookings[]   = (int) ($rows[$key]->cnt ?? 0);
         }
@@ -243,7 +241,7 @@ class DashboardController extends Controller
             ->get()
             ->map(fn (Booking $b) => [
                 'id'           => $b->id,
-                'title'        => $b->proposal?->request?->title ?? $b->proposal?->title ?? "Бронь #{$b->id}",
+                'title'        => $b->proposal?->request?->title ?? $b->proposal?->title ?? __('dashboard.agency.booking_fallback', ['id' => $b->id]),
                 'date_from'    => $b->travel_date_from?->toDateString(),
                 'date_to'      => $b->travel_date_to?->toDateString(),
                 'days_until'   => (int) Carbon::today()->diffInDays($b->travel_date_from, false),

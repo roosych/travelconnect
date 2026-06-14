@@ -21,6 +21,20 @@ return [
     'err_required' => 'Ad və email mütləqdir.',
     'toast_saved'  => 'Profil yeniləndi.',
     'err_save'     => 'Yadda saxlamaq alınmadı.',
+    'err_save_exc' => 'Yadda saxlama xətası.',
+
+    // «Avatar» tabı (agentlik/təchizatçı loqosu)
+    'avatar' => [
+        'hint'           => 'Loqo kabinetin başlığında göstərilir. JPG, PNG və ya WEBP, 2 MB-a qədər.',
+        'upload'         => 'Loqo yüklə',
+        'too_big'        => 'Fayl 2 MB-dan böyükdür.',
+        'loaded'         => 'Loqo yeniləndi.',
+        'upload_err'     => 'Loqonu yükləmək alınmadı.',
+        'load_err'       => 'Yükləmə xətası. Yenidən cəhd edin.',
+        'delete_confirm' => 'Loqonu silmək?',
+        'delete_err'     => 'Loqonu silmək alınmadı.',
+        'generic_err'    => 'Xəta. Yenidən cəhd edin.',
+    ],
 
     'pwd_fill_all' => 'Bütün şifrə sahələrini doldurun',
     'pwd_min'      => 'Yeni şifrə ən azı 8 simvol olmalıdır',

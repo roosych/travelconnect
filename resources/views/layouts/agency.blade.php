@@ -84,7 +84,7 @@
                             {{-- New Request CTA --}}
                             <div class="app-navbar-item ms-1 ms-lg-3">
                                 <a href="{{ route('agency.requests.create') }}" class="btn btn-success btn-sm">
-                                    <i class="ki-outline ki-plus fs-4 me-1"></i>Новая заявка
+                                    <i class="ki-outline ki-plus fs-4 me-1"></i>{{ __('requests.new_request') }}
                                 </a>
                             </div>
 
@@ -107,7 +107,7 @@
                                      data-kt-menu-attach="parent"
                                      data-kt-menu-placement="bottom-end">
                                     @if($__avatar)
-                                        <img src="{{ $__avatar }}" alt="Логотип" class="object-fit-cover" />
+                                        <img src="{{ $__avatar }}" alt="{{ __('common.logo_alt') }}" class="object-fit-cover" />
                                     @else
                                         <div class="symbol-label bg-light-success text-success fw-bold fs-6">{{ $__ini }}</div>
                                     @endif
@@ -121,7 +121,7 @@
                                         <div class="menu-content d-flex align-items-center px-3">
                                             <div class="symbol symbol-circle symbol-50px me-5">
                                                 @if($__avatar)
-                                                    <img src="{{ $__avatar }}" alt="Логотип" class="object-fit-cover" />
+                                                    <img src="{{ $__avatar }}" alt="{{ __('common.logo_alt') }}" class="object-fit-cover" />
                                                 @else
                                                     <div class="symbol-label bg-light-success text-success fw-bold fs-3">{{ $__ini }}</div>
                                                 @endif
@@ -129,7 +129,7 @@
                                             <div class="d-flex flex-column">
                                                 <div class="fw-bold fs-5 text-gray-800 mb-1">{{ $__u->name ?? '' }}</div>
                                                 <span class="text-muted text-hover-primary fs-7">{{ $__u->email ?? '' }}</span>
-                                                <span class="badge badge-light-success fw-bold fs-8 mt-1">Агентство</span>
+                                                <span class="badge badge-light-success fw-bold fs-8 mt-1">{{ __('common.role_agency') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -346,7 +346,7 @@
                                                 <li class="breadcrumb-item">
                                                     <a href="{{ route('agency.dashboard') }}"
                                                        class="text-muted text-hover-primary">
-                                                        <i class="ki-outline ki-home fs-6 text-muted me-1"></i>Главная
+                                                        <i class="ki-outline ki-home fs-6 text-muted me-1"></i>{{ __('common.home') }}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">

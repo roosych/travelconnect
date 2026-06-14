@@ -25,14 +25,14 @@
 
     <div class="menu menu-sub menu-sub-dropdown menu-column w-300px w-lg-350px" data-kt-menu="true">
         <div class="d-flex align-items-center justify-content-between px-5 py-4 border-bottom border-gray-200">
-            <span class="fw-bold fs-6 text-gray-800">Уведомления</span>
+            <span class="fw-bold fs-6 text-gray-800">{{ __('notifications.bell.title') }}</span>
             <div class="d-flex align-items-center gap-2">
                 <button id="notif-mark-all" class="btn btn-sm btn-light-primary py-1 px-3 fs-8 d-none">
-                    Прочитать все
+                    {{ __('notifications.bell.mark_all') }}
                 </button>
                 @if($notifSettingsUrl)
                     <a href="{{ $notifSettingsUrl }}" class="btn btn-icon btn-sm btn-active-light-primary"
-                       title="Настройки уведомлений">
+                       title="{{ __('notifications.bell.settings') }}">
                         <i class="ki-outline ki-setting-2 fs-4 text-gray-600"></i>
                     </a>
                 @endif

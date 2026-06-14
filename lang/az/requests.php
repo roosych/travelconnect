@@ -2,6 +2,7 @@
 
 return [
     'tour_requests' => 'Tur sorğuları',
+    'new_request'   => 'Yeni sorğu',
 
     // Статусы заявки (RequestStatus enum)
     'status' => [
@@ -107,6 +108,293 @@ return [
             'deadline'   => 'Müddət',
             'sup_count'  => ':n təchizatçı',
             'offer_count' => ':n təklif',
+        ],
+    ],
+
+    // ── Agentlik sorğu siyahısı (agency index) ─────────────────────────────
+    'agency_index' => [
+        'search_ph'    => 'Sorğu axtar…',
+        'sort' => [
+            'newest'   => 'Əvvəlcə yenilər',
+            'oldest'   => 'Əvvəlcə köhnələr',
+            'deadline' => 'Yaxın müddət',
+            'pax'      => 'Daha çox qonaq',
+        ],
+        'chips' => [
+            'all'        => 'Hamısı',
+            'submitted'  => 'Göndərilib',
+            'processing' => 'Baxılır',
+            'hot'        => '🔥 Təcili',
+            'booked'     => 'Rezerv edilib',
+            'completed'  => 'Tamamlanıb',
+            'cancelled'  => 'Ləğv edilib',
+            'draft'      => 'Qaralamalar',
+        ],
+        'load_error'   => 'Sorğuları yükləmək alınmadı. Səhifəni yeniləyin.',
+        'empty'        => 'Sorğu tapılmadı.',
+        'submit_first' => 'İlk sorğunu göndər',
+        'cols' => [
+            'request_route' => 'Sorğu və marşrut',
+            'services'      => 'Xidmətlər',
+            'tour_dates'    => 'Səfər dövrü',
+            'guests'        => 'Qonaq',
+            'deadline'      => 'Cavab müddəti',
+            'proposals'     => 'Təkliflər',
+            'status'        => 'Status',
+        ],
+        'pagination'   => ':from–:to / :total',
+    ],
+
+    // ── Agentlik sorğusunun yaradılması/redaktəsi (agency create) ──────────
+    'agency_create' => [
+        'title_new'  => 'Yeni tur sorğusu',
+        'title_edit' => 'Sorğunu redaktə et',
+        'bc_new'     => 'Yeni sorğu',
+        'bc_edit'    => 'Redaktə',
+
+        // Addım naviqasiyası
+        'steps' => [
+            's1_title' => 'Əsas',     's1_desc' => 'Ad, qonaqlar, müddət',
+            's2_title' => 'Marşrut',  's2_desc' => 'Ölkələr, tarixlər, xidmətlər',
+            's3_title' => 'Fayllar',  's3_desc' => 'Əlavələr — istəyə bağlı',
+            's4_title' => 'Yoxlama',  's4_desc' => 'Təsdiq',
+        ],
+
+        // Addım 1 — əsas
+        'step1' => [
+            'heading'        => 'Əsas məlumat',
+            'subtitle'       => 'Sorğunu və müddətləri qısaca təsvir edin.',
+            'title_label'    => 'Sorğunun adı',
+            'title_tip'      => 'Sorğunu siyahıda tapacağınız qısa, anlaşıqlı ad',
+            'title_ph'       => 'Məsələn: 10 qonaq üçün safari turu — Keniya, oktyabr 2026',
+            'pax_label'      => 'Qonaqların sayı',
+            'pax_tip'        => 'Qrupdakı turistlərin ümumi sayı',
+            'pax_ph'         => '10',
+            'deadline_label' => 'Cavab müddəti',
+            'deadline_tip'   => 'Təklifləri nə vaxta qədər gözləyirsiniz. Vaxt sizin saat qurşağınızda: :tz',
+            'notes_label'    => 'Qeydlər və xüsusi istəklər',
+            'notes_tip'      => 'Operator üçün istənilən xüsusi tələb və istəklər. İstəyə bağlı.',
+            'notes_ph'       => 'Operator üçün istənilən xüsusi tələb, istək və ya qeyd…',
+        ],
+
+        // Addım 2 — marşrut
+        'step2' => [
+            'heading'           => 'Ölkələr üzrə marşrut',
+            'subtitle'          => 'Ölkələri ardıcıllıqla əlavə edin. Hər biri üçün — tarixlər, istiqamətlər və tələbləri olan xidmətlər.',
+            'add_country'       => 'Ölkə əlavə et',
+            'leg_title'         => 'Marşrut ölkəsi',
+            'move_up'           => 'Yuxarı',
+            'move_down'         => 'Aşağı',
+            'remove'            => 'Sil',
+            'country_label'     => 'Ölkə',
+            'country_tip'       => 'Marşrut seqmentinin ölkəsi. Hər ölkə yalnız bir dəfə əlavə edilə bilər.',
+            'country_ph'        => 'Ölkə seçin…',
+            'dates_label'       => 'Qalma tarixləri',
+            'dates_tip'         => 'Bu ölkədə dövr. Qonşu ölkə ilə sərhəd günü üst-üstə düşə bilər — çıxış və giriş eyni gündə.',
+            'dest_label'        => 'İstiqamətlər',
+            'dest_tip'          => 'İstiqamətlərə marşrut ardıcıllığı ilə klikləyin — nömrə ardıcıllığı göstərəcək.',
+            'dest_pick_country' => 'Əvvəlcə ölkə seçin.',
+            'dest_none'         => 'Bu ölkə üçün istiqamətlər təyin edilməyib — sorğu ümumilikdə ölkə üzrə olacaq.',
+            'services_label'    => 'Xidmətlər',
+            'services_tip'      => 'Seçilmiş xidmətlər bu ölkənin bütün seçilmiş istiqamətlərinə aiddir.',
+            'req_suffix'        => '— tələblər',
+            'req_none'          => 'Əlavə tələb yoxdur.',
+            'select_ph'         => 'Seçin…',
+        ],
+
+        // Addım 3 — fayllar
+        'step3' => [
+            'heading'        => 'Əlavələr',
+            'subtitle'       => 'Proqram, pasportlar, istəklər — operatora kömək edəcək hər şey. İstəyə bağlı.',
+            'existing'       => 'Əlavə edilmiş fayllar',
+            'drop_hint'      => 'Faylları sürükləyin və ya',
+            'drop_choose'    => 'seçin',
+            'file_types'     => 'PDF, Word, Excel, JPG, PNG · 20 MB-a qədər',
+            'remove_confirm' => 'Bu faylı silmək?',
+            'remove_error'   => 'Faylı silmək alınmadı',
+        ],
+
+        // Addım 4 — yoxlama
+        'step4' => [
+            'heading'       => 'Sorğunu yoxlayın',
+            'subtitle'      => 'Hər şeyin düz olduğuna əmin olun və sorğunu yaradın.',
+            'r_title'       => 'Ad',
+            'r_pax'         => 'Qonaqlar',
+            'r_deadline'    => 'Cavab müddəti',
+            'r_route'       => 'Marşrut',
+            'r_notes'       => 'Qeydlər',
+            'r_files'       => 'Fayllar',
+            'no_dates'      => 'tarixlər göstərilməyib',
+            'whole_country' => 'ümumilikdə ölkə üzrə',
+            'no_segments'   => 'seqment yoxdur',
+            'files_count'   => ':n ədəd',
+            'files_none'    => 'yoxdur',
+        ],
+
+        // Naviqasiya düymələri
+        'nav' => [
+            'back'          => 'Geri',
+            'save_draft'    => 'Qaralamanı saxla',
+            'saving'        => 'Saxlanılır…',
+            'create_submit' => 'Yarat və göndər',
+            'save_submit'   => 'Saxla və göndər',
+            'submitting'    => 'Göndərilir…',
+            'next'          => 'İrəli',
+        ],
+
+        // Addım validasiyası (JS)
+        'val' => [
+            'title_req'    => 'Sorğunun adını qeyd edin.',
+            'pax_req'      => 'Qonaqların sayını qeyd edin.',
+            'deadline_req' => 'Cavab müddətini qeyd edin.',
+            'leg_req'      => 'Marşruta ən azı bir ölkə əlavə edin.',
+            'seg_country'  => 'Seqment :n: ölkə seçin.',
+            'seg_dates'    => 'Seqment :n: qalma tarixlərini qeyd edin.',
+            'seg_service'  => 'Seqment :n: ən azı bir xidmət seçin.',
+            'seg_dest'     => 'Seqment :n: ən azı bir istiqamət seçin.',
+            'seg_unique'   => 'Marşrutda hər ölkə yalnız bir dəfə olmalıdır.',
+            'seg_order'    => 'Tarixlər marşrut ardıcıllığı ilə getməlidir: ölkə əvvəlkindən çıxışdan tez başlamır (ümumi sərhəd günü mümkündür).',
+            'req_select'   => 'Seqment :n, :label: «:attr» seçin.',
+            'req_fill'     => 'Seqment :n, :label: «:attr» qeyd edin.',
+        ],
+
+        // Göndərmə (JS)
+        'submit' => [
+            'uploading'     => 'Fayllar yüklənir… :i/:n',
+            'submitting'    => 'Sorğu göndərilir…',
+            'generic_error' => 'Nəsə səhv getdi.',
+            'files_failed'  => 'Sorğu saxlanıldı, lakin fayllar yüklənmədi: :files. Sorğu göndərilmədi — onu açıb əl ilə göndərin.',
+            'submit_failed' => 'Sorğu saxlanıldı, lakin göndərmək alınmadı. Onu açıb «Göndər» düyməsini basın.',
+            'conn_error'    => 'Bağlantı xətası. Yenidən cəhd edin.',
+        ],
+    ],
+
+    // ── Agentlik sorğusunun detal səhifəsi (agency show) ───────────────────
+    'agency_show' => [
+        'title'        => 'Sorğu təfərrüatları',
+        'breadcrumb'   => 'Sorğu #:id',
+        'req_fallback' => 'Sorğu #:id',
+
+        // Alətlər paneli
+        'edit'       => 'Redaktə et',
+        'submit'     => 'Sorğunu göndər',
+        'submitting' => 'Göndərilir...',
+        'cancel'     => 'Sorğunu ləğv et',
+
+        // İnfo blokları
+        'period'            => 'Səfər dövrü',
+        'guests'            => 'Qonaqlar',
+        'deadline'          => 'Cavab müddəti',
+        'services_label'    => 'Xidmətlər:',
+        'notes'             => 'Qeydlər',
+        'attachments'       => 'Əlavələr',
+        'no_attachments'    => 'Əlavə yoxdur',
+        'pax_unit'          => ':n nəfər',
+        'header_created'    => 'Yaradılıb :date',
+        'deadline_expired'  => 'Müddət bitib',
+        'deadline_left'     => 'Müddət: :n gün',
+        'proposals_counter' => 'Təkliflər',
+
+        // Marşrut
+        'route'           => 'Marşrut',
+        'route_sub'       => 'Ölkələr ardıcıllıqla, istiqamətlər və tələbləri olan xidmətlər',
+        'route_empty'     => 'Marşrut təyin edilməyib.',
+        'dest_label'      => 'İstiqamətlər',
+        'no_dates'        => 'tarixlər göstərilməyib',
+        'whole_country'   => 'ümumilikdə ölkə üzrə',
+        'no_services_leg' => 'xidmətlər göstərilməyib',
+
+        // Təkliflər bloku
+        'proposals_title' => 'Kommersiya təklifləri',
+        'proposals_sub'   => 'Komandamızın bu sorğu üzrə hazırladığı təkliflər',
+        'empty_title'     => 'Hələ təklif yoxdur',
+        'empty_sub'       => 'Gözləyin — operator sorğunuz üzərində işləyir.',
+
+        // Təklif kartı
+        'expired_badge'     => 'Bitib',
+        'valid_until_short' => ':date-dək',
+        'created'           => 'Yaradılıb: :date',
+        'valid_until'       => 'Etibarlıdır: :date',
+        'details'           => 'Təfərrüat',
+        'reject'            => 'Rədd et',
+        'accept'            => 'Qəbul et',
+        'accept_full'       => 'Təklifi qəbul et',
+        'accepted_line'     => 'Qəbul edilib',
+        'rejected_line'     => 'Rədd edilib',
+        'cancelled_by_op'   => 'Operator tərəfindən geri çağırılıb',
+        'expired_full'      => 'Etibarlılıq müddəti bitib',
+        'attachments_label' => 'Əlavələr:',
+
+        // «Qərar gözləyir» banneri (plural)
+        'banner_await' => [
+            'one'   => 'təklif qərarınızı gözləyir',
+            'other' => 'təklif qərarınızı gözləyir',
+        ],
+        'banner_hint' => 'Aşağıdakı təkliflərlə tanış olun və uyğun variantı seçin',
+        'banner_cta'  => 'Təkliflərə',
+
+        // Təklif modalı
+        'proposal_modal_title' => 'Təklif',
+        'modal_title'          => 'KT #:id',
+        'modal_load_error'     => 'Təklifi yükləmək alınmadı',
+        'modal_no_services'    => 'Xidmət siyahısı göstərilməyib',
+        'modal_created'        => 'Yaradılıb:',
+        'modal_valid'          => 'Etibarlıdır',
+        'modal_description'    => 'Təsvir',
+        'modal_composition'    => 'Təklifin tərkibi',
+        'modal_total'          => 'Yekun',
+
+        // Status stepper
+        'steps' => [
+            'draft'      => ['label' => 'Qaralama',    'hint' => 'Sorğu hələ göndərilməyib'],
+            'submitted'  => ['label' => 'Göndərilib',  'hint' => 'Operatorun təsdiqini gözləyirik'],
+            'processing' => ['label' => 'Baxılır',     'hint' => 'Sizin üçün variantlar seçirik'],
+            'booked'     => ['label' => 'Rezerv edilib', 'hint' => 'Rezervasiya təsdiqlənib'],
+            'completed'  => ['label' => 'Tamamlanıb',  'hint' => 'Səfər baş tutdu'],
+        ],
+        'cancelled_title' => 'Sorğu ləğv edildi',
+        'cancelled_sub'   => 'Sonrakı emal mümkün deyil',
+
+        // Ləğv modalı
+        'cancel_modal_title' => 'Sorğunu ləğv etmək?',
+        'cancel_modal_body'  => 'Ləğvdən sonra sorğu «Ləğv edilib» statusuna keçəcək və yenidən göndərilə bilməyəcək.',
+        'cancel_back'        => 'Geri',
+        'cancel_confirm'     => 'Bəli, ləğv et',
+        'cancelling'         => 'Ləğv edilir...',
+
+        // FilePond
+        'fp_idle' => 'Faylları sürükləyin və ya <span class="filepond--label-action">seçin</span><br><span style="font-size:11px;color:#a1a5b7">PDF, Word, Excel, JPG, PNG · 20 MB-a qədər</span>',
+
+        // Fayl əməliyyatları
+        'open'                  => 'Aç',
+        'download'              => 'Endir',
+        'delete'                => 'Sil',
+        'attach_delete_confirm' => 'Əlavəni silmək?',
+
+        // Giriş xətaları
+        'no_access_title' => 'Bu sorğuya girişiniz yoxdur',
+        'no_access_sub'   => 'Sorğu tapılmadı və ya başqa agentliyə aiddir',
+        'back_to_list'    => 'Sorğularıma',
+        'not_found'       => 'Sorğu tapılmadı',
+
+        // Toastlar / mesajlar
+        'toast' => [
+            'submitted'            => 'Sorğu uğurla göndərildi!',
+            'submit_error'         => 'Sorğunu göndərərkən xəta',
+            'cancelled'            => 'Sorğu ləğv edildi',
+            'cancel_error'         => 'Sorğunu ləğv edərkən xəta',
+            'accepted'             => 'Təklif qəbul edildi! Rezervasiyaya keçirik.',
+            'accept_error'         => 'Təklifi qəbul etmək alınmadı',
+            'rejected'             => 'Təklif rədd edildi',
+            'reject_error'         => 'Təklifi rədd etmək alınmadı',
+            'proposals_load_error' => 'Təklifləri yükləmək alınmadı',
+            'file_open_error'      => 'Faylı açarkən xəta',
+            'file_download_error'  => 'Faylı endirərkən xəta',
+            'file_delete_error'    => 'Faylı silərkən xəta',
+            'upload_error'         => 'Yükləmə xətası',
+            'net_error'            => 'Şəbəkə xətası',
+            'revert_error'         => 'Ləğv xətası',
+            'id_undefined'         => 'ID təyin edilməyib',
         ],
     ],
 

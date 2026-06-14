@@ -120,4 +120,82 @@ return [
         'q_won_hint'             => 'Təklifləriniz seçilib',
         'request_fallback'       => 'Sorğu #:id',
     ],
+
+    // ── Agentlik paneli ─────────────────────────────────────────────────────
+    'agency' => [
+        'page_title'        => 'Mənim kabinetim',
+        'home'              => 'Ana səhifə',
+        'summary'           => 'Xülasə',
+        'period_today'      => 'Bu gün',
+        'period_week'       => '7 gün',
+        'period_month'      => 'Bu ay',
+
+        // KPI kartları
+        'kpi_requests'      => 'Yeni sorğular',
+        'kpi_proposals'     => 'Alınan KT',
+        'kpi_bookings'      => 'Rezervasiyalar',
+        'kpi_spend'         => 'Tur xərcləri',
+
+        'attention'         => 'Diqqətinizi tələb edir',
+        'dynamics'          => 'Rezervasiya dinamikası',
+        'dynamics_sub'      => 'son 6 ay',
+        'funnel'            => 'Konversiya',
+        'funnel_sub'        => 'bütün dövr üzrə',
+        'funnel_requests'   => 'Sorğular',
+        'funnel_proposals'  => 'KT aldı',
+        'funnel_booked'     => 'Rezerv etdi',
+        'conversion'        => 'Konversiya sorğu → rezervasiya:',
+
+        // Yaxın səfərlər
+        'upcoming'          => 'Yaxın səfərlər',
+        'upcoming_empty'    => 'Planlaşdırılmış səfər yoxdur',
+        'trip_today'        => 'bu gün',
+        'trip_tomorrow'     => 'sabah',
+        'trip_in_days'      => ':n gün sonra',
+        'pax_unit'          => 'nəfər',
+
+        'recent'            => 'Son sorğular',
+        'all_requests'      => 'Bütün sorğular',
+
+        // Tez baxış modalı
+        'qv_title'          => 'Sorğu təfərrüatları',
+        'qv_pax'            => 'Turist',
+        'qv_dates'          => 'Tur tarixləri',
+        'qv_proposals'      => 'KT alınıb',
+        'qv_services'       => 'Lazımi xidmətlər',
+        'qv_services_empty' => 'Göstərilməyib',
+        'qv_notes'          => 'Qeydlər',
+        'qv_created'        => 'Yaradılıb:',
+        'qv_updated'        => 'Dəyişdirilib:',
+        'qv_full_view'      => 'Tam baxış',
+        'close'             => 'Bağla',
+
+        // Qrafik seriyaları
+        'series_spend'      => 'Xərclər',
+        'series_bookings'   => 'Rezervlər',
+
+        // «Son sorğular» cədvəli (JS)
+        'empty'             => 'Hələ sorğu yoxdur.',
+        'submit_first'      => 'İlk sorğunu göndər',
+        'col_request'       => 'Sorğu',
+        'col_period'        => 'Səfər dövrü',
+        'col_deadline'      => 'Cavab müddəti',
+        'col_proposals'     => 'KT',
+        'col_status'        => 'Status',
+        'quick_view'        => 'Tez baxış',
+
+        // periodLabel + əməliyyat növbəsi + fallback (kontrollerdən)
+        'period_label_today' => 'bu gün',
+        'period_label_week'  => 'son 7 gün',
+        'period_label_month' => 'bu ay',
+        'q_proposals_label'  => 'KT qərar gözləyir',
+        'q_proposals_hint'   => 'Uyğun variantı seçin',
+        'q_deadline_label'   => 'Təcili müddətlər',
+        'q_deadline_hint'    => 'Cavab müddəti ≤ 3 gün olan sorğular',
+        'q_payment_label'    => 'Ödəniş gözləyir',
+        'q_payment_hint'     => 'Ödəniş gözləyən rezervasiyalar',
+        'q_upcoming_label'   => 'Yaxınlaşan səfərlər',
+        'q_upcoming_hint'    => 'Növbəti 14 gündə başlayır',
+        'booking_fallback'   => 'Rezervasiya #:id',
+    ],
 ];

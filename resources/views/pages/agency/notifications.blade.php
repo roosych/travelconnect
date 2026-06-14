@@ -1,9 +1,9 @@
 @extends('layouts.agency')
-@section('title', 'Уведомления')
-@section('page-title', 'Уведомления')
+@section('title', __('common.notifications'))
+@section('page-title', __('common.notifications'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Уведомления</li>
+    <li class="breadcrumb-item text-muted">{{ __('common.notifications') }}</li>
 @endsection
 
 @section('content')
@@ -13,8 +13,8 @@
         <div class="card-title">
             <i class="ki-outline ki-notification-status fs-2x text-info me-3"></i>
             <div>
-                <h3 class="card-label fw-bold fs-4 mb-0">Уведомления</h3>
-                <div class="text-muted fs-7">Каналы доставки уведомлений для вашего аккаунта</div>
+                <h3 class="card-label fw-bold fs-4 mb-0">{{ __('common.notifications') }}</h3>
+                <div class="text-muted fs-7">{{ __('notifications.page_subtitle') }}</div>
             </div>
         </div>
     </div>

@@ -1,15 +1,15 @@
 @extends('layouts.agency')
-@section('title', 'Сотрудники')
-@section('page-title', 'Сотрудники')
+@section('title', __('nav.employees'))
+@section('page-title', __('nav.employees'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Сотрудники</li>
+    <li class="breadcrumb-item text-muted">{{ __('nav.employees') }}</li>
 @endsection
 
 @section('toolbar-actions')
     @if($agency)
     <button class="btn btn-success btn-sm" id="btn-invite">
-        <i class="ki-outline ki-plus fs-4 me-1"></i>Пригласить сотрудника
+        <i class="ki-outline ki-plus fs-4 me-1"></i>{{ __('employees.invite') }}
     </button>
     @endif
 @endsection
@@ -21,7 +21,7 @@
         <div class="card-title">
             <i class="ki-outline ki-people fs-2x text-primary me-3"></i>
             <div>
-                <h3 class="card-label fw-bold fs-4 mb-0">Команда агентства</h3>
+                <h3 class="card-label fw-bold fs-4 mb-0">{{ __('employees.team_title') }}</h3>
                 <div class="text-muted fs-7">{{ $agency?->name ?? '—' }}</div>
             </div>
         </div>
@@ -36,11 +36,11 @@
             <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
                 <thead>
                     <tr class="fw-bold text-muted fs-7 text-uppercase">
-                        <th>Сотрудник</th>
-                        <th>Email</th>
-                        <th>Роль</th>
-                        <th>Добавлен</th>
-                        <th class="text-end">Действия</th>
+                        <th>{{ __('employees.cols.employee') }}</th>
+                        <th>{{ __('employees.cols.email') }}</th>
+                        <th>{{ __('employees.cols.role') }}</th>
+                        <th>{{ __('employees.cols.added') }}</th>
+                        <th class="text-end">{{ __('employees.cols.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody id="members-tbody"></tbody>
@@ -49,7 +49,7 @@
 
         <div id="members-empty" class="text-center py-10 d-none">
             <i class="ki-outline ki-people fs-3x text-muted mb-4 d-block"></i>
-            <div class="text-muted fs-6">Нет сотрудников</div>
+            <div class="text-muted fs-6">{{ __('employees.empty') }}</div>
         </div>
 
     </div>
@@ -60,34 +60,34 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Пригласить сотрудника</h5>
+                <h5 class="modal-title fw-bold">{{ __('employees.invite') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-4">
-                    <label class="form-label fw-semibold required">Email</label>
+                    <label class="form-label fw-semibold required">{{ __('employees.email') }}</label>
                     <input type="email" id="invite-email" class="form-control form-control-solid"
                            placeholder="ivanov@example.com" />
                 </div>
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Имя (необязательно)</label>
+                    <label class="form-label fw-semibold">{{ __('employees.modal.name_opt') }}</label>
                     <input type="text" id="invite-name" class="form-control form-control-solid"
-                           placeholder="Иван Иванов" />
+                           placeholder="{{ __('employees.modal.name_ph') }}" />
                 </div>
                 <div>
-                    <label class="form-label fw-semibold required">Роль</label>
+                    <label class="form-label fw-semibold required">{{ __('employees.role') }}</label>
                     <select id="invite-role" class="form-select form-select-solid">
-                        <option value="manager">Менеджер</option>
-                        <option value="staff">Сотрудник</option>
+                        <option value="manager">{{ __('employees.roles.manager') }}</option>
+                        <option value="staff">{{ __('employees.roles.staff') }}</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
                 <button type="button" class="btn btn-success btn-sm" id="btn-invite-save">
-                    <span class="indicator-label">Пригласить</span>
+                    <span class="indicator-label">{{ __('employees.modal.invite') }}</span>
                     <span class="indicator-progress d-none">
-                        <span class="spinner-border spinner-border-sm align-middle me-1"></span>Отправка...
+                        <span class="spinner-border spinner-border-sm align-middle me-1"></span>{{ __('employees.modal.sending') }}
                     </span>
                 </button>
             </div>
@@ -101,7 +101,8 @@
 <script>
 const agencyId = {{ $agency?->id ?? 'null' }};
 
-const roleLabel = { owner: 'Владелец', manager: 'Менеджер', staff: 'Сотрудник' };
+const L = @json(__('employees'));
+const roleLabel = { owner: L.roles.owner, manager: L.roles.manager, staff: L.roles.staff };
 const roleBadge = {
     owner:   'badge-light-warning',
     manager: 'badge-light-primary',
@@ -115,7 +116,7 @@ async function loadMembers() {
         const members = data.data ?? [];
         renderMembers(members);
     } catch {
-        showToast('Не удалось загрузить сотрудников', 'error');
+        showToast(L.toast.load_error, 'error');
     } finally {
         document.getElementById('members-loading').classList.add('d-none');
     }
@@ -144,7 +145,7 @@ function renderMembers(list) {
         const isOwner  = m.role === 'owner';
         const isSelf   = m.id === currentUserId;
         const actions  = (isOwner || isSelf) ? '' :
-            `<button class="btn btn-sm btn-icon btn-light-danger btn-remove" data-id="${m.id}" title="Удалить">
+            `<button class="btn btn-sm btn-icon btn-light-danger btn-remove" data-id="${m.id}" title="${@json(__('common.delete'))}">
                 <i class="ki-outline ki-trash fs-5"></i>
              </button>`;
 
@@ -170,13 +171,13 @@ function renderMembers(list) {
 }
 
 async function removeMember(userId) {
-    if (!confirm('Удалить сотрудника из агентства?')) return;
+    if (!confirm(L.toast.remove_confirm)) return;
     try {
         await api.delete(`/agencies/${agencyId}/members/${userId}`);
-        showToast('Сотрудник удалён');
+        showToast(L.toast.removed);
         loadMembers();
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось удалить сотрудника', 'error');
+        showToast(err?.message ?? L.toast.remove_error, 'error');
     }
 }
 
@@ -192,7 +193,7 @@ document.getElementById('btn-invite-save').addEventListener('click', async funct
     const name  = document.getElementById('invite-name').value.trim();
     const role  = document.getElementById('invite-role').value;
 
-    if (!email) { showToast('Введите email', 'error'); return; }
+    if (!email) { showToast(L.toast.email_required, 'error'); return; }
 
     this.disabled = true;
     this.querySelector('.indicator-label').classList.add('d-none');
@@ -201,10 +202,10 @@ document.getElementById('btn-invite-save').addEventListener('click', async funct
     try {
         await api.post(`/agencies/${agencyId}/members`, { email, name, role });
         bootstrap.Modal.getInstance(document.getElementById('modal-invite')).hide();
-        showToast('Сотрудник приглашён');
+        showToast(L.toast.invited);
         loadMembers();
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось пригласить сотрудника', 'error');
+        showToast(err?.message ?? L.toast.invite_error, 'error');
     } finally {
         this.disabled = false;
         this.querySelector('.indicator-label').classList.remove('d-none');

@@ -2,6 +2,7 @@
 
 return [
     'subtitle'   => 'Choose delivery channels for each notification category.',
+    'page_subtitle' => 'Notification delivery channels for your account',
     'category'   => 'Category',
     'load_error' => 'Failed to load notification settings.',
     'saved'      => 'Notification settings saved',
@@ -29,5 +30,18 @@ return [
         'unlink_confirm' => 'Unlink Telegram? You will no longer receive notifications in Telegram.',
         'unlinked'       => 'Telegram unlinked',
         'unlink_error'   => 'Failed to unlink',
+    ],
+
+    // In-app notification bell — shared partial across all cabinets
+    'bell' => [
+        'title'      => 'Notifications',
+        'mark_all'   => 'Mark all read',
+        'settings'   => 'Notification settings',
+        'empty'      => 'No notifications',
+        'load_error' => 'Failed to load',
+        'just_now'   => 'just now',
+        'min_ago'    => ':n min ago',
+        'hour_ago'   => ':n h ago',
+        'day_ago'    => ':n d ago',
     ],
 ];

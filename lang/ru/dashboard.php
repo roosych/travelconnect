@@ -120,4 +120,82 @@ return [
         'q_won_hint'             => 'Ваши предложения выбраны',
         'request_fallback'       => 'Запрос #:id',
     ],
+
+    // ── Дашборд агентства ───────────────────────────────────────────────────
+    'agency' => [
+        'page_title'        => 'Мой кабинет',
+        'home'              => 'Главная',
+        'summary'           => 'Сводка',
+        'period_today'      => 'Сегодня',
+        'period_week'       => '7 дней',
+        'period_month'      => 'Этот месяц',
+
+        // KPI-карточки
+        'kpi_requests'      => 'Новые заявки',
+        'kpi_proposals'     => 'Получено КП',
+        'kpi_bookings'      => 'Бронирований',
+        'kpi_spend'         => 'Расходы на туры',
+
+        'attention'         => 'Требует вашего внимания',
+        'dynamics'          => 'Динамика бронирований',
+        'dynamics_sub'      => 'последние 6 месяцев',
+        'funnel'            => 'Воронка',
+        'funnel_sub'        => 'за всё время',
+        'funnel_requests'   => 'Заявки',
+        'funnel_proposals'  => 'Получили КП',
+        'funnel_booked'     => 'Забронировали',
+        'conversion'        => 'Конверсия заявка → бронь:',
+
+        // Ближайшие поездки
+        'upcoming'          => 'Ближайшие поездки',
+        'upcoming_empty'    => 'Запланированных поездок нет',
+        'trip_today'        => 'сегодня',
+        'trip_tomorrow'     => 'завтра',
+        'trip_in_days'      => 'через :n дн.',
+        'pax_unit'          => 'чел.',
+
+        'recent'            => 'Последние заявки',
+        'all_requests'      => 'Все заявки',
+
+        // Модалка быстрого просмотра
+        'qv_title'          => 'Детали заявки',
+        'qv_pax'            => 'Туристов',
+        'qv_dates'          => 'Даты тура',
+        'qv_proposals'      => 'КП получено',
+        'qv_services'       => 'Нужные услуги',
+        'qv_services_empty' => 'Не указаны',
+        'qv_notes'          => 'Примечания',
+        'qv_created'        => 'Создана:',
+        'qv_updated'        => 'Изменена:',
+        'qv_full_view'      => 'Полный просмотр',
+        'close'             => 'Закрыть',
+
+        // Серии графика
+        'series_spend'      => 'Расходы',
+        'series_bookings'   => 'Брони',
+
+        // Таблица «Последние заявки» (JS)
+        'empty'             => 'Заявок пока нет.',
+        'submit_first'      => 'Подать первую заявку',
+        'col_request'       => 'Заявка',
+        'col_period'        => 'Период поездки',
+        'col_deadline'      => 'Срок ответа',
+        'col_proposals'     => 'КП',
+        'col_status'        => 'Статус',
+        'quick_view'        => 'Быстрый просмотр',
+
+        // periodLabel + очередь действий + fallback (из контроллера)
+        'period_label_today' => 'сегодня',
+        'period_label_week'  => 'за 7 дней',
+        'period_label_month' => 'этот месяц',
+        'q_proposals_label'  => 'КП ждут решения',
+        'q_proposals_hint'   => 'Выберите подходящий вариант',
+        'q_deadline_label'   => 'Горящие дедлайны',
+        'q_deadline_hint'    => 'Заявки со сроком ответа ≤ 3 дней',
+        'q_payment_label'    => 'Ждут оплаты',
+        'q_payment_hint'     => 'Брони в ожидании оплаты',
+        'q_upcoming_label'   => 'Поездки на подходе',
+        'q_upcoming_hint'    => 'Старт в ближайшие 14 дней',
+        'booking_fallback'   => 'Бронь #:id',
+    ],
 ];

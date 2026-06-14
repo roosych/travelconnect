@@ -10,6 +10,9 @@ return [
     'notifications' => 'Notifications',
     'logout'        => 'Sign out',
     'role_supplier' => 'Supplier',
+    'role_agency'   => 'Agency',
+    'home'          => 'Home',
+    'logo_alt'      => 'Logo',
 
     // Переключатель темы
     'theme'        => 'Theme',
@@ -32,6 +35,7 @@ return [
 
     // Кнопки и общие действия
     'cancel'           => 'Cancel',
+    'close'            => 'Close',
     'save'             => 'Save',
     'saving'           => 'Saving...',
     'add'              => 'Add',

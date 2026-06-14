@@ -10,6 +10,9 @@ return [
     'notifications' => 'Bildirişlər',
     'logout'        => 'Çıxış',
     'role_supplier' => 'Təchizatçı',
+    'role_agency'   => 'Agentlik',
+    'home'          => 'Ana səhifə',
+    'logo_alt'      => 'Loqo',
 
     // Переключатель темы
     'theme'        => 'Tema',
@@ -32,6 +35,7 @@ return [
 
     // Кнопки и общие действия
     'cancel'           => 'Ləğv et',
+    'close'            => 'Bağla',
     'save'             => 'Yadda saxla',
     'saving'           => 'Saxlanılır...',
     'add'              => 'Əlavə et',

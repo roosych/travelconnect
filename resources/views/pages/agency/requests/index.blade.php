@@ -1,15 +1,15 @@
 @extends('layouts.agency')
 
-@section('title', 'Мои заявки')
-@section('page-title', 'Мои заявки')
+@section('title', __('nav.agency.requests'))
+@section('page-title', __('nav.agency.requests'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Мои заявки</li>
+    <li class="breadcrumb-item text-muted">{{ __('nav.agency.requests') }}</li>
 @endsection
 
 @section('toolbar-actions')
     <a href="{{ route('agency.requests.create') }}" class="btn btn-success btn-sm">
-        <i class="ki-outline ki-plus fs-4 me-1"></i>Новая заявка
+        <i class="ki-outline ki-plus fs-4 me-1"></i>{{ __('requests.new_request') }}
     </a>
 @endsection
 
@@ -20,7 +20,7 @@
     {{-- Quick-filter chips with counts --}}
     <div class="card-header border-0 pt-6 pb-2">
         <div class="d-flex align-items-center gap-2 flex-wrap" id="requests-chips">
-            <span class="text-muted fs-7 fw-semibold">Загрузка…</span>
+            <span class="text-muted fs-7 fw-semibold">{{ __('common.loading') }}</span>
         </div>
     </div>
 
@@ -32,15 +32,15 @@
                 <input type="text"
                        id="requests-search"
                        class="form-control form-control-solid w-250px ps-12"
-                       placeholder="Поиск заявок…" />
+                       placeholder="{{ __('requests.agency_index.search_ph') }}" />
             </div>
         </div>
         <div class="card-toolbar d-flex align-items-center flex-nowrap gap-3">
             <select id="requests-sort" class="form-select form-select-solid w-200px flex-shrink-0">
-                <option value="">Сначала новые</option>
-                <option value="created_asc">Сначала старые</option>
-                <option value="deadline_asc">Ближайший дедлайн</option>
-                <option value="pax_desc">Больше гостей</option>
+                <option value="">{{ __('requests.agency_index.sort.newest') }}</option>
+                <option value="created_asc">{{ __('requests.agency_index.sort.oldest') }}</option>
+                <option value="deadline_asc">{{ __('requests.agency_index.sort.deadline') }}</option>
+                <option value="pax_desc">{{ __('requests.agency_index.sort.pax') }}</option>
             </select>
         </div>
     </div>
@@ -62,6 +62,11 @@
 <script>
 /* Shared helpers (statusBadge, serviceBadge, deadlineCell, formatDate, escHtml)
    come from partials/js-helpers.blade.php (loaded by the agency layout). */
+
+const t   = @json(__('requests'));
+const tc  = @json(__('common'));
+const _PR = new Intl.PluralRules(@json(app()->getLocale()));
+function plural(n, forms) { return forms[_PR.select(n)] ?? forms.other ?? forms.one ?? ''; }
 
 // Часовой пояс смотрящего — срок ответа показываем в нём (UTC хранится в БД).
 const USER_TZ = @json($userTimezone);
@@ -92,7 +97,7 @@ async function loadRequests(page = 1) {
         renderChips(data.meta);
         renderTable(data.data ?? [], data.meta);
     } catch (err) {
-        container.innerHTML = `<div class="alert alert-danger mx-4">Не удалось загрузить заявки. Обновите страницу.</div>`;
+        container.innerHTML = `<div class="alert alert-danger mx-4">${t.agency_index.load_error}</div>`;
     }
 }
 
@@ -102,15 +107,16 @@ async function loadRequests(page = 1) {
 
 function renderChips(meta) {
     const counts = meta?.counts ?? {};
+    const c = t.agency_index.chips;
     const defs = [
-        { status: '',          due: '',     label: 'Все',             cls: 'secondary', n: meta?.total_all ?? 0,    core: true },
-        { status: 'submitted', due: '',     label: 'Поданы',          cls: 'primary',   n: counts.submitted ?? 0,   core: true },
-        { status: 'processing',due: '',     label: 'На рассмотрении', cls: 'info',      n: counts.processing ?? 0,  core: true },
-        { status: '',          due: 'soon', label: '🔥 Горящие',      cls: 'danger',    n: meta?.due_soon ?? 0,     core: true },
-        { status: 'booked',    due: '',     label: 'Забронированы',   cls: 'success',   n: counts.booked ?? 0 },
-        { status: 'completed', due: '',     label: 'Завершены',       cls: 'dark',      n: counts.completed ?? 0 },
-        { status: 'cancelled', due: '',     label: 'Отменены',        cls: 'danger',    n: counts.cancelled ?? 0 },
-        { status: 'draft',     due: '',     label: 'Черновики',       cls: 'secondary', n: counts.draft ?? 0 },
+        { status: '',          due: '',     label: c.all,        cls: 'secondary', n: meta?.total_all ?? 0,    core: true },
+        { status: 'submitted', due: '',     label: c.submitted,  cls: 'primary',   n: counts.submitted ?? 0,   core: true },
+        { status: 'processing',due: '',     label: c.processing, cls: 'info',      n: counts.processing ?? 0,  core: true },
+        { status: '',          due: 'soon', label: c.hot,        cls: 'danger',    n: meta?.due_soon ?? 0,     core: true },
+        { status: 'booked',    due: '',     label: c.booked,     cls: 'success',   n: counts.booked ?? 0 },
+        { status: 'completed', due: '',     label: c.completed,  cls: 'dark',      n: counts.completed ?? 0 },
+        { status: 'cancelled', due: '',     label: c.cancelled,  cls: 'danger',    n: counts.cancelled ?? 0 },
+        { status: 'draft',     due: '',     label: c.draft,      cls: 'secondary', n: counts.draft ?? 0 },
     ];
 
     const chips = defs
@@ -160,9 +166,9 @@ function renderTable(requests, meta) {
         container.innerHTML = `
             <div class="text-center py-12">
                 <i class="ki-outline ki-document fs-3x text-gray-300 mb-4 d-block"></i>
-                <span class="text-muted fs-6 d-block mb-3">Заявок не найдено.</span>
+                <span class="text-muted fs-6 d-block mb-3">${t.agency_index.empty}</span>
                 <a href="{{ route('agency.requests.create') }}" class="btn btn-sm btn-light-success">
-                    <i class="ki-outline ki-plus fs-5 me-1"></i>Подать первую заявку
+                    <i class="ki-outline ki-plus fs-5 me-1"></i>${t.agency_index.submit_first}
                 </a>
             </div>`;
         return;
@@ -174,13 +180,13 @@ function renderTable(requests, meta) {
         <table class="table align-middle table-row-dashed fs-6 gy-4">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="min-w-250px">Заявка и маршрут</th>
-                    <th class="min-w-140px">Услуги</th>
-                    <th class="min-w-160px">Период поездки</th>
-                    <th class="min-w-60px text-center">Гостей</th>
-                    <th class="min-w-110px">Срок ответа</th>
-                    <th class="min-w-110px text-center">Предложений</th>
-                    <th class="min-w-90px">Статус</th>
+                    <th class="min-w-250px">${t.agency_index.cols.request_route}</th>
+                    <th class="min-w-140px">${t.agency_index.cols.services}</th>
+                    <th class="min-w-160px">${t.agency_index.cols.tour_dates}</th>
+                    <th class="min-w-60px text-center">${t.agency_index.cols.guests}</th>
+                    <th class="min-w-110px">${t.agency_index.cols.deadline}</th>
+                    <th class="min-w-110px text-center">${t.agency_index.cols.proposals}</th>
+                    <th class="min-w-90px">${t.agency_index.cols.status}</th>
                     <th class="w-90px text-end"></th>
                 </tr>
             </thead>
@@ -234,21 +240,14 @@ function renderServices(r) {
 }
 
 function renderRow(r) {
-    // Числовой формат ДД.ММ.ГГГГ — 12.07.2026 — 22.07.2026
-    const fmtNum = d => d ? new Date(d).toLocaleDateString('ru-RU') : '';
-    const dateParts = [r.travel_date_from, r.travel_date_to].filter(Boolean).map(fmtNum);
+    // Числовой формат ДД.ММ.ГГГГ — 12.07.2026 — 22.07.2026 (общий formatDate)
+    const dateParts = [r.travel_date_from, r.travel_date_to].filter(Boolean).map(formatDate);
     const dateRange = dateParts.length ? dateParts.join(' — ') : '—';
 
     // Кол-во стран маршрута — подсказка о мультистрановой заявке.
     const countriesCount = Array.isArray(r.legs) ? r.legs.length : 0;
-    const countryWord = (n) => {
-        const m10 = n % 10, m100 = n % 100;
-        if (m10 === 1 && m100 !== 11) return 'страна';
-        if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'страны';
-        return 'стран';
-    };
     const multiBadge = countriesCount > 1
-        ? `<span class="badge badge-light-info fs-8 ms-2">${countriesCount} ${countryWord(countriesCount)}</span>`
+        ? `<span class="badge badge-light-info fs-8 ms-2">${countriesCount} ${plural(countriesCount, t.plural.countries)}</span>`
         : '';
 
     // Mute the deadline for terminal statuses where a response is no longer expected.
@@ -286,7 +285,7 @@ function renderRow(r) {
             <td class="text-center">${proposalsHtml}</td>
             <td>${statusBadge(r)}</td>
             <td class="text-end">
-                <a href="/agency/requests/${r.id}" class="btn btn-icon btn-sm btn-light-primary" title="Открыть">
+                <a href="/agency/requests/${r.id}" class="btn btn-icon btn-sm btn-light-primary" title="${tc.open}">
                     <i class="ki-outline ki-arrow-right fs-4"></i>
                 </a>
             </td>
@@ -316,7 +315,7 @@ function renderPagination(meta) {
 
     return `
     <div class="d-flex justify-content-between align-items-center pt-4 px-1">
-        <div class="text-muted fs-7">${from}–${to} из ${total}</div>
+        <div class="text-muted fs-7">${t.agency_index.pagination.replace(':from', from).replace(':to', to).replace(':total', total)}</div>
         <ul class="pagination pagination-sm mb-0">
             <li class="page-item ${cur === 1 ? 'disabled' : ''}">
                 <a class="page-link" href="#" onclick="event.preventDefault();loadRequests(${cur - 1})">

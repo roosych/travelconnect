@@ -6,14 +6,17 @@
     const markAllBtn = document.getElementById('notif-mark-all');
     if (!badge || !list) return;
 
+    const T = @json(__('notifications.bell'));
+    const LOCALE = (window.APP_LOCALE || 'ru').replace('_', '-');
+
     function timeAgo(iso) {
         const d = new Date(iso);
         const sec = Math.floor((Date.now() - d.getTime()) / 1000);
-        if (sec < 60) return 'только что';
-        if (sec < 3600) return Math.floor(sec / 60) + ' мин назад';
-        if (sec < 86400) return Math.floor(sec / 3600) + ' ч назад';
-        if (sec < 604800) return Math.floor(sec / 86400) + ' дн назад';
-        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+        if (sec < 60) return T.just_now;
+        if (sec < 3600) return T.min_ago.replace(':n', Math.floor(sec / 60));
+        if (sec < 86400) return T.hour_ago.replace(':n', Math.floor(sec / 3600));
+        if (sec < 604800) return T.day_ago.replace(':n', Math.floor(sec / 86400));
+        return d.toLocaleDateString(LOCALE, { day: '2-digit', month: '2-digit' });
     }
 
     function esc(s) {
@@ -35,7 +38,7 @@
         if (!items.length) {
             list.innerHTML = `<div class="text-center text-muted fs-7 py-10">
                 <i class="ki-outline ki-notification-status fs-3x text-gray-300 d-block mb-3"></i>
-                Уведомлений нет
+                ${esc(T.empty)}
             </div>`;
             return;
         }
@@ -71,7 +74,7 @@
             setBadge(data.unread_count ?? 0);
             render(data.data ?? []);
         } catch (_) {
-            list.innerHTML = '<div class="text-center text-danger fs-8 py-8">Не удалось загрузить</div>';
+            list.innerHTML = `<div class="text-center text-danger fs-8 py-8">${esc(T.load_error)}</div>`;
         }
     }
 

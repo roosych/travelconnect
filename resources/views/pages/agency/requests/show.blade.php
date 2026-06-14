@@ -1,27 +1,27 @@
 @extends('layouts.agency')
 
-@section('title', 'Детали заявки')
-@section('page-title', 'Детали заявки')
+@section('title', __('requests.agency_show.title'))
+@section('page-title', __('requests.agency_show.title'))
 
 @section('breadcrumb')
     <li class="breadcrumb-item">
-        <a href="{{ route('agency.requests.index') }}" class="text-muted text-hover-primary">Мои заявки</a>
+        <a href="{{ route('agency.requests.index') }}" class="text-muted text-hover-primary">{{ __('nav.agency.requests') }}</a>
     </li>
     <li class="breadcrumb-item"><i class="ki-outline ki-right fs-7 text-gray-700 mx-n1"></i></li>
-    <li class="breadcrumb-item text-muted" id="breadcrumb-title">Заявка #{{ $id }}</li>
+    <li class="breadcrumb-item text-muted" id="breadcrumb-title">{{ __('requests.agency_show.breadcrumb', ['id' => $id]) }}</li>
 @endsection
 
 @section('toolbar-actions')
     <div id="toolbar-actions" class="d-flex gap-3 d-none">
         <a id="btn-edit" href="{{ route('agency.requests.edit', $id) }}" class="btn btn-primary btn-sm d-none">
-            Редактировать
+            {{ __('requests.agency_show.edit') }}
         </a>
         <button id="btn-submit" class="btn btn-success btn-sm d-none" onclick="submitRequest()" data-kt-indicator="off">
-            <span class="indicator-label">Подать заявку</span>
-            <span class="indicator-progress"><span class="spinner-border spinner-border-sm align-middle me-1"></span>Подача...</span>
+            <span class="indicator-label">{{ __('requests.agency_show.submit') }}</span>
+            <span class="indicator-progress"><span class="spinner-border spinner-border-sm align-middle me-1"></span>{{ __('requests.agency_show.submitting') }}</span>
         </button>
         <button id="btn-cancel" class="btn btn-danger btn-sm d-none" onclick="cancelRequest()">
-            Отменить заявку
+            {{ __('requests.agency_show.cancel') }}
         </button>
     </div>
 @endsection
@@ -83,7 +83,7 @@
                             <i class="ki-outline ki-calendar fs-4 text-info"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Период поездки</div>
+                            <div class="text-muted fs-8">{{ __('requests.agency_show.period') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-period">—</div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                             <i class="ki-outline ki-people fs-4 text-warning"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Гостей</div>
+                            <div class="text-muted fs-8">{{ __('requests.agency_show.guests') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-pax">—</div>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                             <i class="ki-outline ki-time fs-4 text-danger"></i>
                         </span>
                         <div>
-                            <div class="text-muted fs-8">Срок ответа</div>
+                            <div class="text-muted fs-8">{{ __('requests.agency_show.deadline') }}</div>
                             <div class="fw-semibold text-gray-800 fs-7 mt-1" id="info-deadline">—</div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
             <div id="info-services-wrap" class="d-none">
                 <div class="separator my-4"></div>
                 <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <span class="text-muted fs-8 fw-semibold">Услуги:</span>
+                    <span class="text-muted fs-8 fw-semibold">{{ __('requests.agency_show.services_label') }}</span>
                     <div id="info-services" class="d-flex flex-wrap gap-2"></div>
                 </div>
             </div>
@@ -127,7 +127,7 @@
                 <div class="d-flex align-items-start gap-3 bg-light rounded-2 p-4">
                     <i class="ki-outline ki-message-text-2 fs-3 text-gray-500 mt-1 flex-shrink-0"></i>
                     <div>
-                        <div class="text-muted fs-8 mb-1">Примечания</div>
+                        <div class="text-muted fs-8 mb-1">{{ __('requests.agency_show.notes') }}</div>
                         <div class="text-gray-700 fs-7 lh-lg" id="info-notes"></div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <div class="d-flex align-items-center gap-2">
                         <i class="ki-outline ki-paper-clip fs-4 text-muted"></i>
-                        <span class="fw-bold text-gray-800 fs-6">Вложения</span>
+                        <span class="fw-bold text-gray-800 fs-6">{{ __('requests.agency_show.attachments') }}</span>
                     </div>
                     <span class="badge badge-light-primary" id="attach-count-requests">0</span>
                 </div>
@@ -149,7 +149,7 @@
                 </div>
                 <div id="attachments-list-requests">
                     <div class="text-center text-muted py-4 fs-7" id="attachments-empty-requests">
-                        Нет вложений
+                        {{ __('requests.agency_show.no_attachments') }}
                     </div>
                     <div class="row g-3" id="attachments-grid-requests"
                          data-col-class="col-12 col-sm-6 col-xl-4"></div>
@@ -166,8 +166,8 @@
     <div class="card card-flush" id="route-card">
         <div class="card-header pt-5">
             <div class="card-title flex-column gap-1">
-                <h3 class="fw-bold text-gray-900 mb-0">Маршрут</h3>
-                <span class="text-muted fs-7">Страны по порядку, направления и нужные услуги с требованиями</span>
+                <h3 class="fw-bold text-gray-900 mb-0">{{ __('requests.agency_show.route') }}</h3>
+                <span class="text-muted fs-7">{{ __('requests.agency_show.route_sub') }}</span>
             </div>
         </div>
         <div class="card-body pt-2 pb-6">
@@ -181,8 +181,8 @@
     <div class="card card-flush mb-6" id="proposals-card">
         <div class="card-header pt-5">
             <div class="card-title flex-column gap-1">
-                <h3 class="fw-bold text-gray-900 mb-0">Коммерческие предложения</h3>
-                <span class="text-muted fs-7">Предложения, подготовленные нашей командой по этой заявке</span>
+                <h3 class="fw-bold text-gray-900 mb-0">{{ __('requests.agency_show.proposals_title') }}</h3>
+                <span class="text-muted fs-7">{{ __('requests.agency_show.proposals_sub') }}</span>
             </div>
         </div>
         <div class="card-body pt-2 pb-6">
@@ -201,18 +201,18 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Отменить заявку?</h5>
+                <h5 class="modal-title fw-bold">{{ __('requests.agency_show.cancel_modal_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-gray-700 fs-6">
-                После отмены заявка перейдёт в статус <span class="fw-semibold text-danger">«Отменено»</span> и не сможет быть повторно подана.
+                {{ __('requests.agency_show.cancel_modal_body') }}
             </div>
             <div class="modal-footer gap-3">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Назад</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('requests.agency_show.cancel_back') }}</button>
                 <button type="button" class="btn btn-danger" id="btn-cancel-confirm" onclick="confirmCancel()" data-kt-indicator="off">
-                    <span class="indicator-label">Да, отменить</span>
+                    <span class="indicator-label">{{ __('requests.agency_show.cancel_confirm') }}</span>
                     <span class="indicator-progress">
-                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>Отмена...
+                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>{{ __('requests.agency_show.cancelling') }}
                     </span>
                 </button>
             </div>
@@ -225,7 +225,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="modal-proposal-title">Предложение</h5>
+                <h5 class="modal-title fw-bold" id="modal-proposal-title">{{ __('requests.agency_show.proposal_modal_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="modal-proposal-body">
@@ -246,6 +246,13 @@
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
 FilePond.registerPlugin(FilePondPluginFileValidateSize);
+
+// Локализация (requests.agency_show.*). :id/:n/:date — через .replace().
+const L  = @json(__('requests.agency_show'));
+const PS = @json(__('requests.proposal_status'));
+const tc = @json(__('common'));
+const _PR = new Intl.PluralRules(@json(app()->getLocale()));
+function plural(n, forms) { return forms[_PR.select(n)] ?? forms.other ?? forms.one ?? ''; }
 
 const requestId = {{ $id }};
 let requestData  = null;
@@ -350,7 +357,7 @@ function renderAttachments(type, attachments, canDelete) {
         const action  = (isPdf || isImage)
             ? `openAttachment(${a.id}); return false;`
             : `downloadAttachment(${a.id}, '${name}'); return false;`;
-        const actionTitle = (isPdf || isImage) ? 'Открыть' : 'Скачать';
+        const actionTitle = (isPdf || isImage) ? L.open : L.download;
 
         const iconHtml = isImage
             ? `<img src="${a.url}"
@@ -373,7 +380,7 @@ function renderAttachments(type, attachments, canDelete) {
                 </div>
                 ${canDelete ? `
                 <button type="button" class="btn btn-icon btn-sm btn-light-danger flex-shrink-0"
-                        onclick="deleteAttachment(${a.id}, '${type}')" title="Удалить">
+                        onclick="deleteAttachment(${a.id}, '${type}')" title="${L.delete}">
                     <i class="ki-outline ki-cross fs-5"></i>
                 </button>` : ''}
             </div>`;
@@ -397,11 +404,11 @@ async function openAttachment(attachmentId) {
             credentials: 'same-origin',
             headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
         });
-        if (!res.ok) { showToast('Ошибка открытия файла', 'error'); return; }
+        if (!res.ok) { showToast(L.toast.file_open_error, 'error'); return; }
         const blob = await res.blob();
         window.open(URL.createObjectURL(blob), '_blank');
     } catch (e) {
-        showToast('Ошибка открытия файла', 'error');
+        showToast(L.toast.file_open_error, 'error');
     }
 }
 
@@ -411,7 +418,7 @@ async function downloadAttachment(attachmentId, filename) {
             credentials: 'same-origin',
             headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
         });
-        if (!res.ok) { showToast('Ошибка скачивания файла', 'error'); return; }
+        if (!res.ok) { showToast(L.toast.file_download_error, 'error'); return; }
         const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
@@ -419,12 +426,12 @@ async function downloadAttachment(attachmentId, filename) {
         document.body.appendChild(a); a.click();
         document.body.removeChild(a); URL.revokeObjectURL(url);
     } catch (e) {
-        showToast('Ошибка скачивания файла', 'error');
+        showToast(L.toast.file_download_error, 'error');
     }
 }
 
 async function deleteAttachment(attachmentId, type) {
-    if (!confirm('Удалить вложение?')) return;
+    if (!confirm(L.attach_delete_confirm)) return;
     try {
         await api.delete(`/attachments/${attachmentId}`);
         document.querySelector(`[data-attachment-id="${attachmentId}"]`)?.remove();
@@ -435,7 +442,7 @@ async function deleteAttachment(attachmentId, type) {
             document.getElementById('attachments-empty-' + type)?.style.removeProperty('display');
         }
     } catch (e) {
-        showToast('Ошибка удаления файла', 'error');
+        showToast(L.toast.file_delete_error, 'error');
     }
 }
 
@@ -448,15 +455,14 @@ function initFilepond(type, entityIdGetter, canDelete) {
         maxFiles: 10,
         maxFileSize: '20MB',
         allowFileTypeValidation: false,
-        labelIdle: 'Перетащите файлы или <span class="filepond--label-action">выберите</span><br>'
-                 + '<span style="font-size:11px;color:#a1a5b7">PDF, Word, Excel, JPG, PNG · до 20 МБ</span>',
+        labelIdle: L.fp_idle,
         onprocessfile: (error, file) => {
             if (!error) setTimeout(() => pond.removeFile(file), 1000);
         },
         server: {
             process: (fieldName, file, metadata, load, error, progress, abort) => {
                 const entityId = entityIdGetter();
-                if (!entityId) { error('ID не определён'); return; }
+                if (!entityId) { error(L.toast.id_undefined); return; }
 
                 const fd  = new FormData();
                 fd.append('file', file);
@@ -473,10 +479,10 @@ function initFilepond(type, entityIdGetter, canDelete) {
                         load(resp.data.id);
                         loadAttachments(type, entityId, canDelete);
                     } else {
-                        error('Ошибка загрузки');
+                        error(L.toast.upload_error);
                     }
                 };
-                xhr.onerror = () => error('Ошибка сети');
+                xhr.onerror = () => error(L.toast.net_error);
                 xhr.send(fd);
                 return { abort: () => { xhr.abort(); abort(); } };
             },
@@ -486,7 +492,7 @@ function initFilepond(type, entityIdGetter, canDelete) {
                         document.querySelector(`[data-attachment-id="${uniqueFileId}"]`)?.remove();
                         load();
                     })
-                    .catch(() => error('Ошибка отмены'));
+                    .catch(() => error(L.toast.revert_error));
             },
         },
     });
@@ -496,20 +502,20 @@ const SERVICE_LABELS = window.SERVICE_LABELS;
 
 
 const PROPOSAL_BADGE = {
-    draft:    '<span class="badge badge-light-secondary fs-8">Черновик</span>',
-    sent:     '<span class="badge badge-light-primary fs-8">Отправлено</span>',
-    accepted: '<span class="badge badge-light-success fs-8">Принято</span>',
-    rejected: '<span class="badge badge-light-danger fs-8">Отклонено</span>',
+    draft:    `<span class="badge badge-light-secondary fs-8">${PS.draft}</span>`,
+    sent:     `<span class="badge badge-light-primary fs-8">${PS.sent}</span>`,
+    accepted: `<span class="badge badge-light-success fs-8">${PS.accepted}</span>`,
+    rejected: `<span class="badge badge-light-danger fs-8">${PS.rejected}</span>`,
 };
 
 // ── Status timeline ───────────────────────────────────────────────────────────
 
 const STEPS = [
-    { key: 'draft',      label: 'Черновик',        icon: 'ki-document',     hint: 'Заявка ещё не отправлена' },
-    { key: 'submitted',  label: 'Подано',            icon: 'ki-send',         hint: 'Ожидаем подтверждения оператора' },
-    { key: 'processing', label: 'Рассматривается',  icon: 'ki-magnifier',    hint: 'Подбираем варианты для вас' },
-    { key: 'booked',     label: 'Забронировано',    icon: 'ki-check-circle', hint: 'Бронирование подтверждено' },
-    { key: 'completed',  label: 'Завершено',        icon: 'ki-flag',         hint: 'Поездка состоялась' },
+    { key: 'draft',      label: L.steps.draft.label,      icon: 'ki-document',     hint: L.steps.draft.hint },
+    { key: 'submitted',  label: L.steps.submitted.label,  icon: 'ki-send',         hint: L.steps.submitted.hint },
+    { key: 'processing', label: L.steps.processing.label, icon: 'ki-magnifier',    hint: L.steps.processing.hint },
+    { key: 'booked',     label: L.steps.booked.label,     icon: 'ki-check-circle', hint: L.steps.booked.hint },
+    { key: 'completed',  label: L.steps.completed.label,  icon: 'ki-flag',         hint: L.steps.completed.hint },
 ];
 
 function renderTimeline(status) {
@@ -522,8 +528,8 @@ function renderTimeline(status) {
                     <i class="ki-outline ki-cross fs-2 text-white"></i>
                 </div>
                 <div>
-                    <div class="fw-bold text-danger fs-5 mb-1">Заявка отменена</div>
-                    <div class="text-muted fs-7">Дальнейшая обработка невозможна</div>
+                    <div class="fw-bold text-danger fs-5 mb-1">${L.cancelled_title}</div>
+                    <div class="text-muted fs-7">${L.cancelled_sub}</div>
                 </div>
             </div>`;
         return;
@@ -569,7 +575,7 @@ function renderActionBanner(proposals) {
     }
 
     const count = pending.length;
-    const noun  = count === 1 ? 'предложение ожидает' : count < 5 ? 'предложения ожидают' : 'предложений ожидают';
+    const noun  = plural(count, L.banner_await);
 
     banner.classList.remove('d-none');
     banner.innerHTML = `
@@ -579,15 +585,15 @@ function renderActionBanner(proposals) {
             </div>
             <div class="flex-grow-1 min-w-0">
                 <div class="fw-bold text-gray-900 fs-6 mb-1">
-                    ${count} ${noun} вашего решения
+                    ${count} ${noun}
                 </div>
                 <div class="text-gray-600 fs-7">
-                    Ознакомьтесь с предложениями ниже и выберите подходящий вариант
+                    ${L.banner_hint}
                 </div>
             </div>
             <button class="btn btn-warning btn-sm flex-shrink-0"
                     onclick="document.getElementById('proposals-card').scrollIntoView({behavior:'smooth',block:'start'})">
-                <i class="ki-outline ki-arrow-down fs-5 me-1"></i>К предложениям
+                <i class="ki-outline ki-arrow-down fs-5 me-1"></i>${L.banner_cta}
             </button>
         </div>`;
 }
@@ -601,8 +607,8 @@ function renderProposals(proposals) {
         wrap.innerHTML = `
             <div class="text-center py-14">
                 <i class="ki-outline ki-book-open fs-4x text-gray-300 mb-4 d-block"></i>
-                <div class="text-gray-600 fw-semibold fs-6">Предложений пока нет</div>
-                <div class="text-muted fs-7 mt-2">Ожидайте — оператор работает над вашей заявкой.</div>
+                <div class="text-gray-600 fw-semibold fs-6">${L.empty_title}</div>
+                <div class="text-muted fs-7 mt-2">${L.empty_sub}</div>
             </div>`;
         return;
     }
@@ -632,9 +638,9 @@ function proposalCard(p) {
     // ── Validity badge ─────────────────────────────────────────────────────
     let validBadge = '';
     if (p.valid_until) {
-        if (isExpired)    validBadge = `<span class="badge badge-light-danger fs-8">Истёк</span>`;
-        else if (days<=3) validBadge = `<span class="badge badge-light-warning fs-8">${days} дн.</span>`;
-        else              validBadge = `<span class="badge badge-light-secondary fs-8">до ${fmtDate(p.valid_until)}</span>`;
+        if (isExpired)    validBadge = `<span class="badge badge-light-danger fs-8">${L.expired_badge}</span>`;
+        else if (days<=3) validBadge = `<span class="badge badge-light-warning fs-8">${tc.time.days.replace(':n', days)}</span>`;
+        else              validBadge = `<span class="badge badge-light-secondary fs-8">${L.valid_until_short.replace(':date', fmtDate(p.valid_until))}</span>`;
     }
 
     const offers = Array.isArray(p.offers) ? p.offers : [];
@@ -649,21 +655,21 @@ function proposalCard(p) {
     // ── Status indicator / actions ─────────────────────────────────────────
     let statusLine = '';
     if (p.status === 'accepted') {
-        statusLine = `<div class="d-flex align-items-center gap-1 text-success fw-semibold fs-8 mt-2"><i class="ki-outline ki-check-circle fs-6"></i>Принято</div>`;
+        statusLine = `<div class="d-flex align-items-center gap-1 text-success fw-semibold fs-8 mt-2"><i class="ki-outline ki-check-circle fs-6"></i>${L.accepted_line}</div>`;
     } else if (p.status === 'rejected') {
-        statusLine = `<div class="d-flex align-items-center gap-1 text-danger fw-semibold fs-8 mt-2"><i class="ki-outline ki-cross-circle fs-6"></i>Отклонено</div>`;
+        statusLine = `<div class="d-flex align-items-center gap-1 text-danger fw-semibold fs-8 mt-2"><i class="ki-outline ki-cross-circle fs-6"></i>${L.rejected_line}</div>`;
     } else if (p.status === 'cancelled') {
-        statusLine = `<div class="d-flex align-items-center gap-1 text-muted fw-semibold fs-8 mt-2"><i class="ki-outline ki-arrow-left fs-6"></i>Отозвано оператором</div>`;
+        statusLine = `<div class="d-flex align-items-center gap-1 text-muted fw-semibold fs-8 mt-2"><i class="ki-outline ki-arrow-left fs-6"></i>${L.cancelled_by_op}</div>`;
     } else if (isExpired) {
-        statusLine = `<div class="text-muted fs-8 mt-2">Срок действия истёк</div>`;
+        statusLine = `<div class="text-muted fs-8 mt-2">${L.expired_full}</div>`;
     }
 
     const actionButtons = canAct ? `
             <button class="btn btn-light-danger btn-sm" onclick="rejectProposal(${p.id})">
-                <i class="ki-outline ki-cross fs-7 me-1"></i>Отклонить
+                <i class="ki-outline ki-cross fs-7 me-1"></i>${L.reject}
             </button>
             <button class="btn btn-success btn-sm" onclick="acceptProposal(${p.id})">
-                <i class="ki-outline ki-check fs-7 me-1"></i>Принять
+                <i class="ki-outline ki-check fs-7 me-1"></i>${L.accept}
             </button>` : '';
 
     // ── Attachments ────────────────────────────────────────────────────────
@@ -671,7 +677,7 @@ function proposalCard(p) {
     const attachmentsHtml = attachments.length ? `
         <div class="separator mt-4 mb-3"></div>
         <div class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="text-muted fs-9 fw-semibold me-1"><i class="ki-outline ki-paper-clip fs-8 me-1"></i>Вложения:</span>
+            <span class="text-muted fs-9 fw-semibold me-1"><i class="ki-outline ki-paper-clip fs-8 me-1"></i>${L.attachments_label}</span>
             ${attachments.map(a => `
                 <a href="${a.url}" target="_blank" rel="noopener"
                    class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-2 bg-light text-gray-700 text-decoration-none fs-8"
@@ -695,9 +701,9 @@ function proposalCard(p) {
                                 ${p.title ? `<span class="text-gray-600 fs-7">— ${esc(p.title)}</span>` : ''}
                             </div>
                             <div class="d-flex align-items-center gap-3 text-muted fs-8 mt-1 flex-wrap">
-                                <span>Создано: ${fmtDate(p.created_at)}</span>
+                                <span>${L.created.replace(':date', fmtDate(p.created_at))}</span>
                                 ${p.valid_until ? `<span class="bullet bg-gray-300 w-4px h-4px rounded-circle d-inline-block"></span>
-                                <span ${isExpired ? 'class="text-danger"' : ''}>Действует до: ${fmtDate(p.valid_until)}</span>` : ''}
+                                <span ${isExpired ? 'class="text-danger"' : ''}>${L.valid_until.replace(':date', fmtDate(p.valid_until))}</span>` : ''}
                                 ${p.description ? `<span class="bullet bg-gray-300 w-4px h-4px rounded-circle d-inline-block"></span>
                                 <span class="text-gray-600 fst-italic text-truncate" style="max-width:260px">${esc(p.description)}</span>` : ''}
                             </div>
@@ -708,7 +714,7 @@ function proposalCard(p) {
                                 ${conversionLine}
                                 ${statusLine}
                             </div>
-                            <button class="btn btn-sm btn-icon btn-light" onclick="openProposalModal(${p.id})" title="Детали">
+                            <button class="btn btn-sm btn-icon btn-light" onclick="openProposalModal(${p.id})" title="${L.details}">
                                 <i class="ki-outline ki-eye fs-6"></i>
                             </button>
                         </div>
@@ -729,7 +735,7 @@ function proposalCard(p) {
 
 async function openProposalModal(proposalId) {
     const modal = new bootstrap.Modal(document.getElementById('modal-proposal'));
-    document.getElementById('modal-proposal-title').textContent = `КП #${proposalId}`;
+    document.getElementById('modal-proposal-title').textContent = L.modal_title.replace(':id', proposalId);
     document.getElementById('modal-proposal-body').innerHTML = `
         <div class="text-center py-10"><div class="spinner-border text-primary" role="status"></div></div>
     `;
@@ -741,7 +747,7 @@ async function openProposalModal(proposalId) {
         res = await api.get(`/proposals/${proposalId}`);
     } catch (err) {
         document.getElementById('modal-proposal-body').innerHTML =
-            `<div class="text-center text-danger py-10"><i class="ki-outline ki-cross-circle fs-3x mb-3 d-block"></i>${err?.message ?? 'Не удалось загрузить предложение'}</div>`;
+            `<div class="text-center text-danger py-10"><i class="ki-outline ki-cross-circle fs-3x mb-3 d-block"></i>${err?.message ?? L.modal_load_error}</div>`;
         return;
     }
     const p = res?.data;
@@ -782,29 +788,29 @@ async function openProposalModal(proposalId) {
                 ${catalogHtml}
             </div>
         `}).join('')
-        : '<div class="text-muted fs-7 py-4 text-center">Список услуг не указан</div>';
+        : `<div class="text-muted fs-7 py-4 text-center">${L.modal_no_services}</div>`;
 
     document.getElementById('modal-proposal-body').innerHTML = `
         <div class="mb-6">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="text-muted fs-8">Создано: <strong>${fmtDate(p.created_at)}</strong></div>
-                ${p.valid_until ? `<div class="text-muted fs-8">Действует до <strong class="${p.is_expired ? 'text-danger' : ''}">${fmtDate(p.valid_until)}</strong></div>` : ''}
+                <div class="text-muted fs-8">${L.modal_created} <strong>${fmtDate(p.created_at)}</strong></div>
+                ${p.valid_until ? `<div class="text-muted fs-8">${L.modal_valid} <strong class="${p.is_expired ? 'text-danger' : ''}">${fmtDate(p.valid_until)}</strong></div>` : ''}
             </div>
 
             ${p.description ? `
                 <div class="bg-light rounded-2 p-4 mb-4">
-                    <div class="text-muted fs-8 mb-1">Описание</div>
+                    <div class="text-muted fs-8 mb-1">${L.modal_description}</div>
                     <div class="text-gray-700 fs-7 lh-lg">${esc(p.description)}</div>
                 </div>
             ` : ''}
 
             <div class="mb-4">
-                <div class="fw-bold text-gray-800 fs-7 mb-3">Состав предложения</div>
+                <div class="fw-bold text-gray-800 fs-7 mb-3">${L.modal_composition}</div>
                 ${offersHtml}
             </div>
 
             <div class="bg-light rounded-2 p-4 d-flex align-items-center justify-content-between">
-                <div class="text-muted fw-semibold fs-7">Итого</div>
+                <div class="text-muted fw-semibold fs-7">${L.modal_total}</div>
                 <div class="text-end">
                     <div class="fw-bolder text-gray-900 fs-3">${fmtMoney(p.total_price, p.currency)}</div>
                     ${modalConversionLine}
@@ -819,15 +825,15 @@ async function openProposalModal(proposalId) {
     }, 50);
 
     const footerEl = document.getElementById('modal-proposal-footer');
-    footerEl.innerHTML = '<button class="btn btn-light" data-bs-dismiss="modal">Закрыть</button>';
+    footerEl.innerHTML = `<button class="btn btn-light" data-bs-dismiss="modal">${tc.close}</button>`;
 
     if (p.status === 'sent' && !p.is_expired) {
         footerEl.innerHTML += `
             <button class="btn btn-light-danger" onclick="rejectProposal(${p.id}, true)">
-                <i class="ki-outline ki-cross fs-5 me-1"></i>Отклонить
+                <i class="ki-outline ki-cross fs-5 me-1"></i>${L.reject}
             </button>
             <button class="btn btn-success" onclick="acceptProposal(${p.id}, true)">
-                <i class="ki-outline ki-check fs-5 me-1"></i>Принять предложение
+                <i class="ki-outline ki-check fs-5 me-1"></i>${L.accept_full}
             </button>
         `;
     }
@@ -841,10 +847,10 @@ async function submitRequest() {
 
     try {
         await api.patch(`/requests/${requestId}/submit`);
-        showToast('Заявка успешно подана!', 'success');
+        showToast(L.toast.submitted, 'success');
         await reloadRequest();
     } catch (err) {
-        showToast(err?.message ?? 'Ошибка при подаче заявки', 'error');
+        showToast(err?.message ?? L.toast.submit_error, 'error');
         btnLoading(btn, false);
     }
 }
@@ -860,11 +866,11 @@ async function confirmCancel() {
     try {
         await api.patch(`/requests/${requestId}/cancel`);
         bootstrap.Modal.getInstance(document.getElementById('modal-cancel'))?.hide();
-        showToast('Заявка отменена', 'success');
+        showToast(L.toast.cancelled, 'success');
         await reloadRequest();
     } catch (err) {
         bootstrap.Modal.getInstance(document.getElementById('modal-cancel'))?.hide();
-        showToast(err?.message ?? 'Ошибка при отмене заявки', 'error');
+        showToast(err?.message ?? L.toast.cancel_error, 'error');
     } finally {
         btnLoading(btn, false);
     }
@@ -876,11 +882,11 @@ async function acceptProposal(proposalId, fromModal = false) {
     try {
         await api.patch(`/proposals/${proposalId}/accept`);
         if (fromModal) bootstrap.Modal.getInstance(document.getElementById('modal-proposal'))?.hide();
-        showToast('Предложение принято! Переходим к бронированию.', 'success');
+        showToast(L.toast.accepted, 'success');
         await reloadRequest();
         await loadProposals();
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось принять предложение', 'error');
+        showToast(err?.message ?? L.toast.accept_error, 'error');
     }
 }
 
@@ -888,10 +894,10 @@ async function rejectProposal(proposalId, fromModal = false) {
     try {
         await api.patch(`/proposals/${proposalId}/reject`);
         if (fromModal) bootstrap.Modal.getInstance(document.getElementById('modal-proposal'))?.hide();
-        showToast('Предложение отклонено', 'success');
+        showToast(L.toast.rejected, 'success');
         await loadProposals();
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось отклонить предложение', 'error');
+        showToast(err?.message ?? L.toast.reject_error, 'error');
     }
 }
 
@@ -906,18 +912,18 @@ async function reloadRequest() {
 function renderRoute(legs) {
     const wrap = document.getElementById('route-wrap');
     if (!legs.length) {
-        wrap.innerHTML = '<div class="text-muted fs-7 py-4">Маршрут не задан.</div>';
+        wrap.innerHTML = `<div class="text-muted fs-7 py-4">${L.route_empty}</div>`;
         return;
     }
 
     wrap.innerHTML = legs.map((leg, i) => {
         const last  = i === legs.length - 1;
         const flag  = leg.country_flag ? `<img src="${leg.country_flag}" class="rounded h-20px me-2" onerror="this.remove()">` : '';
-        const dates = (leg.date_from || leg.date_to) ? `${fmtDate(leg.date_from)} — ${fmtDate(leg.date_to)}` : 'даты не указаны';
+        const dates = (leg.date_from || leg.date_to) ? `${fmtDate(leg.date_from)} — ${fmtDate(leg.date_to)}` : L.no_dates;
 
         const dests = (leg.destinations && leg.destinations.length)
             ? leg.destinations.map((d, idx) => `<span class="badge badge-light-primary fs-8">${idx + 1}. ${esc(d)}</span>`).join(' ')
-            : '<span class="text-muted fs-8">по стране в целом</span>';
+            : `<span class="text-muted fs-8">${L.whole_country}</span>`;
 
         const svcs = (leg.services && leg.services.length)
             ? leg.services.map(s => `
@@ -925,7 +931,7 @@ function renderRoute(legs) {
                     <span class="badge badge-light-info fs-8">${esc(s.label)}</span>
                     ${s.summary ? `<span class="text-gray-600 fs-8">${esc(s.summary)}</span>` : ''}
                 </div>`).join('')
-            : '<span class="text-muted fs-8">услуги не указаны</span>';
+            : `<span class="text-muted fs-8">${L.no_services_leg}</span>`;
 
         return `
         <div class="d-flex">
@@ -939,11 +945,11 @@ function renderRoute(legs) {
                     <span class="badge badge-light fs-8"><i class="ki-outline ki-calendar fs-8 me-1"></i>${esc(dates)}</span>
                 </div>
                 <div class="mb-3">
-                    <div class="text-muted fs-8 mb-1">Направления</div>
+                    <div class="text-muted fs-8 mb-1">${L.dest_label}</div>
                     <div class="d-flex flex-wrap gap-1">${dests}</div>
                 </div>
                 <div>
-                    <div class="text-muted fs-8 mb-1">Услуги</div>
+                    <div class="text-muted fs-8 mb-1">${L.services_label.replace(':', '')}</div>
                     <div class="d-flex flex-column gap-1">${svcs}</div>
                 </div>
             </div>
@@ -958,24 +964,25 @@ function renderRequest(r) {
     document.getElementById('page-loader').classList.add('d-none');
     document.getElementById('page-content').classList.remove('d-none');
 
-    document.getElementById('breadcrumb-title').textContent = r.title ?? `Заявка #${requestId}`;
-    document.getElementById('req-title').textContent        = r.title ?? `Заявка #${requestId}`;
+    const _fallback = L.req_fallback.replace(':id', requestId);
+    document.getElementById('breadcrumb-title').textContent = r.title ?? _fallback;
+    document.getElementById('req-title').textContent        = r.title ?? _fallback;
     document.getElementById('req-status-badge').innerHTML   = r.status_label ? `<span class="badge ${r.status_badge_class} fs-7">${esc(r.status_label)}</span>` : '';
-    document.getElementById('req-created').textContent      = r.created_at ? 'Создано ' + fmtDate(r.created_at) : '';
+    document.getElementById('req-created').textContent      = r.created_at ? L.header_created.replace(':date', fmtDate(r.created_at)) : '';
 
     // Deadline badge in header
     const deadlineEl = document.getElementById('req-deadline-badge');
     if (r.deadline_at) {
         const d = daysLeft(r.deadline_at);
         if (d < 0) {
-            deadlineEl.innerHTML = `<span class="badge badge-light-danger fs-8"><i class="ki-outline ki-time fs-8 me-1"></i>Срок истёк</span>`;
+            deadlineEl.innerHTML = `<span class="badge badge-light-danger fs-8"><i class="ki-outline ki-time fs-8 me-1"></i>${L.deadline_expired}</span>`;
         } else if (d <= 3) {
-            deadlineEl.innerHTML = `<span class="badge badge-light-warning fs-8"><i class="ki-outline ki-time fs-8 me-1"></i>Срок: ${d} дн.</span>`;
+            deadlineEl.innerHTML = `<span class="badge badge-light-warning fs-8"><i class="ki-outline ki-time fs-8 me-1"></i>${L.deadline_left.replace(':n', d)}</span>`;
         }
     }
 
     // Info fields
-    document.getElementById('info-pax').textContent         = r.pax_count ? `${r.pax_count} чел.` : '—';
+    document.getElementById('info-pax').textContent         = r.pax_count ? L.pax_unit.replace(':n', r.pax_count) : '—';
     document.getElementById('info-deadline').textContent    = r.deadline_at ? (fmtDateTimeTz(r.deadline_at) + ' (' + tzOffsetLabel(r.deadline_at) + ')') : '—';
 
     const from = r.travel_date_from, to = r.travel_date_to;
@@ -997,7 +1004,7 @@ function renderRequest(r) {
     if (r.proposals_count > 0) {
         counterItems.push(`<div class="bg-light-primary rounded-2 px-4 py-2 text-center">
             <div class="fw-bolder text-primary fs-3 lh-1">${r.proposals_count}</div>
-            <div class="text-muted fs-9 mt-1">Предложения</div>
+            <div class="text-muted fs-9 mt-1">${L.proposals_counter}</div>
         </div>`);
     }
     document.getElementById('header-counters').innerHTML = counterItems.join('');
@@ -1033,7 +1040,7 @@ async function loadProposals() {
         }
         renderProposals(proposals);
     } catch (err) {
-        showToast(err?.message ?? 'Не удалось загрузить предложения', 'error');
+        showToast(err?.message ?? L.toast.proposals_load_error, 'error');
     }
 }
 
@@ -1048,10 +1055,10 @@ async function loadProposals() {
         document.getElementById('page-loader').innerHTML = `
             <div class="text-center py-20">
                 <i class="ki-outline ki-lock-2 fs-4x text-warning mb-4 d-block"></i>
-                <div class="fw-semibold fs-5 text-gray-700">Нет доступа к этой заявке</div>
-                <div class="text-muted fs-7 mt-2 mb-6">Заявка не найдена или принадлежит другому агентству</div>
+                <div class="fw-semibold fs-5 text-gray-700">${L.no_access_title}</div>
+                <div class="text-muted fs-7 mt-2 mb-6">${L.no_access_sub}</div>
                 <a href="{{ route('agency.requests.index') }}" class="btn btn-light btn-sm">
-                    <i class="ki-outline ki-arrow-left fs-5 me-1"></i>К моим заявкам
+                    <i class="ki-outline ki-arrow-left fs-5 me-1"></i>${L.back_to_list}
                 </a>
             </div>
         `;
@@ -1063,7 +1070,7 @@ async function loadProposals() {
         document.getElementById('page-loader').innerHTML = `
             <div class="text-center py-20">
                 <i class="ki-outline ki-cross-circle fs-4x text-danger mb-4 d-block"></i>
-                <div class="fw-semibold fs-5">Заявка не найдена</div>
+                <div class="fw-semibold fs-5">${L.not_found}</div>
             </div>
         `;
         return;

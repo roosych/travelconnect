@@ -1,10 +1,10 @@
 @extends('layouts.agency')
 
-@section('title', 'Профиль')
-@section('page-title', 'Профиль')
+@section('title', __('common.profile'))
+@section('page-title', __('common.profile'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Профиль</li>
+    <li class="breadcrumb-item text-muted">{{ __('common.profile') }}</li>
 @endsection
 
 @php
@@ -24,17 +24,17 @@
             <ul class="nav nav-tabs nav-line-tabs nav-stretch fs-6 border-0" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active d-flex align-items-center gap-2" data-bs-toggle="tab" href="#tab-info" role="tab">
-                        <i class="ki-outline ki-profile-circle fs-4"></i>Информация
+                        <i class="ki-outline ki-profile-circle fs-4"></i>{{ __('profile.tab_info') }}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" href="#tab-avatar" role="tab">
-                        <i class="ki-outline ki-picture fs-4"></i>Аватар
+                        <i class="ki-outline ki-picture fs-4"></i>{{ __('profile.tab_avatar') }}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" href="#tab-security" role="tab">
-                        <i class="ki-outline ki-lock fs-4"></i>Безопасность
+                        <i class="ki-outline ki-lock fs-4"></i>{{ __('profile.security') }}
                     </a>
                 </li>
             </ul>
@@ -48,25 +48,25 @@
             <div class="tab-pane fade show active" id="tab-info" role="tabpanel">
                 <form id="profile-form" class="mw-500px" novalidate>
                     <div class="mb-5">
-                        <label class="form-label fw-semibold required">Имя</label>
+                        <label class="form-label fw-semibold required">{{ __('profile.name') }}</label>
                         <input type="text" id="pf-name" class="form-control form-control-solid"
                                value="{{ $user->name }}" maxlength="255" autocomplete="name" />
                     </div>
                     <div class="mb-5">
-                        <label class="form-label fw-semibold required">Email</label>
+                        <label class="form-label fw-semibold required">{{ __('profile.email') }}</label>
                         <input type="email" id="pf-email" class="form-control form-control-solid"
                                value="{{ $user->email }}" maxlength="255" autocomplete="email" />
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-semibold">Телефон</label>
+                        <label class="form-label fw-semibold">{{ __('profile.phone') }}</label>
                         <input type="text" id="pf-phone" class="form-control form-control-solid js-phone"
                                value="{{ $user->phone }}" maxlength="40" placeholder="+994 ..." autocomplete="tel" />
                     </div>
                     <div id="profile-error" class="alert alert-danger mt-4 d-none"></div>
                     <div class="d-flex justify-content-end mt-5">
                         <button type="submit" id="btn-save-profile" class="btn btn-primary btn-sm">
-                            <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>Сохранить</span>
-                            <span class="indicator-progress d-none">Сохранение... <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>{{ __('common.save') }}</span>
+                            <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                         </button>
                     </div>
                 </form>
@@ -79,7 +79,7 @@
                     <div class="position-relative">
                         <div id="avatar-preview" class="symbol symbol-125px symbol-circle">
                             @if($agencyAvatar)
-                                <img id="avatar-img" src="{{ $agencyAvatar }}" alt="Логотип" class="object-fit-cover" />
+                                <img id="avatar-img" src="{{ $agencyAvatar }}" alt="{{ __('common.logo_alt') }}" class="object-fit-cover" />
                             @else
                                 <span id="avatar-initials" class="symbol-label bg-light-success text-success fw-bold fs-2x">{{ $__ini }}</span>
                             @endif
@@ -91,14 +91,14 @@
 
                     <div class="flex-grow-1">
                         <div class="fw-bold fs-4 text-gray-800">{{ $agencyName ?? '—' }}</div>
-                        <div class="text-muted fs-7 mb-4">Логотип отображается в шапке кабинета. JPG, PNG или WEBP, до 2&nbsp;МБ.</div>
+                        <div class="text-muted fs-7 mb-4">{{ __('profile.avatar.hint') }}</div>
                         <div class="d-flex gap-2">
                             <button type="button" id="btn-avatar-upload" class="btn btn-sm btn-light-success">
-                                <i class="ki-outline ki-cloud-add fs-5 me-1"></i>Загрузить логотип
+                                <i class="ki-outline ki-cloud-add fs-5 me-1"></i>{{ __('profile.avatar.upload') }}
                             </button>
                             <button type="button" id="btn-avatar-remove"
                                     class="btn btn-sm btn-light-danger {{ $agencyAvatar ? '' : 'd-none' }}">
-                                <i class="ki-outline ki-trash fs-5 me-1"></i>Удалить
+                                <i class="ki-outline ki-trash fs-5 me-1"></i>{{ __('common.delete') }}
                             </button>
                         </div>
                         <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp" class="d-none" />
@@ -110,24 +110,24 @@
             <div class="tab-pane fade" id="tab-security" role="tabpanel">
                 <div class="mw-500px">
                     <div class="mb-5">
-                        <label class="form-label fw-semibold required">Текущий пароль</label>
+                        <label class="form-label fw-semibold required">{{ __('profile.current_password') }}</label>
                         <input type="password" id="pwd-current" class="form-control form-control-solid"
-                               placeholder="Введите текущий пароль" autocomplete="current-password" />
+                               placeholder="{{ __('profile.current_password_ph') }}" autocomplete="current-password" />
                     </div>
                     <div class="mb-5">
-                        <label class="form-label fw-semibold required">Новый пароль</label>
+                        <label class="form-label fw-semibold required">{{ __('profile.new_password') }}</label>
                         <input type="password" id="pwd-new" class="form-control form-control-solid"
-                               placeholder="Минимум 8 символов" autocomplete="new-password" />
+                               placeholder="{{ __('profile.new_password_ph') }}" autocomplete="new-password" />
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-semibold required">Повторите новый пароль</label>
+                        <label class="form-label fw-semibold required">{{ __('profile.confirm_password') }}</label>
                         <input type="password" id="pwd-confirm" class="form-control form-control-solid"
-                               placeholder="Повторите новый пароль" autocomplete="new-password" />
+                               placeholder="{{ __('profile.confirm_password_ph') }}" autocomplete="new-password" />
                     </div>
                     <div class="d-flex justify-content-end mt-5">
                         <button id="btn-save-password" class="btn btn-warning btn-sm">
-                            <span class="indicator-label"><i class="ki-outline ki-lock fs-4 me-1"></i>Изменить пароль</span>
-                            <span class="indicator-progress d-none">Сохранение... <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            <span class="indicator-label"><i class="ki-outline ki-lock fs-4 me-1"></i>{{ __('profile.change_password') }}</span>
+                            <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                         </button>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
             phone: byId('pf-phone').value.trim() || null,
         };
         if (!payload.name || !payload.email) {
-            err.textContent = 'Имя и email обязательны.';
+            err.textContent = @json(__('profile.err_required'));
             err.classList.remove('d-none');
             return;
         }
@@ -169,13 +169,13 @@
         try {
             const res = await api.patch('/me', payload);
             if (res.data) {
-                showToast('Профиль обновлён.');
+                showToast(@json(__('profile.toast_saved')));
             } else {
-                err.textContent = res.message ?? 'Не удалось сохранить.';
+                err.textContent = res.message ?? @json(__('profile.err_save'));
                 err.classList.remove('d-none');
             }
         } catch (ex) {
-            const msg = ex?.errors ? Object.values(ex.errors).flat().join(' ') : (ex?.message ?? 'Ошибка сохранения.');
+            const msg = ex?.errors ? Object.values(ex.errors).flat().join(' ') : (ex?.message ?? @json(__('profile.err_save_exc')));
             err.textContent = msg;
             err.classList.remove('d-none');
         } finally {
@@ -190,9 +190,9 @@
         const pwd     = byId('pwd-new').value;
         const confirm = byId('pwd-confirm').value;
 
-        if (!current || !pwd || !confirm) { showToast('Заполните все поля пароля', 'error'); return; }
-        if (pwd.length < 8)               { showToast('Новый пароль должен содержать минимум 8 символов', 'error'); return; }
-        if (pwd !== confirm)              { showToast('Пароли не совпадают', 'error'); return; }
+        if (!current || !pwd || !confirm) { showToast(@json(__('profile.pwd_fill_all')), 'error'); return; }
+        if (pwd.length < 8)               { showToast(@json(__('profile.pwd_min')), 'error'); return; }
+        if (pwd !== confirm)              { showToast(@json(__('profile.pwd_mismatch')), 'error'); return; }
 
         setBtnLoading(btn, true);
         try {
@@ -201,10 +201,10 @@
                 password:              pwd,
                 password_confirmation: confirm,
             });
-            showToast('Пароль успешно изменён.');
+            showToast(@json(__('profile.pwd_changed')));
             byId('pwd-current').value = byId('pwd-new').value = byId('pwd-confirm').value = '';
         } catch (err) {
-            showToast(err?.message ?? 'Не удалось изменить пароль', 'error');
+            showToast(err?.message ?? @json(__('profile.pwd_error')), 'error');
         } finally {
             setBtnLoading(btn, false);
         }
@@ -228,7 +228,7 @@
             btnRemove.disabled = on;
         };
         const showImage = (url) => {
-            preview.innerHTML = `<img id="avatar-img" src="${url}" alt="Логотип" class="object-fit-cover" />`;
+            preview.innerHTML = `<img id="avatar-img" src="${url}" alt="${@json(__('common.logo_alt'))}" class="object-fit-cover" />`;
             btnRemove.classList.remove('d-none');
         };
 
@@ -238,7 +238,7 @@
             const file = this.files[0];
             if (!file) return;
             if (file.size > 2 * 1024 * 1024) {
-                showToast('Файл больше 2 МБ.', 'error');
+                showToast(@json(__('profile.avatar.too_big')), 'error');
                 this.value = '';
                 return;
             }
@@ -254,12 +254,12 @@
                 const data = await res.json();
                 if (res.ok && data.avatar_url) {
                     showImage(data.avatar_url);
-                    showToast('Логотип обновлён.');
+                    showToast(@json(__('profile.avatar.loaded')));
                 } else {
-                    showToast(data.message ?? 'Не удалось загрузить логотип.', 'error');
+                    showToast(data.message ?? @json(__('profile.avatar.upload_err')), 'error');
                 }
             } catch {
-                showToast('Ошибка загрузки. Попробуйте снова.', 'error');
+                showToast(@json(__('profile.avatar.load_err')), 'error');
             } finally {
                 setBusy(false);
                 this.value = '';
@@ -267,7 +267,7 @@
         });
 
         btnRemove.addEventListener('click', async function () {
-            if (!confirm('Удалить логотип агентства?')) return;
+            if (!confirm(@json(__('profile.avatar.delete_confirm')))) return;
             setBusy(true);
             try {
                 const res = await fetch(`/api/agencies/${agencyId}/avatar`, {
@@ -277,10 +277,10 @@
                 if (res.ok) {
                     location.reload();
                 } else {
-                    showToast('Не удалось удалить логотип.', 'error');
+                    showToast(@json(__('profile.avatar.delete_err')), 'error');
                 }
             } catch {
-                showToast('Ошибка. Попробуйте снова.', 'error');
+                showToast(@json(__('profile.avatar.generic_err')), 'error');
             } finally {
                 setBusy(false);
             }

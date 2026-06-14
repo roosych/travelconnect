@@ -2,6 +2,7 @@
 
 return [
     'tour_requests' => 'Tour requests',
+    'new_request'   => 'New request',
 
     // Request statuses (RequestStatus enum)
     'status' => [
@@ -107,6 +108,293 @@ return [
             'deadline'   => 'Deadline',
             'sup_count'  => ':n suppliers',
             'offer_count' => ':n offers',
+        ],
+    ],
+
+    // ── Agency request list (agency index) ─────────────────────────────────
+    'agency_index' => [
+        'search_ph'    => 'Search requests…',
+        'sort' => [
+            'newest'   => 'Newest first',
+            'oldest'   => 'Oldest first',
+            'deadline' => 'Nearest deadline',
+            'pax'      => 'More guests',
+        ],
+        'chips' => [
+            'all'        => 'All',
+            'submitted'  => 'Submitted',
+            'processing' => 'Under review',
+            'hot'        => '🔥 Urgent',
+            'booked'     => 'Booked',
+            'completed'  => 'Completed',
+            'cancelled'  => 'Cancelled',
+            'draft'      => 'Drafts',
+        ],
+        'load_error'   => 'Failed to load requests. Please refresh the page.',
+        'empty'        => 'No requests found.',
+        'submit_first' => 'Submit your first request',
+        'cols' => [
+            'request_route' => 'Request & route',
+            'services'      => 'Services',
+            'tour_dates'    => 'Travel period',
+            'guests'        => 'Guests',
+            'deadline'      => 'Response deadline',
+            'proposals'     => 'Proposals',
+            'status'        => 'Status',
+        ],
+        'pagination'   => ':from–:to of :total',
+    ],
+
+    // ── Agency request create/edit (agency create) ─────────────────────────
+    'agency_create' => [
+        'title_new'  => 'New tour request',
+        'title_edit' => 'Edit request',
+        'bc_new'     => 'New request',
+        'bc_edit'    => 'Editing',
+
+        // Step navigation
+        'steps' => [
+            's1_title' => 'Basics',  's1_desc' => 'Title, guests, deadline',
+            's2_title' => 'Route',   's2_desc' => 'Countries, dates, services',
+            's3_title' => 'Files',   's3_desc' => 'Attachments — optional',
+            's4_title' => 'Review',  's4_desc' => 'Confirmation',
+        ],
+
+        // Step 1 — basics
+        'step1' => [
+            'heading'        => 'Basic information',
+            'subtitle'       => 'Briefly describe the request and the timeline.',
+            'title_label'    => 'Request title',
+            'title_tip'      => 'A short, clear title to find this request in the list',
+            'title_ph'       => 'E.g.: Safari tour for 10 guests — Kenya, October 2026',
+            'pax_label'      => 'Number of guests',
+            'pax_tip'        => 'Total number of travelers in the group',
+            'pax_ph'         => '10',
+            'deadline_label' => 'Response deadline',
+            'deadline_tip'   => 'How long you wait for proposals. Time in your zone: :tz',
+            'notes_label'    => 'Notes and special requests',
+            'notes_tip'      => 'Any special requirements and requests for the operator. Optional.',
+            'notes_ph'       => 'Any special requirements, wishes or notes for the operator…',
+        ],
+
+        // Step 2 — route
+        'step2' => [
+            'heading'           => 'Route by country',
+            'subtitle'          => 'Add countries in order. For each — dates, destinations and required services with requirements.',
+            'add_country'       => 'Add country',
+            'leg_title'         => 'Route country',
+            'move_up'           => 'Up',
+            'move_down'         => 'Down',
+            'remove'            => 'Remove',
+            'country_label'     => 'Country',
+            'country_tip'       => 'Country of the route segment. Each country can be added only once.',
+            'country_ph'        => 'Select a country…',
+            'dates_label'       => 'Stay dates',
+            'dates_tip'         => 'Period in this country. The boundary day with the neighboring country may overlap — departure and arrival on the same day.',
+            'dest_label'        => 'Destinations',
+            'dest_tip'          => 'Click destinations in route order — the number shows the sequence.',
+            'dest_pick_country' => 'Select a country first.',
+            'dest_none'         => 'No destinations defined for this country — the request will cover the country as a whole.',
+            'services_label'    => 'Services',
+            'services_tip'      => 'Selected services apply to all chosen destinations of this country.',
+            'req_suffix'        => '— requirements',
+            'req_none'          => 'No additional requirements.',
+            'select_ph'         => 'Select…',
+        ],
+
+        // Step 3 — files
+        'step3' => [
+            'heading'        => 'Attachments',
+            'subtitle'       => 'Program, passports, wishes — anything that helps the operator. Optional.',
+            'existing'       => 'Attached files',
+            'drop_hint'      => 'Drag files here or',
+            'drop_choose'    => 'choose',
+            'file_types'     => 'PDF, Word, Excel, JPG, PNG · up to 20 MB',
+            'remove_confirm' => 'Remove this file?',
+            'remove_error'   => 'Failed to remove the file',
+        ],
+
+        // Step 4 — review
+        'step4' => [
+            'heading'       => 'Review the request',
+            'subtitle'      => 'Make sure everything is correct and create the request.',
+            'r_title'       => 'Title',
+            'r_pax'         => 'Guests',
+            'r_deadline'    => 'Response deadline',
+            'r_route'       => 'Route',
+            'r_notes'       => 'Notes',
+            'r_files'       => 'Files',
+            'no_dates'      => 'dates not specified',
+            'whole_country' => 'country as a whole',
+            'no_segments'   => 'no segments',
+            'files_count'   => ':n file(s)',
+            'files_none'    => 'none',
+        ],
+
+        // Navigation buttons
+        'nav' => [
+            'back'          => 'Back',
+            'save_draft'    => 'Save draft',
+            'saving'        => 'Saving…',
+            'create_submit' => 'Create and submit',
+            'save_submit'   => 'Save and submit',
+            'submitting'    => 'Submitting…',
+            'next'          => 'Next',
+        ],
+
+        // Step validation (JS)
+        'val' => [
+            'title_req'    => 'Enter the request title.',
+            'pax_req'      => 'Enter the number of guests.',
+            'deadline_req' => 'Enter the response deadline.',
+            'leg_req'      => 'Add at least one country to the route.',
+            'seg_country'  => 'Segment :n: select a country.',
+            'seg_dates'    => 'Segment :n: enter the stay dates.',
+            'seg_service'  => 'Segment :n: select at least one service.',
+            'seg_dest'     => 'Segment :n: select at least one destination.',
+            'seg_unique'   => 'Each country in the route must appear only once.',
+            'seg_order'    => 'Dates must follow the route order: a country starts no earlier than the departure from the previous one (a shared boundary day is allowed).',
+            'req_select'   => 'Segment :n, :label: select “:attr”.',
+            'req_fill'     => 'Segment :n, :label: enter “:attr”.',
+        ],
+
+        // Submission (JS)
+        'submit' => [
+            'uploading'     => 'Uploading files… :i/:n',
+            'submitting'    => 'Submitting the request…',
+            'generic_error' => 'Something went wrong.',
+            'files_failed'  => 'The request was saved, but files failed to upload: :files. The request was not submitted — open it and submit manually.',
+            'submit_failed' => 'The request was saved, but submission failed. Open it and click “Submit”.',
+            'conn_error'    => 'Connection error. Please try again.',
+        ],
+    ],
+
+    // ── Agency request detail page (agency show) ───────────────────────────
+    'agency_show' => [
+        'title'        => 'Request details',
+        'breadcrumb'   => 'Request #:id',
+        'req_fallback' => 'Request #:id',
+
+        // Toolbar
+        'edit'       => 'Edit',
+        'submit'     => 'Submit request',
+        'submitting' => 'Submitting...',
+        'cancel'     => 'Cancel request',
+
+        // Info tiles
+        'period'            => 'Travel period',
+        'guests'            => 'Guests',
+        'deadline'          => 'Response deadline',
+        'services_label'    => 'Services:',
+        'notes'             => 'Notes',
+        'attachments'       => 'Attachments',
+        'no_attachments'    => 'No attachments',
+        'pax_unit'          => ':n pax',
+        'header_created'    => 'Created :date',
+        'deadline_expired'  => 'Deadline passed',
+        'deadline_left'     => 'Deadline: :n d.',
+        'proposals_counter' => 'Proposals',
+
+        // Route
+        'route'           => 'Route',
+        'route_sub'       => 'Countries in order, destinations and required services with requirements',
+        'route_empty'     => 'No route defined.',
+        'dest_label'      => 'Destinations',
+        'no_dates'        => 'dates not specified',
+        'whole_country'   => 'country as a whole',
+        'no_services_leg' => 'services not specified',
+
+        // Proposals block
+        'proposals_title' => 'Proposals',
+        'proposals_sub'   => 'Proposals prepared by our team for this request',
+        'empty_title'     => 'No proposals yet',
+        'empty_sub'       => 'Please wait — the operator is working on your request.',
+
+        // Proposal card
+        'expired_badge'     => 'Expired',
+        'valid_until_short' => 'until :date',
+        'created'           => 'Created: :date',
+        'valid_until'       => 'Valid until: :date',
+        'details'           => 'Details',
+        'reject'            => 'Reject',
+        'accept'            => 'Accept',
+        'accept_full'       => 'Accept proposal',
+        'accepted_line'     => 'Accepted',
+        'rejected_line'     => 'Rejected',
+        'cancelled_by_op'   => 'Revoked by operator',
+        'expired_full'      => 'Validity period expired',
+        'attachments_label' => 'Attachments:',
+
+        // "Awaiting decision" banner (plural)
+        'banner_await' => [
+            'one'   => 'proposal awaits your decision',
+            'other' => 'proposals await your decision',
+        ],
+        'banner_hint' => 'Review the proposals below and choose a suitable option',
+        'banner_cta'  => 'To proposals',
+
+        // Proposal modal
+        'proposal_modal_title' => 'Proposal',
+        'modal_title'          => 'Proposal #:id',
+        'modal_load_error'     => 'Failed to load the proposal',
+        'modal_no_services'    => 'No services listed',
+        'modal_created'        => 'Created:',
+        'modal_valid'          => 'Valid until',
+        'modal_description'    => 'Description',
+        'modal_composition'    => 'Proposal contents',
+        'modal_total'          => 'Total',
+
+        // Status stepper
+        'steps' => [
+            'draft'      => ['label' => 'Draft',       'hint' => 'Request not submitted yet'],
+            'submitted'  => ['label' => 'Submitted',   'hint' => 'Awaiting operator confirmation'],
+            'processing' => ['label' => 'Under review', 'hint' => 'Selecting options for you'],
+            'booked'     => ['label' => 'Booked',      'hint' => 'Booking confirmed'],
+            'completed'  => ['label' => 'Completed',   'hint' => 'The trip took place'],
+        ],
+        'cancelled_title' => 'Request cancelled',
+        'cancelled_sub'   => 'No further processing possible',
+
+        // Cancel modal
+        'cancel_modal_title' => 'Cancel request?',
+        'cancel_modal_body'  => 'After cancellation the request will move to “Cancelled” status and cannot be re-submitted.',
+        'cancel_back'        => 'Back',
+        'cancel_confirm'     => 'Yes, cancel',
+        'cancelling'         => 'Cancelling...',
+
+        // FilePond
+        'fp_idle' => 'Drag files here or <span class="filepond--label-action">choose</span><br><span style="font-size:11px;color:#a1a5b7">PDF, Word, Excel, JPG, PNG · up to 20 MB</span>',
+
+        // File actions
+        'open'                  => 'Open',
+        'download'              => 'Download',
+        'delete'                => 'Delete',
+        'attach_delete_confirm' => 'Delete attachment?',
+
+        // Access errors
+        'no_access_title' => 'No access to this request',
+        'no_access_sub'   => 'The request was not found or belongs to another agency',
+        'back_to_list'    => 'To my requests',
+        'not_found'       => 'Request not found',
+
+        // Toasts / messages
+        'toast' => [
+            'submitted'            => 'Request submitted successfully!',
+            'submit_error'         => 'Error submitting the request',
+            'cancelled'            => 'Request cancelled',
+            'cancel_error'         => 'Error cancelling the request',
+            'accepted'             => 'Proposal accepted! Proceeding to booking.',
+            'accept_error'         => 'Failed to accept the proposal',
+            'rejected'             => 'Proposal rejected',
+            'reject_error'         => 'Failed to reject the proposal',
+            'proposals_load_error' => 'Failed to load proposals',
+            'file_open_error'      => 'Error opening the file',
+            'file_download_error'  => 'Error downloading the file',
+            'file_delete_error'    => 'Error deleting the file',
+            'upload_error'         => 'Upload error',
+            'net_error'            => 'Network error',
+            'revert_error'         => 'Revert error',
+            'id_undefined'         => 'ID is undefined',
         ],
     ],
 
