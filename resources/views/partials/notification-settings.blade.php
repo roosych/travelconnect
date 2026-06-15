@@ -34,7 +34,7 @@
     <div class="d-flex justify-content-end mt-6">
         <button id="btn-save-notif" class="btn btn-{{ $accent }} btn-sm">
             <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>{{ __('common.save') }}</span>
-            <span class="indicator-progress d-none">
+            <span class="indicator-progress">
                 <span class="spinner-border spinner-border-sm align-middle me-2"></span>{{ __('common.saving') }}
             </span>
         </button>

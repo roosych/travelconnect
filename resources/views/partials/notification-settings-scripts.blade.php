@@ -92,9 +92,7 @@
         });
 
         const btn = this;
-        btn.disabled = true;
-        btn.querySelector('.indicator-label').classList.add('d-none');
-        btn.querySelector('.indicator-progress').classList.remove('d-none');
+        btnLoading(btn, true);
 
         try {
             await api.patch('/settings/notifications', { matrix });
@@ -102,9 +100,7 @@
         } catch (e) {
             showToast(e?.message ?? tn.save_error, 'error');
         } finally {
-            btn.disabled = false;
-            btn.querySelector('.indicator-label').classList.remove('d-none');
-            btn.querySelector('.indicator-progress').classList.add('d-none');
+            btnLoading(btn, false);
         }
     });
 
