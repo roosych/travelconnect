@@ -59,11 +59,26 @@
                 </a>
             </div>
             <div id="req-cities" class="text-gray-700 fs-6 mt-2 d-none"></div>
+            <div id="req-pax" class="text-gray-700 fs-6 mt-2 d-none"></div>
             <div id="req-deadline" class="d-none mt-3">
                 <span class="text-muted fs-8 me-1">
                     <i class="ki-outline ki-calendar fs-7 me-1"></i>{{ __('suppliers.cabinet.rfqs.compose.sub_deadline') }}
                 </span>
                 <span class="fw-semibold text-gray-700 fs-7" id="req-deadline-val"></span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Operator note + request attachments (бывший дровер) --}}
+    <div id="req-info" class="card card-flush mb-6 d-none">
+        <div class="card-body py-5 d-flex flex-column gap-5">
+            <div id="req-note" class="d-none">
+                <div class="text-muted fs-8 text-uppercase fw-bold mb-2">{{ __('suppliers.cabinet.rfqs.detail.description') }}</div>
+                <div class="text-gray-800 fs-6" id="req-note-val"></div>
+            </div>
+            <div id="req-files" class="d-none">
+                <div class="text-muted fs-8 text-uppercase fw-bold mb-2">{{ __('suppliers.cabinet.rfqs.compose.op_files') }}</div>
+                <div class="d-flex flex-wrap gap-3" id="req-files-list"></div>
             </div>
         </div>
     </div>
@@ -194,15 +209,6 @@
             </div>
         </div>
     </div>
-</div>
-
-{{-- Быстрый просмотр услуги: детали запроса оператора (read-only) --}}
-<div class="offcanvas offcanvas-end" tabindex="-1" id="svc-detail-drawer" style="width:460px;max-width:92vw">
-    <div class="offcanvas-header border-bottom">
-        <h4 class="offcanvas-title fw-bold" id="svc-detail-title">{{ __('suppliers.cabinet.rfqs.compose.details') }}</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body" id="svc-detail-body"></div>
 </div>
 
 {{-- Подтверждение отзыва предложения (текст зависит от статуса) --}}
@@ -465,11 +471,36 @@ function renderPage() {
     document.getElementById('page-content').classList.remove('d-none');
 
     renderRequestHeader();
+    renderRequestInfo();
     renderSvcList();
 }
 
 function pluralDays(n) {
     return plForm(n, C.day);
+}
+
+// Заметка оператора + вложения к запросу — общие для всей заявки (одинаковы у всех RFQ).
+function renderRequestInfo() {
+    const note  = allRfqs.find(r => r.description?.trim())?.description?.trim() ?? '';
+    const atts  = allRfqs.find(r => (r.shared_attachments ?? []).length)?.shared_attachments ?? [];
+
+    const noteEl  = document.getElementById('req-note');
+    if (note) {
+        document.getElementById('req-note-val').textContent = note;
+        noteEl.classList.remove('d-none');
+    } else {
+        noteEl.classList.add('d-none');
+    }
+
+    const filesEl = document.getElementById('req-files');
+    if (atts.length) {
+        document.getElementById('req-files-list').innerHTML = atts.map(svcFileChip).join('');
+        filesEl.classList.remove('d-none');
+    } else {
+        filesEl.classList.add('d-none');
+    }
+
+    document.getElementById('req-info').classList.toggle('d-none', !note && !atts.length);
 }
 
 function renderRequestHeader() {
@@ -488,6 +519,15 @@ function renderRequestHeader() {
         citiesEl.classList.remove('d-none');
     } else {
         citiesEl.classList.add('d-none');
+    }
+
+    const pax    = allRfqs.find(r => r.request?.pax_count)?.request?.pax_count;
+    const paxEl  = document.getElementById('req-pax');
+    if (pax) {
+        paxEl.innerHTML = `<i class="ki-outline ki-profile-user fs-6 me-1 text-gray-500"></i>${pax} ${plForm(pax, L.tourists)}`;
+        paxEl.classList.remove('d-none');
+    } else {
+        paxEl.classList.add('d-none');
     }
 
     const deadlines = allRfqs.filter(r => r.deadline_at).map(r => r.deadline_at).sort();
@@ -519,8 +559,6 @@ function renderSvcList() {
 
 function renderSvcItem(item) {
     const { rfq, type, state } = item;
-    const color = SVC_COLOR[type] ?? 'secondary';
-    const icon  = SVC_ICON[type]  ?? 'ki-abstract-26';
     const label = SERVICE_LABELS[type] ?? type;
     const key   = draftKey(rfq.id, type);
 
@@ -528,19 +566,6 @@ function renderSvcItem(item) {
     const reqHtml = reqSummary
         ? `<div class="text-muted fs-7 mt-1"><i class="ki-outline ki-information-3 fs-7 me-1"></i>${esc(reqSummary)}</div>`
         : '';
-
-    const circleColor = state === 'closed' ? 'secondary' : (state === 'submitted' ? 'success' : color);
-    const circleIcon  = state === 'submitted' ? 'ki-check-circle' : icon;
-    const circleText  = state === 'submitted' ? 'success' : (state === 'closed' ? 'muted' : color);
-    const iconCircle  = `
-        <span class="w-40px h-40px rounded-circle bg-light-${circleColor}
-              d-flex align-items-center justify-content-center flex-shrink-0">
-            <i class="ki-outline ${circleIcon} fs-5 text-${circleText}"></i>
-        </span>`;
-
-    const detailsBtn = `<button type="button" class="btn btn-sm btn-light"
-        onclick="event.stopPropagation();showSvcDetail(${rfq.id},'${type}')">
-        <i class="ki-outline ki-eye fs-6 me-1"></i>${C.details}</button>`;
 
     if (state === 'submitted') {
         const { offer } = item;
@@ -551,7 +576,6 @@ function renderSvcItem(item) {
         const fileCount = (offer.attachments ?? []).length;
         return `
         <div class="svc-item is-submitted" data-key="${esc(key)}">
-            ${iconCircle}
             <div class="flex-grow-1 min-w-0">
                 <div class="fw-bold text-gray-900 fs-6">${esc(label)}</div>
                 ${resourceLine ? `<div class="text-muted fs-8 mt-1"><i class="ki-outline ki-abstract-26 fs-8 me-1"></i>${esc(resourceLine.replace(/^[^:]+:\s*/, ''))}</div>` : ''}
@@ -564,7 +588,6 @@ function renderSvcItem(item) {
             <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
                 <div class="fw-bolder text-gray-900 fs-4">${fmtMoney(offer.unit_price, offer.currency)}</div>
                 <div class="d-flex gap-2">
-                    ${detailsBtn}
                     ${canWithdraw
                         ? `<button class="btn btn-sm btn-light-danger" onclick="withdrawOffer(${offer.id}, ${rfq.id}, '${offer.status}')">
                                <i class="ki-outline ki-cross-circle fs-7 me-1"></i>${C.wd_confirm}
@@ -579,7 +602,6 @@ function renderSvcItem(item) {
         const { lastOffer } = item;
         return `
         <div class="svc-item is-closed" data-key="${esc(key)}">
-            ${iconCircle}
             <div class="flex-grow-1 min-w-0">
                 <div class="fw-semibold text-gray-600 fs-6">${esc(label)}</div>
                 <div class="mt-1"><span class="badge ${rfq.status_badge_class} fs-8">${esc(rfq.status_label)}</span></div>
@@ -589,7 +611,6 @@ function renderSvcItem(item) {
                     ? `<div class="fw-semibold text-gray-600 fs-6">${fmtMoney(lastOffer.unit_price, lastOffer.currency)}</div>
                        <span class="badge ${lastOffer.status_badge_class} fs-8">${esc(lastOffer.status_label)}</span>`
                     : `<i class="ki-outline ki-lock-2 fs-2 text-gray-400"></i>`}
-                ${detailsBtn}
             </div>
         </div>`;
     }
@@ -605,14 +626,12 @@ function renderSvcItem(item) {
     return `
     <div class="svc-item is-pending" data-key="${esc(key)}"
          onclick="openSvcModal('${rfq.id}', '${type}')">
-        ${iconCircle}
         <div class="flex-grow-1 min-w-0">
             <div class="fw-bold text-gray-900 fs-6">${esc(label)}</div>
             ${reqHtml}
             ${deadlineHtml}
         </div>
         <div class="d-flex gap-2 flex-shrink-0">
-            ${detailsBtn}
             <button class="btn btn-sm btn-primary" tabindex="-1">
                 <i class="ki-outline ki-send fs-6 me-1"></i>${C.respond}
             </button>
@@ -635,10 +654,7 @@ function parseOfferNotes(notes) {
     return { resourceLine: null, userNotes: notes.trim() };
 }
 
-// ── Быстрый просмотр услуги (drawer) ────────────────────────────────────────────
-
-const svcDetailDrawer = new bootstrap.Offcanvas(document.getElementById('svc-detail-drawer'));
-
+// ── Вложения: чип файла ─────────────────────────────────────────────────────────
 function svcFileChip(a) {
     const ext = (a.filename ?? '').split('.').pop().toLowerCase();
     let c = 'text-primary';
@@ -651,62 +667,6 @@ function svcFileChip(a) {
         <i class="ki-outline ki-file fs-2 ${c}"></i>
         <div class="lh-sm"><div class="fw-semibold fs-7">${esc(name)}</div><div class="text-muted fs-8">${esc(a.human_size ?? '')}</div></div>
     </a>`;
-}
-
-function svcDetailRow(label, valueHtml) {
-    return `<div class="d-flex flex-column">
-        <span class="text-muted fs-8 text-uppercase fw-bold">${esc(label)}</span>
-        <span class="text-gray-800 fw-semibold fs-6 mt-1">${valueHtml}</span></div>`;
-}
-
-function svcFilesBlock(title, atts) {
-    if (!atts.length) return '';
-    return `<div class="d-flex flex-column gap-2">
-        <span class="text-muted fs-8 text-uppercase fw-bold">${esc(title)}</span>
-        <div class="d-flex flex-wrap gap-3">${atts.map(svcFileChip).join('')}</div></div>`;
-}
-
-function showSvcDetail(rfqId, type) {
-    rfqId = parseInt(rfqId);
-    const rfq = allRfqs.find(r => r.id === rfqId);
-    if (!rfq) return;
-
-    const label    = SERVICE_LABELS[type] ?? type;
-    const seg      = rfq.segment ?? {};
-    const dates    = (seg.date_from || seg.date_to) ? `${fmtDate(seg.date_from)} — ${fmtDate(seg.date_to)}` : '—';
-    const cities   = (seg.destinations ?? []).filter(Boolean);
-    const pax      = rfq.request?.pax_count;
-    const reqs     = seg.requirements_summary;
-    const note     = rfq.description?.trim();
-    const opAtts   = rfq.shared_attachments ?? [];
-    const deadline = rfq.deadline_at;
-
-    // Ваше предложение по этой услуге (если уже ответили) — со своими файлами/примечаниями.
-    const myOffer  = getActiveOffer(rfqId);
-    const myNotes  = myOffer ? parseOfferNotes(myOffer.notes).userNotes : null;
-    const myAtts   = myOffer?.attachments ?? [];
-
-    const myOfferBlock = myOffer ? `
-        <div class="separator"></div>
-        <div class="text-muted fs-8 text-uppercase fw-bold">${C.your_offer}</div>
-        ${svcDetailRow(C.your_status, `<span class="badge ${myOffer.status_badge_class} fs-8">${esc(myOffer.status_label)}</span>`)}
-        ${svcDetailRow(C.your_amount, fmtMoney(myOffer.unit_price, myOffer.currency))}
-        ${myNotes ? svcDetailRow(C.your_notes, esc(myNotes)) : ''}
-        ${svcFilesBlock(C.your_files, myAtts)}` : '';
-
-    document.getElementById('svc-detail-title').textContent = label;
-    document.getElementById('svc-detail-body').innerHTML = `
-        <div class="d-flex flex-column gap-5">
-            ${reqs ? svcDetailRow(L.detail.requirements, esc(reqs)) : ''}
-            ${svcDetailRow(L.detail.dates, esc(dates))}
-            ${cities.length ? svcDetailRow(L.detail.route, cities.map(esc).join(', ')) : ''}
-            ${pax ? svcDetailRow(L.detail.pax, `${pax}`) : ''}
-            ${deadline ? svcDetailRow(L.detail.deadline, fmtDeadline(deadline)) : ''}
-            ${note ? svcDetailRow(L.detail.description, esc(note)) : ''}
-            ${svcFilesBlock(C.op_files, opAtts)}
-            ${myOfferBlock}
-        </div>`;
-    svcDetailDrawer.show();
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
