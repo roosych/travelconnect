@@ -32,6 +32,7 @@ return [
         'upload_err'     => 'Loqonu yükləmək alınmadı.',
         'load_err'       => 'Yükləmə xətası. Yenidən cəhd edin.',
         'delete_confirm' => 'Loqonu silmək?',
+        'delete_body'    => 'Loqo silinəcək. İstənilən vaxt yenisini yükləyə bilərsiniz.',
         'delete_err'     => 'Loqonu silmək alınmadı.',
         'generic_err'    => 'Xəta. Yenidən cəhd edin.',
     ],

@@ -136,6 +136,25 @@
     </div>
 </div>
 
+{{-- Подтверждение удаления логотипа --}}
+<div class="modal fade" id="modal-delete-avatar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="fw-bold">{{ __('suppliers.cabinet.profile.logo_delete_confirm') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-muted py-3">
+                {{ __('suppliers.cabinet.profile.logo_delete_body') }}
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                <button type="button" id="btn-confirm-delete-avatar" class="btn btn-danger btn-sm">{{ __('common.delete') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -259,8 +278,11 @@
             }
         });
 
-        btnRemove.addEventListener('click', async function () {
-            if (!confirm(@json(__('suppliers.cabinet.profile.logo_delete_confirm')))) return;
+        const deleteModal = new bootstrap.Modal(byId('modal-delete-avatar'));
+        btnRemove.addEventListener('click', () => deleteModal.show());
+
+        byId('btn-confirm-delete-avatar').addEventListener('click', async function () {
+            deleteModal.hide();
             setBusy(btnRemove, true);
             try {
                 const res = await fetch(`/api/suppliers/${supplierId}/avatar`, {

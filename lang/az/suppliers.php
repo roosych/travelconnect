@@ -218,6 +218,7 @@ return [
             'logo_upload_err'     => 'Loqonu yükləmək alınmadı.',
             'logo_load_err'       => 'Yükləmə xətası. Yenidən cəhd edin.',
             'logo_delete_confirm' => 'Şirkət loqosunu silmək?',
+            'logo_delete_body'    => 'Loqo silinəcək. İstənilən vaxt yenisini yükləyə bilərsiniz.',
             'logo_delete_err'     => 'Loqonu silmək alınmadı.',
             'generic_err'         => 'Xəta. Yenidən cəhd edin.',
             'save_err'            => 'Yadda saxlama xətası.',

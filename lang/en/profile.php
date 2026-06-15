@@ -32,6 +32,7 @@ return [
         'upload_err'     => 'Failed to upload the logo.',
         'load_err'       => 'Upload error. Please try again.',
         'delete_confirm' => 'Delete the logo?',
+        'delete_body'    => 'The logo will be removed. You can upload a new one anytime.',
         'delete_err'     => 'Failed to delete the logo.',
         'generic_err'    => 'Error. Please try again.',
     ],

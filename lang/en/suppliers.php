@@ -218,6 +218,7 @@ return [
             'logo_upload_err'     => 'Failed to upload the logo.',
             'logo_load_err'       => 'Upload error. Please try again.',
             'logo_delete_confirm' => 'Delete the company logo?',
+            'logo_delete_body'    => 'The logo will be removed. You can upload a new one anytime.',
             'logo_delete_err'     => 'Failed to delete the logo.',
             'generic_err'         => 'Error. Please try again.',
             'save_err'            => 'Save error.',
