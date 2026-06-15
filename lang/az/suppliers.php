@@ -250,6 +250,7 @@ return [
                 'status'  => 'Status',
             ],
             'open'       => 'Aç',
+            'request_no' => 'Sorğu #:id',
             'empty'      => 'Təklif tapılmadı.',
             'load_error' => 'Təklifləri yükləmək alınmadı. Səhifəni yeniləyin.',
             'of'         => '/',

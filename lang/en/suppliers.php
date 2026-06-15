@@ -250,6 +250,7 @@ return [
                 'status'  => 'Status',
             ],
             'open'       => 'Open',
+            'request_no' => 'Request #:id',
             'empty'      => 'No offers found.',
             'load_error' => 'Failed to load offers. Please refresh the page.',
             'of'         => 'of',

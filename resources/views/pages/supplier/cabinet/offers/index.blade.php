@@ -132,10 +132,15 @@ function renderTable(offers, meta) {
 
     const rows = offers.map(o => {
         const sm = serviceMeta(o.rfq_service_type);
+        const reqId = o.rfq?.request?.id;
+        const reqCell = reqId
+            ? `<a href="/supplier/rfqs/request/${reqId}" class="fw-bold text-gray-800 text-hover-primary">${L.request_no.replace(':id', reqId)}</a>
+               <div class="text-muted fs-8">${escHtml(o.rfq_title ?? '')}</div>`
+            : `<span class="text-muted">${escHtml(o.rfq_title ?? '—')}</span>`;
         return `
             <tr>
                 <td><a href="/supplier/offers/${o.id}" class="fw-bold text-gray-800 text-hover-primary">#${o.id}</a></td>
-                <td class="text-muted">${escHtml(o.rfq_title ?? '—')}</td>
+                <td>${reqCell}</td>
                 <td>
                     <i class="${sm.icon} fs-6 text-gray-500 me-1"></i>
                     <span class="fs-7 text-gray-700">${sm.label}</span>
