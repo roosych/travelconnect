@@ -166,6 +166,6 @@ class User extends Authenticatable implements HasMedia
             }
         }
 
-        return config('app.timezone');
+        return config('app.display_timezone', config('app.timezone'));
     }
 }
