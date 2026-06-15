@@ -66,7 +66,7 @@
                     <div class="d-flex justify-content-end mt-5">
                         <button type="submit" id="btn-save-profile" class="btn btn-primary btn-sm">
                             <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>{{ __('common.save') }}</span>
-                            <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            <span class="indicator-progress">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                         </button>
                     </div>
                 </form>
@@ -127,7 +127,7 @@
                     <div class="d-flex justify-content-end mt-5">
                         <button id="btn-save-password" class="btn btn-warning btn-sm">
                             <span class="indicator-label"><i class="ki-outline ki-lock fs-4 me-1"></i>{{ __('profile.change_password') }}</span>
-                            <span class="indicator-progress d-none">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            <span class="indicator-progress">{{ __('common.saving') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                         </button>
                     </div>
                 </div>
@@ -142,12 +142,6 @@
 @push('scripts')
 <script>
     const byId = id => document.getElementById(id);
-
-    function setBtnLoading(btn, on) {
-        btn.disabled = on;
-        btn.querySelector('.indicator-label').classList.toggle('d-none', on);
-        btn.querySelector('.indicator-progress').classList.toggle('d-none', !on);
-    }
 
     // ── Личные данные ──────────────────────────────────────────────────────
     byId('profile-form').addEventListener('submit', async function (e) {
@@ -164,7 +158,7 @@
             err.classList.remove('d-none');
             return;
         }
-        setBtnLoading(btn, true);
+        btnLoading(btn, true);
         err.classList.add('d-none');
         try {
             const res = await api.patch('/me', payload);
@@ -179,7 +173,7 @@
             err.textContent = msg;
             err.classList.remove('d-none');
         } finally {
-            setBtnLoading(btn, false);
+            btnLoading(btn, false);
         }
     });
 
@@ -194,7 +188,7 @@
         if (pwd.length < 8)               { showToast(@json(__('profile.pwd_min')), 'error'); return; }
         if (pwd !== confirm)              { showToast(@json(__('profile.pwd_mismatch')), 'error'); return; }
 
-        setBtnLoading(btn, true);
+        btnLoading(btn, true);
         try {
             await api.patch('/me/password', {
                 current_password:      current,
@@ -206,7 +200,7 @@
         } catch (err) {
             showToast(err?.message ?? @json(__('profile.pwd_error')), 'error');
         } finally {
-            setBtnLoading(btn, false);
+            btnLoading(btn, false);
         }
     });
 
