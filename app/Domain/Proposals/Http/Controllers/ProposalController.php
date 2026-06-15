@@ -2,6 +2,7 @@
 
 namespace App\Domain\Proposals\Http\Controllers;
 
+use App\Domain\Attachments\Models\Attachment;
 use App\Domain\Offers\Models\Offer;
 use App\Domain\Offers\Services\OfferService;
 use App\Domain\Services\ServiceCatalog;
@@ -138,7 +139,7 @@ class ProposalController extends Controller
             $request->user(),
         );
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -150,12 +151,42 @@ class ProposalController extends Controller
     {
         $this->authorize('view', $proposal);
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
             'data'    => new ProposalResource($proposal),
         ]);
+    }
+
+    /**
+     * Анонимная inline-отдача фото из вложений оффера, входящего в это КП.
+     * Дезинтермедиация: доступ только участникам КП (агентство-получатель/оператор),
+     * только картинки офферов этого КП, имя файла нейтральное (без идентификации поставщика).
+     */
+    public function offerPhoto(Request $request, Proposal $proposal, Attachment $attachment): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $this->authorize('view', $proposal);
+
+        $model = $attachment->attachable;
+        $offerIds = $proposal->offers()->pluck('offers.id');
+
+        abort_unless(
+            $model instanceof Offer
+                && $offerIds->contains($model->id)
+                && str_starts_with((string) $attachment->mime_type, 'image/'),
+            404
+        );
+
+        abort_unless(\Illuminate\Support\Facades\Storage::disk($attachment->disk)->exists($attachment->path), 404);
+
+        $ext = pathinfo((string) $attachment->filename, PATHINFO_EXTENSION) ?: 'jpg';
+
+        return \Illuminate\Support\Facades\Storage::disk($attachment->disk)->response(
+            $attachment->path,
+            'photo.'.$ext,
+            ['Content-Type' => $attachment->mime_type ?? 'image/jpeg'],
+        );
     }
 
     public function update(UpdateProposalRequest $request, Proposal $proposal): JsonResponse
@@ -166,7 +197,7 @@ class ProposalController extends Controller
 
         $proposal->fill($request->validated());
         $proposal->save();
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -181,7 +212,7 @@ class ProposalController extends Controller
         }
 
         $proposal = $this->proposalService->send($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -194,7 +225,7 @@ class ProposalController extends Controller
         $this->authorize('decide', $proposal);
 
         $proposal = $this->proposalService->accept($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -207,7 +238,7 @@ class ProposalController extends Controller
         $this->authorize('decide', $proposal);
 
         $proposal = $this->proposalService->reject($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -263,7 +294,7 @@ class ProposalController extends Controller
             $itemMarkups,
         );
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -278,7 +309,7 @@ class ProposalController extends Controller
         }
 
         $proposal = $this->proposalService->cancel($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -309,7 +340,7 @@ class ProposalController extends Controller
         // Step 2: set offer status back to reviewed
         $this->offerService->removeFromProposal($offer, $proposal);
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,

@@ -104,6 +104,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     Route::get('/proposals', [ProposalController::class, 'indexAll']);
     Route::get('/proposals/{proposal}', [ProposalController::class, 'show']);
+    Route::get('/proposals/{proposal}/photos/{attachment}', [ProposalController::class, 'offerPhoto']);
     Route::patch('/proposals/{proposal}', [ProposalController::class, 'update']);
     Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy']);
     Route::patch('/proposals/{proposal}/send', [ProposalController::class, 'send']);

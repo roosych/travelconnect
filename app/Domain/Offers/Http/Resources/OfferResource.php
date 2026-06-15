@@ -11,6 +11,9 @@ class OfferResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isSupplier = $request->user()?->isSupplier() ?? false;
+        // Дезинтермедиация: агентство не должно видеть, какой поставщик стоит
+        // за предложением (личность/контакты).
+        $isAgency = $request->user()?->isAgency() ?? false;
 
         // Operators/agencies work in AZN: expose the AZN snapshot under unit_price
         // and keep the supplier's original amount/currency as reference.
@@ -47,15 +50,16 @@ class OfferResource extends JsonResource
                     ] : null,
                 ] : null,
             ]),
-            'supplier' => new SupplierResource($this->whenLoaded('supplier')),
+            'supplier' => $this->when(! $isAgency, fn () => new SupplierResource($this->whenLoaded('supplier'))),
             'is_partial' => $this->is_partial,
             'covered_services' => $this->covered_services,
             'uncovered_services' => $this->uncovered_services,
-            'unit_price' => $isSupplier ? (float) $this->unit_price : $aznUnit,
-            'currency' => $isSupplier ? $this->currency : 'AZN',
-            'supplier_unit_price' => (float) $this->unit_price,
-            'supplier_currency' => $this->currency,
-            'unit_price_azn' => $aznUnit,
+            // Себестоимость/нетто и валюта поставщика — НЕ агентству (защита маржи).
+            'unit_price' => $this->when(! $isAgency, fn () => $isSupplier ? (float) $this->unit_price : $aznUnit),
+            'currency' => $this->when(! $isAgency, fn () => $isSupplier ? $this->currency : 'AZN'),
+            'supplier_unit_price' => $this->when(! $isAgency, fn () => (float) $this->unit_price),
+            'supplier_currency' => $this->when(! $isAgency, fn () => $this->currency),
+            'unit_price_azn' => $this->when(! $isAgency, fn () => $aznUnit),
             'valid_until' => $this->valid_until?->toIso8601String(),
             'notes' => $this->notes,
             'status' => $this->status->value,
@@ -63,15 +67,15 @@ class OfferResource extends JsonResource
             'status_badge_class' => $isSupplier ? $this->status->supplierBadgeClass() : $this->status->operatorBadgeClass(),
             'is_expired' => $this->isExpired(),
             'operator_notes' => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->operator_notes),
-            'markup_pct' => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->markup_pct),
+            'markup_pct' => $this->when(! $isAgency, fn () => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->markup_pct)),
             'selected_item_types' => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->selected_item_types
                     ? json_decode($this->pivot->selected_item_types, true)
                     : null
             ),
-            'item_markups' => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->item_markups
+            'item_markups' => $this->when(! $isAgency, fn () => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->item_markups
                     ? json_decode($this->pivot->item_markups, true)
                     : null
-            ),
+            )),
             'price_with_markup' => $this->whenPivotLoaded('proposal_offer', function () {
                 $selectedTypes = $this->pivot->selected_item_types
                     ? json_decode($this->pivot->selected_item_types, true)
@@ -98,7 +102,8 @@ class OfferResource extends JsonResource
                 return ($this->unit_price_azn ?? $this->unit_price) * (1 + ($markupPct / 100));
             }),
             'items' => OfferItemResource::collection($this->whenLoaded('items')),
-            'attachments' => $this->whenLoaded('attachments', fn () => $this->attachments->map(fn ($a) => [
+            // Полный список вложений (с url/uploader) — не для агентства: утечка личности.
+            'attachments' => $this->when(! $isAgency && $this->relationLoaded('attachments'), fn () => $this->attachments->map(fn ($a) => [
                 'id' => $a->id,
                 'filename' => $a->filename,
                 'mime_type' => $a->mime_type,
@@ -108,6 +113,11 @@ class OfferResource extends JsonResource
                 'uploader' => $a->uploader ? ['id' => $a->uploader->id, 'name' => $a->uploader->name] : null,
                 'created_at' => $a->created_at->toDateTimeString(),
             ])),
+            // Агентству — только id картинок-вложений для анонимной галереи КП
+            // (отдаются через /proposals/{p}/photos/{id}, без имени файла и поставщика).
+            'photo_attachment_ids' => $this->when($isAgency && $this->relationLoaded('attachments'), fn () => $this->attachments
+                ->filter(fn ($a) => str_starts_with((string) $a->mime_type, 'image/'))
+                ->pluck('id')->values()),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

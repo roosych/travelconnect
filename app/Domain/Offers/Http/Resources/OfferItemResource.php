@@ -11,6 +11,8 @@ class OfferItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isSupplier = $request->user()?->isSupplier() ?? false;
+        // Дезинтермедиация/маржа: агентству не отдаём нетто-стоимость по позициям.
+        $isAgency = $request->user()?->isAgency() ?? false;
 
         // Operators/agencies work in AZN (snapshot); suppliers see their own currency.
         $aznUnit = (float) ($this->unit_price_azn ?? $this->unit_price);
@@ -26,14 +28,14 @@ class OfferItemResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'quantity' => $this->quantity,
-            'unit_price' => $unit,
-            'currency' => $currency,
-            'supplier_unit_price' => (float) $this->unit_price,
-            'supplier_currency' => $this->currency,
-            'unit_price_azn' => $aznUnit,
+            'unit_price' => $this->when(! $isAgency, fn () => $unit),
+            'currency' => $this->when(! $isAgency, fn () => $currency),
+            'supplier_unit_price' => $this->when(! $isAgency, fn () => (float) $this->unit_price),
+            'supplier_currency' => $this->when(! $isAgency, fn () => $this->currency),
+            'unit_price_azn' => $this->when(! $isAgency, fn () => $aznUnit),
             'price_unit' => $this->price_unit->value,
             'price_unit_label' => $this->price_unit->label(),
-            'line_total' => round($unit * $this->quantity, 2),
+            'line_total' => $this->when(! $isAgency, fn () => round($unit * $this->quantity, 2)),
             'catalog_name' => $this->when(
                 $this->relationLoaded('supplierService') && $this->supplierService,
                 fn () => $this->supplierService->name

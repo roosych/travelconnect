@@ -766,24 +766,27 @@ async function openProposalModal(proposalId) {
             const rfqTitle = o.rfq?.title ?? o.rfq_title ?? '';
             const allItems = o.items ?? [];
             const ci = allItems.find(i => i.supplier_service_id && (i.catalog_photos?.length || i.catalog_name || i.catalog_description));
-            const catalogHtml = ci ? `
-                <div class="mt-3">
-                    ${ci.catalog_photos?.length ? `
-                    <div class="d-flex gap-2 mb-2" style="overflow-x:auto;">
-                        ${ci.catalog_photos.map(url =>
-                            `<a href="${url}" class="agency-glightbox flex-shrink-0" data-gallery="agency-offer-${o.id}">
-                                <img src="${url}" alt="" class="rounded" style="height:60px;width:85px;object-fit:cover;cursor:pointer;">
-                            </a>`
-                        ).join('')}
-                    </div>` : ''}
-                    ${ci.catalog_name ? `<div class="fw-semibold text-gray-800 fs-7 mb-1">${esc(ci.catalog_name)}</div>` : ''}
-                    ${ci.catalog_description ? `<div class="text-gray-600 fs-8 lh-base">${esc(ci.catalog_description)}</div>` : ''}
+            // Фото = каталог ресурса + ручные фото-вложения оффера (анонимный роут КП).
+            const photoUrls = [
+                ...((ci?.catalog_photos) ?? []),
+                ...((o.photo_attachment_ids ?? []).map(id => `/api/proposals/${p.id}/photos/${id}`)),
+            ];
+            const photosHtml = photoUrls.length ? `
+                <div class="d-flex gap-2 mb-2" style="overflow-x:auto;">
+                    ${photoUrls.map(url =>
+                        `<a href="${url}" class="agency-glightbox flex-shrink-0" data-gallery="agency-offer-${o.id}">
+                            <img src="${url}" alt="" class="rounded" style="height:60px;width:85px;object-fit:cover;cursor:pointer;">
+                        </a>`
+                    ).join('')}
                 </div>` : '';
+            const catalogTextHtml = ci ? `
+                ${ci.catalog_name ? `<div class="fw-semibold text-gray-800 fs-7 mb-1">${esc(ci.catalog_name)}</div>` : ''}
+                ${ci.catalog_description ? `<div class="text-gray-600 fs-8 lh-base">${esc(ci.catalog_description)}</div>` : ''}` : '';
+            const catalogHtml = (photosHtml || catalogTextHtml) ? `<div class="mt-3">${photosHtml}${catalogTextHtml}</div>` : '';
             return `
             <div class="py-3 border-bottom">
                 <div class="fw-semibold text-gray-800 fs-7">${esc(svcLabel)}</div>
                 ${rfqTitle && rfqTitle !== svcLabel ? `<div class="text-muted fs-8 mt-1 text-truncate">${esc(rfqTitle)}</div>` : ''}
-                ${o.supplier?.name ? `<div class="text-muted fs-8 mt-1">${esc(o.supplier.name)}</div>` : ''}
                 ${o.notes ? `<div class="text-gray-600 fs-8 mt-2 fst-italic">${esc(o.notes)}</div>` : ''}
                 ${catalogHtml}
             </div>
