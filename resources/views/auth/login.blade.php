@@ -57,6 +57,7 @@
                     <div class="fv-row mb-6">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <label class="form-label fw-semibold text-gray-900 fs-6 mb-0">{{ __('auth.password') }}</label>
+                            <a href="{{ route('password.request') }}" class="link-primary fs-7 fw-semibold">{{ __('auth.forgot_link') }}</a>
                         </div>
                         <div class="position-relative">
                             <input type="password"

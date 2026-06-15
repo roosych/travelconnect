@@ -9,6 +9,7 @@ use App\Domain\Proposals\Models\Proposal;
 use App\Domain\RFQs\Models\Rfq;
 use App\Domain\Suppliers\Models\Supplier;
 use App\Domain\Users\Enums\UserRole;
+use App\Domain\Users\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -56,6 +57,12 @@ class User extends Authenticatable implements HasMedia
             'role'               => UserRole::class,
             'telegram_linked_at' => 'datetime',
         ];
+    }
+
+    /** Отправка письма со ссылкой на сброс пароля (на языке пользователя). */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     // -------------------------------------------------------------------------
