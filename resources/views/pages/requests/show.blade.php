@@ -1765,9 +1765,16 @@
         const parts = [agency, requestTitle, datesStr].filter(Boolean);
         document.getElementById('proposal-title').value = parts.join(', ');
 
-        // Pre-fill valid_until to +30 days
-        const validUntil = new Date();
-        validUntil.setDate(validUntil.getDate() + 30);
+        // Pre-fill valid_until = дата начала тура (конец дня); фолбэк +30 дней,
+        // если у заявки нет даты на уровне запроса (напр. даты в сегментах).
+        let validUntil;
+        if (dateFrom) {
+            validUntil = new Date(dateFrom);
+            validUntil.setHours(23, 59, 0, 0);
+        } else {
+            validUntil = new Date();
+            validUntil.setDate(validUntil.getDate() + 30);
+        }
         document.getElementById('proposal-valid-until')._flatpickr?.setDate(validUntil, true);
 
         // Preview selected offers — per selected item
@@ -3119,7 +3126,7 @@
             if (previewExRate > 0) {
                 const est = Math.round(totalGross / previewExRate);
                 convStr = `<div class="text-muted fs-7 mt-1">≈ ${formatCurrency(est, previewAgcyCur)}
-                    <span class="badge badge-light-warning fs-9 ms-1">${t.show.preview.current_rate}</span></div>`;
+                    <span class="badge badge-light-success fs-9 ms-1">${t.show.preview.current_rate}</span></div>`;
                 noteStr = `<div class="text-muted fs-8 mt-2">
                     <i class="ki-outline ki-information fs-8 me-1"></i>${t.show.preview.rate_note}
                 </div>`;
@@ -3134,7 +3141,7 @@
                     </div>
                     <div class="text-end flex-shrink-0">
                         <div class="text-muted fs-7 mb-2">${t.show.preview.cost} <span class="fw-bold text-gray-800 fs-6 ms-2">${formatCurrency(totalNet, currency)}</span></div>
-                        <div class="text-muted fs-7">${t.show.preview.markup} <span class="fw-bold text-warning fs-6 ms-2">+${formatCurrency(totalMarkup, currency)}</span></div>
+                        <div class="text-muted fs-7">${t.show.preview.markup} <span class="fw-bold text-success fs-6 ms-2">+${formatCurrency(totalMarkup, currency)}</span></div>
                     </div>
                 </div>
             </div>`;
