@@ -279,7 +279,7 @@ class RfqService
                         'country_code' => $leg->country_code,
                         'leg_id'       => $leg->id,
                         'operator_id'  => $operator->id,
-                        'title'        => "{$countryName} · {$serviceType->label()}",
+                        'title'        => "{$countryName} · " . app(ServiceCatalog::class)->typeLabel($serviceType),
                         'description'  => $baseNotes ? trim($baseNotes) : '',
                         'service_type' => $serviceType,
                         'deadline_at'  => $deadlineAt,
