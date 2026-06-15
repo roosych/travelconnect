@@ -84,9 +84,6 @@
                                 <span id="avatar-initials" class="symbol-label bg-light-primary text-primary fw-bold fs-2x">{{ $__ini }}</span>
                             @endif
                         </div>
-                        <span id="avatar-spinner" class="position-absolute top-50 start-50 translate-middle d-none">
-                            <span class="spinner-border text-primary"></span>
-                        </span>
                     </div>
 
                     <div class="flex-grow-1">
@@ -94,11 +91,13 @@
                         <div class="text-muted fs-7 mb-4">{{ __('suppliers.cabinet.profile.logo_hint') }}</div>
                         <div class="d-flex gap-2">
                             <button type="button" id="btn-avatar-upload" class="btn btn-sm btn-light-primary">
-                                <i class="ki-outline ki-cloud-add fs-5 me-1"></i>{{ __('suppliers.cabinet.profile.logo_upload') }}
+                                <span class="indicator-label"><i class="ki-outline ki-cloud-add fs-5 me-1"></i>{{ __('suppliers.cabinet.profile.logo_upload') }}</span>
+                                <span class="indicator-progress">{{ __('common.loading') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                             </button>
                             <button type="button" id="btn-avatar-remove"
                                     class="btn btn-sm btn-light-danger {{ $supplierAvatar ? '' : 'd-none' }}">
-                                <i class="ki-outline ki-trash fs-5 me-1"></i>{{ __('common.delete') }}
+                                <span class="indicator-label"><i class="ki-outline ki-trash fs-5 me-1"></i>{{ __('common.delete') }}</span>
+                                <span class="indicator-progress">{{ __('common.loading') }} <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                             </button>
                         </div>
                         <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp" class="d-none" />
@@ -213,11 +212,11 @@
         const btnUpload  = byId('btn-avatar-upload');
         const btnRemove  = byId('btn-avatar-remove');
         const preview    = byId('avatar-preview');
-        const spinner    = byId('avatar-spinner');
         const token      = localStorage.getItem('auth_token');
 
-        const setBusy = (on) => {
-            spinner.classList.toggle('d-none', !on);
+        // Лоадер на активной кнопке через глобальный btnLoading; вторую — блокируем.
+        const setBusy = (btn, on) => {
+            btnLoading(btn, on);
             btnUpload.disabled = on;
             btnRemove.disabled = on;
         };
@@ -238,7 +237,7 @@
             }
             const fd = new FormData();
             fd.append('avatar', file);
-            setBusy(true);
+            setBusy(btnUpload, true);
             try {
                 const res = await fetch(`/api/suppliers/${supplierId}/avatar`, {
                     method: 'POST',
@@ -255,14 +254,14 @@
             } catch {
                 showToast(@json(__('suppliers.cabinet.profile.logo_load_err')), 'error');
             } finally {
-                setBusy(false);
+                setBusy(btnUpload, false);
                 this.value = '';
             }
         });
 
         btnRemove.addEventListener('click', async function () {
             if (!confirm(@json(__('suppliers.cabinet.profile.logo_delete_confirm')))) return;
-            setBusy(true);
+            setBusy(btnRemove, true);
             try {
                 const res = await fetch(`/api/suppliers/${supplierId}/avatar`, {
                     method: 'DELETE',
@@ -276,7 +275,7 @@
             } catch {
                 showToast(@json(__('suppliers.cabinet.profile.generic_err')), 'error');
             } finally {
-                setBusy(false);
+                setBusy(btnRemove, false);
             }
         });
     })();
