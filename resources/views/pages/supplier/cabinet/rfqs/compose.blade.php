@@ -13,6 +13,7 @@
 
 @push('styles')
 <link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
 <style>
     .filepond--root       { font-family: inherit; }
     .filepond--panel-root { background: #f9f9f9; border: 2px dashed #e4e6ef; border-radius: 8px; }
@@ -108,8 +109,6 @@
             <div class="modal-header border-0 pb-0">
                 <div>
                     <div class="d-flex align-items-center gap-2 mb-1">
-                        <span id="modal-type-icon"
-                              class="w-32px h-32px rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"></span>
                         <h4 class="modal-title fw-bold mb-0" id="modal-svc-title">{{ __('suppliers.cabinet.rfqs.compose.modal_service') }}</h4>
                     </div>
                 </div>
@@ -239,6 +238,7 @@
 @push('scripts')
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
 FilePond.registerPlugin(FilePondPluginFileValidateSize);
 
@@ -496,6 +496,8 @@ function renderRequestInfo() {
     if (atts.length) {
         document.getElementById('req-files-list').innerHTML = atts.map(svcFileChip).join('');
         filesEl.classList.remove('d-none');
+        if (window._reqFilesLb) window._reqFilesLb.destroy();
+        window._reqFilesLb = GLightbox({ selector: '#req-files-list .js-req-file-image', loop: true });
     } else {
         filesEl.classList.add('d-none');
     }
@@ -657,14 +659,26 @@ function parseOfferNotes(notes) {
 // ── Вложения: чип файла ─────────────────────────────────────────────────────────
 function svcFileChip(a) {
     const ext = (a.filename ?? '').split('.').pop().toLowerCase();
+    const isImage = (a.mime_type ?? '').startsWith('image/');
     let c = 'text-primary';
     if (ext === 'pdf')                            c = 'text-danger';
     else if (['xls','xlsx'].includes(ext))        c = 'text-success';
-    else if (['jpg','jpeg','png'].includes(ext))  c = 'text-warning';
+    else if (isImage)                             c = 'text-warning';
     const name = (a.filename ?? '').length > 28 ? a.filename.slice(0, 25) + '…' : (a.filename ?? 'file');
-    return `<a href="/api/attachments/${a.id}/download" target="_blank" rel="noopener"
-        class="d-inline-flex align-items-center gap-2 border border-dashed rounded px-3 py-2 bg-white text-gray-700 text-hover-primary text-decoration-none">
-        <i class="ki-outline ki-file fs-2 ${c}"></i>
+    const url  = a.url ?? `/api/attachments/${a.id}/download`;
+
+    // Картинки — открываем в лайтбоксе (GLightbox), остальное — скачиваем в новой вкладке.
+    const attrs = isImage
+        ? `href="${url}" class="js-req-file-image d-inline-flex align-items-center gap-2 border border-dashed rounded px-3 py-2 bg-white text-gray-700 text-hover-primary text-decoration-none"
+            data-gallery="req-files" data-glightbox="type: image"`
+        : `href="${url}" target="_blank" rel="noopener"
+            class="d-inline-flex align-items-center gap-2 border border-dashed rounded px-3 py-2 bg-white text-gray-700 text-hover-primary text-decoration-none"`;
+
+    const thumb = isImage
+        ? `<img src="${url}" class="rounded" style="width:32px;height:32px;object-fit:cover;" alt="">`
+        : `<i class="ki-outline ki-file fs-2 ${c}"></i>`;
+    return `<a ${attrs}>
+        ${thumb}
         <div class="lh-sm"><div class="fw-semibold fs-7">${esc(name)}</div><div class="text-muted fs-8">${esc(a.human_size ?? '')}</div></div>
     </a>`;
 }
@@ -676,8 +690,6 @@ function openSvcModal(rfqId, type) {
     modalCtx = { rfqId, type };
 
     const label   = SERVICE_LABELS[type] ?? type;
-    const color   = SVC_COLOR[type] ?? 'secondary';
-    const icon    = SVC_ICON[type]  ?? 'ki-abstract-26';
     const rfq     = allRfqs.find(r => r.id === rfqId);
     const catalog = catalogByType[type] ?? [];
     const draft   = draftMap[draftKey(rfqId, type)];
@@ -693,10 +705,6 @@ function openSvcModal(rfqId, type) {
         : C.price_hint;
     document.getElementById('modal-price-hint-text').textContent = hintText;
     document.getElementById('modal-currency-label').textContent = supplierCurrency;
-
-    const iconEl = document.getElementById('modal-type-icon');
-    iconEl.className = `w-32px h-32px rounded-circle bg-light-${color} d-flex align-items-center justify-content-center flex-shrink-0`;
-    iconEl.innerHTML = `<i class="ki-outline ${icon} fs-7 text-${color}"></i>`;
 
     // Catalog
     const hasCatalog  = catalog.length > 0;

@@ -179,9 +179,6 @@
                         : (covered.length === 1 ? (offer.unit_price ?? null) : null);
             return `
             <div class="d-flex align-items-center gap-3 py-3" >
-                <span class="d-flex align-items-center justify-content-center w-35px h-35px rounded-circle bg-light-${m.color} flex-shrink-0">
-                    <i class="ki-outline ${m.icon} fs-5 text-${m.color}"></i>
-                </span>
                 <span class="flex-grow-1 fw-semibold text-gray-800">${m.label}</span>
                 ${item?.name && item.name !== s
                     ? `<span class="text-muted fs-7 me-4">${escHtml(item.name)}</span>`
@@ -196,9 +193,6 @@
             const m = SERVICE_META[s] ?? { label: s, icon: 'ki-abstract-26', color: 'secondary' };
             return `
             <div class="d-flex align-items-center gap-3 py-3 opacity-50" >
-                <span class="d-flex align-items-center justify-content-center w-35px h-35px rounded-circle bg-light flex-shrink-0">
-                    <i class="ki-outline ${m.icon} fs-5 text-gray-400"></i>
-                </span>
                 <span class="flex-grow-1 fw-semibold text-gray-500">${m.label}</span>
                 <span class="badge badge-light-danger fs-8">${t.labels.not_covered}</span>
             </div>`;
