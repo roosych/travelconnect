@@ -135,6 +135,14 @@ class AttachmentController extends Controller
             );
         }
 
+        // Защита от распухания: не больше N вложений на одну сущность.
+        $limit = (int) config('uploads.max_files_per_collection', 20);
+        abort_if(
+            $model->attachments()->count() >= $limit,
+            422,
+            __('attachments.limit_reached', ['n' => $limit])
+        );
+
         $request->validate([
             'file' => [
                 'required',

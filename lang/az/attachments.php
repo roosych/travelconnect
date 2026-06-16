@@ -11,6 +11,7 @@ return [
     'download_error' => 'Faylı endirərkən xəta',
     'delete_error'   => 'Faylı silərkən xəta',
     'upload_error'   => 'Yükləmə xətası',
+    'limit_reached'  => 'Limit doldu: hər qeyd üçün ən çox :n fayl.',
     'net_error'      => 'Şəbəkə xətası',
     'revert_error'   => 'Ləğv xətası',
     'id_undefined'   => 'ID təyin edilməyib',

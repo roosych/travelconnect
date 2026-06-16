@@ -342,6 +342,8 @@ return [
                 'close'   => 'Close',
                 'fp_idle' => 'Drag photos or <span class="filepond--label-action">browse</span>',
                 'empty'   => 'No photos uploaded yet',
+                'limit_reached' => 'Limit reached: no more than :n photos per resource.',
+                'limit_hint'    => 'Up to :n photos',
             ],
 
             'card' => [

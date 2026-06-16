@@ -11,6 +11,7 @@ return [
     'download_error' => 'Error downloading the file',
     'delete_error'   => 'Error deleting the file',
     'upload_error'   => 'Upload error',
+    'limit_reached'  => 'Limit reached: no more than :n files per record.',
     'net_error'      => 'Network error',
     'revert_error'   => 'Revert error',
     'id_undefined'   => 'ID is undefined',

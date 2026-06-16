@@ -342,6 +342,8 @@ return [
                 'close'   => 'Закрыть',
                 'fp_idle' => 'Перетащите фото или <span class="filepond--label-action">выберите</span>',
                 'empty'   => 'Фото ещё не загружены',
+                'limit_reached' => 'Достигнут лимит: не более :n фото на ресурс.',
+                'limit_hint'    => 'Максимум :n фото',
             ],
 
             'card' => [

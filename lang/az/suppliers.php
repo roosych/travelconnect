@@ -342,6 +342,8 @@ return [
                 'close'   => 'Bağla',
                 'fp_idle' => 'Foto sürüşdürün və ya <span class="filepond--label-action">seçin</span>',
                 'empty'   => 'Hələ foto yüklənməyib',
+                'limit_reached' => 'Limit doldu: hər resurs üçün ən çox :n foto.',
+                'limit_hint'    => 'Maksimum :n foto',
             ],
 
             'card' => [

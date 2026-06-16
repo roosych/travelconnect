@@ -204,6 +204,7 @@
 const supplierId       = {{ $supplier?->id ?? 'null' }};
 const supplierCurrency = '{{ strtoupper($supplier?->currency_code ?? 'AZN') }}';
 const L = @json(__('suppliers.cabinet.catalog'));
+const PHOTO_LIMIT = @json((int) config('uploads.max_files_per_collection', 20));
 let allResources    = [];
 let activeTypeTab   = '';
 let searchQuery     = '';
@@ -563,12 +564,19 @@ function openPhotos(resourceId, resourceName) {
     const r = allResources.find(r => r.id === resourceId);
     renderPhotoGrid(r?.photos ?? []);
 
+    // Лимит фото на ресурс: остаток с учётом уже загруженных.
+    const existing  = (r?.photos ?? []).length;
+    const remaining = Math.max(0, PHOTO_LIMIT - existing);
+
     const input = document.getElementById('photos-filepond');
     photoPond = FilePond.create(input, {
         allowMultiple: true,
-        maxFiles: 10,
+        maxFiles: remaining,
+        disabled: remaining === 0,
         maxFileSize: '10MB',
-        labelIdle: L.photos.fp_idle,
+        labelIdle: remaining === 0
+            ? L.photos.limit_reached.replace(':n', PHOTO_LIMIT)
+            : `${L.photos.fp_idle}<br><span style="font-size:11px;color:#a1a5b7">${L.photos.limit_hint.replace(':n', PHOTO_LIMIT)}</span>`,
         onprocessfile: (error, file) => {
             if (!error) {
                 setTimeout(() => photoPond.removeFile(file), 800);
@@ -585,7 +593,12 @@ function openPhotos(resourceId, resourceName) {
                 xhr.setRequestHeader('Accept', 'application/json');
                 xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
                 xhr.upload.onprogress = (e) => progress(e.lengthComputable, e.loaded, e.total);
-                xhr.onload  = () => xhr.status >= 200 && xhr.status < 300 ? load(xhr.responseText) : error(L.toast.upload_err);
+                xhr.onload  = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) { load(xhr.responseText); return; }
+                    let msg = L.toast.upload_err;
+                    try { msg = JSON.parse(xhr.responseText)?.message || msg; } catch (e) {}
+                    error(msg);
+                };
                 xhr.onerror = () => error(L.toast.network_err);
                 xhr.send(fd);
                 return { abort: () => { xhr.abort(); abort(); } };

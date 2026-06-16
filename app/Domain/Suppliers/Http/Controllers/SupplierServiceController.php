@@ -81,6 +81,13 @@ class SupplierServiceController extends Controller
 
         $request->validate(['photo' => ['required', 'image', 'max:5120']]);
 
+        $limit = (int) config('uploads.max_files_per_collection', 20);
+        abort_if(
+            $service->getMedia('photos')->count() >= $limit,
+            422,
+            __('suppliers.cabinet.catalog.photos.limit_reached', ['n' => $limit])
+        );
+
         $media = $service->addMediaFromRequest('photo')->toMediaCollection('photos');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], 201);

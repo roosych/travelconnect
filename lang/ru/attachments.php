@@ -11,6 +11,7 @@ return [
     'download_error' => 'Ошибка скачивания файла',
     'delete_error'   => 'Ошибка удаления файла',
     'upload_error'   => 'Ошибка загрузки',
+    'limit_reached'  => 'Достигнут лимит: не более :n файлов на запись.',
     'net_error'      => 'Ошибка сети',
     'revert_error'   => 'Ошибка отмены',
     'id_undefined'   => 'ID не определён',
