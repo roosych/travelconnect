@@ -162,7 +162,7 @@ class RequestController extends Controller
     {
         $this->authorize('view', $travelRequest);
 
-        $travelRequest->load(['agency', 'legs.country', 'legs.destinations', 'legs.services']);
+        $travelRequest->load(['agency', 'legs.country', 'legs.destinations', 'legs.services', 'bookings']);
         $travelRequest->loadCount([
             'rfqs',
             'bookings',

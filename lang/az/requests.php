@@ -333,6 +333,14 @@ return [
         'banner_hint' => 'Aşağıdakı təkliflərlə tanış olun və uyğun variantı seçin',
         'banner_cta'  => 'Təkliflərə',
 
+        'booking' => [
+            'title'    => 'Bron təsdiqləndi',
+            'subtitle' => 'Təklifi qəbul etdiniz. Detallar və ödəniş bron kartındadır.',
+            'view'     => 'Bronu aç',
+            'price'    => 'Məbləğ',
+            'created'  => 'Yaradıldı :date',
+        ],
+
         // Təklif modalı
         'proposal_modal_title' => 'Təklif',
         'modal_title'          => 'KT #:id',
@@ -432,6 +440,15 @@ return [
             'rfqs'      => 'Təchizatçılara sorğular',
             'offers'    => 'Təchizatçı təklifləri',
             'proposals' => 'Agentlik üçün təkliflər',
+        ],
+
+        'booking' => [
+            'title'    => 'Bron yaradıldı',
+            'subtitle' => 'Agentlik təklifi qəbul etdi. Sonrakı iş bron kartında aparılır.',
+            'view'     => 'Bronu aç',
+            'price'    => 'Məbləğ',
+            'margin'   => 'Marja',
+            'created'  => 'Yaradıldı :date',
         ],
 
         'rfqs' => [

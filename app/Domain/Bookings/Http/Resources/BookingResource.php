@@ -15,7 +15,7 @@ class BookingResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'confirmed_at' => $this->confirmed_at?->toDateTimeString(),
+            'confirmed_at' => $this->confirmed_at?->toIso8601String(),
             'travel_date_from' => $this->travel_date_from?->toDateString(),
             'travel_date_to' => $this->travel_date_to?->toDateString(),
             'pax_count' => $this->pax_count,

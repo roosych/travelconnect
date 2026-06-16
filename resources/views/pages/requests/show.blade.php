@@ -55,6 +55,9 @@
     </div>
 </div>
 
+{{-- Бронь создана (после принятия КП агентством) --}}
+<div id="booking-banner"></div>
+
 {{-- Tabs --}}
 <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x fs-5 fw-semibold mb-6" id="request-tabs">
     <li class="nav-item">
@@ -713,10 +716,53 @@
             const data = await api.get(`/requests/${requestId}`);
             currentRequest = data.data ?? data;
             renderRequestInfo(currentRequest);
+            renderBookingBanner(currentRequest);
         } catch {
             document.getElementById('request-info-card').querySelector('.card-body').innerHTML =
                 `<div class="alert alert-danger">${t.show.info.load_error}</div>`;
         }
+    }
+
+    // Баннер «Бронь создана» — показывается после принятия КП агентством (req.booking).
+    function renderBookingBanner(req) {
+        const el = document.getElementById('booking-banner');
+        if (!el) return;
+        const b = req?.booking;
+        if (!b) { el.innerHTML = ''; return; }
+        const tb = t.show.booking;
+        const dates = (b.travel_date_from || b.travel_date_to)
+            ? `${formatDate(b.travel_date_from)} — ${formatDate(b.travel_date_to)}` : '';
+        const marginHtml = (b.margin_azn != null) ? `
+            <div class="text-end">
+                <div class="text-muted fs-8">${tb.margin}</div>
+                <div class="fw-bold text-success fs-5">+${formatCurrency(b.margin_azn, 'AZN')}</div>
+            </div>` : '';
+        el.innerHTML = `
+        <div class="card card-flush mb-6 border border-success border-dashed bg-light-success">
+            <div class="card-body py-5 d-flex flex-wrap align-items-center gap-4">
+                <span class="symbol symbol-50px flex-shrink-0">
+                    <span class="symbol-label bg-success">
+                        <i class="ki-outline ki-check-circle fs-2x text-white"></i>
+                    </span>
+                </span>
+                <div class="flex-grow-1 min-w-200px">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                        <span class="fw-bold text-gray-900 fs-4">${tb.title}</span>
+                        <span class="badge ${b.status_badge_class}">${escHtml(b.status_label)}</span>
+                    </div>
+                    <div class="text-muted fs-7">${tb.subtitle}</div>
+                    <div class="text-muted fs-8 mt-1">#${b.id}${dates ? ` · ${escHtml(dates)}` : ''} · ${tb.created.replace(':date', formatDateTime(b.created_at))}</div>
+                </div>
+                <div class="text-end">
+                    <div class="text-muted fs-8">${tb.price}</div>
+                    <div class="fw-bold text-gray-900 fs-4">${formatCurrency(b.final_price, b.currency)}</div>
+                </div>
+                ${marginHtml}
+                <a href="/admin/bookings/${b.id}" class="btn btn-success flex-shrink-0">
+                    <i class="ki-outline ki-handcart fs-4 me-1"></i>${tb.view}
+                </a>
+            </div>
+        </div>`;
     }
 
     const SERVICE_BADGE = {
@@ -2912,7 +2958,7 @@
                     </div>
                 </div>
                 ${itemsHtml}
-                ${isDraft ? _materialsBlock(o) : _catalogBlock(items.length ? items : allItems, `dprop-offer-${o.id}`)}
+                ${isDraft ? _materialsBlock(o) : _previewMaterialsBlock(o, `dprop-offer-${o.id}`)}
                 ${markupHtml}
             </div>`;
         }).join('') : `<div class="text-muted fs-7 mb-5">${t.show.dprop.no_offers}</div>`;

@@ -333,6 +333,14 @@ return [
         'banner_hint' => 'Review the proposals below and choose a suitable option',
         'banner_cta'  => 'To proposals',
 
+        'booking' => [
+            'title'    => 'Booking confirmed',
+            'subtitle' => 'You accepted the proposal. Details and payment are in the booking.',
+            'view'     => 'Open booking',
+            'price'    => 'Amount',
+            'created'  => 'Created :date',
+        ],
+
         // Proposal modal
         'proposal_modal_title' => 'Proposal',
         'modal_title'          => 'Proposal #:id',
@@ -432,6 +440,15 @@ return [
             'rfqs'      => 'Supplier requests',
             'offers'    => 'Supplier offers',
             'proposals' => 'Agency proposals',
+        ],
+
+        'booking' => [
+            'title'    => 'Booking created',
+            'subtitle' => 'The agency accepted the proposal. Further work is handled in the booking.',
+            'view'     => 'Open booking',
+            'price'    => 'Amount',
+            'margin'   => 'Margin',
+            'created'  => 'Created :date',
         ],
 
         'rfqs' => [

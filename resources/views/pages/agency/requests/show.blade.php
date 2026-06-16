@@ -51,6 +51,9 @@
     {{-- ── Action banner (shown when agency must pick a proposal) ─────────── --}}
     <div id="action-banner" class="d-none mb-6"></div>
 
+    {{-- ── Booking banner (shown after the agency accepts a proposal) ──────── --}}
+    <div id="booking-banner"></div>
+
     {{-- ── 1. Status stepper ────────────────────────────────────────────────── --}}
     <x-stepper id="status-timeline" class="mb-6" />
 
@@ -976,12 +979,49 @@ function renderRoute(legs) {
     }).join('');
 }
 
+// Баннер «Бронь подтверждена» — после принятия КП агентством (r.booking).
+// Агентству себестоимость/маржа не отдаются — показываем только свою сумму.
+function renderBookingBanner(r) {
+    const el = document.getElementById('booking-banner');
+    if (!el) return;
+    const b = r?.booking;
+    if (!b) { el.innerHTML = ''; return; }
+    const tb = L.booking;
+    const dates = (b.travel_date_from || b.travel_date_to)
+        ? `${fmtDate(b.travel_date_from)} — ${fmtDate(b.travel_date_to)}` : '';
+    el.innerHTML = `
+    <div class="card card-flush mb-6 border border-success border-dashed bg-light-success">
+        <div class="card-body py-5 d-flex flex-wrap align-items-center gap-4">
+            <span class="w-50px h-50px rounded-circle bg-success d-flex align-items-center justify-content-center flex-shrink-0">
+                <i class="ki-outline ki-check-circle fs-2 text-white"></i>
+            </span>
+            <div class="flex-grow-1 min-w-200px">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                    <span class="fw-bold text-gray-900 fs-4">${tb.title}</span>
+                    <span class="badge ${b.status_badge_class}">${esc(b.status_label)}</span>
+                </div>
+                <div class="text-gray-600 fs-7">${tb.subtitle}</div>
+                <div class="text-muted fs-8 mt-1">#${b.id}${dates ? ` · ${esc(dates)}` : ''} · ${tb.created.replace(':date', fmtDate(b.created_at))}</div>
+            </div>
+            <div class="text-end">
+                <div class="text-muted fs-8">${tb.price}</div>
+                <div class="fw-bold text-gray-900 fs-4">${fmtMoney(b.final_price, b.currency)}</div>
+            </div>
+            <a href="/agency/bookings/${b.id}" class="btn btn-success flex-shrink-0">
+                <i class="ki-outline ki-handcart fs-4 me-1"></i>${tb.view}
+            </a>
+        </div>
+    </div>`;
+}
+
 function renderRequest(r) {
     if (!r) return;
     requestData = r;
 
     document.getElementById('page-loader').classList.add('d-none');
     document.getElementById('page-content').classList.remove('d-none');
+
+    renderBookingBanner(r);
 
     const _fallback = L.req_fallback.replace(':id', requestId);
     document.getElementById('breadcrumb-title').textContent = r.title ?? _fallback;

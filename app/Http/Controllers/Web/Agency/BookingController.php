@@ -14,6 +14,9 @@ class BookingController extends Controller
 
     public function show(Request $request, int $id)
     {
-        return view('pages.agency.bookings.show', ['id' => $id]);
+        return view('pages.agency.bookings.show', [
+            'id'           => $id,
+            'userTimezone' => $request->user()->effectiveTimezone(),
+        ]);
     }
 }

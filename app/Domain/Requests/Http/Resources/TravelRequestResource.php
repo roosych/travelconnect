@@ -52,6 +52,36 @@ class TravelRequestResource extends JsonResource
             'proposals_count'          => $this->proposals_count ?? 0,
             'received_proposals_count' => (int) ($this->received_proposals_count ?? 0),
             'bookings_count'           => $this->bookings_count ?? 0,
+            // Сводка по созданной брони (после принятия КП агентством). Себестоимость/
+            // маржа — только оператору; агентству отдаём лишь свою цену.
+            'booking'             => $this->whenLoaded('bookings', function () use ($isAgency) {
+                $b = $this->bookings->sortByDesc('created_at')->first();
+                if (! $b) {
+                    return null;
+                }
+
+                $data = [
+                    'id'                 => $b->id,
+                    'status'             => $b->status->value,
+                    'status_label'       => $isAgency ? $b->status->agencyLabel() : $b->status->operatorLabel(),
+                    'status_badge_class' => $isAgency ? $b->status->agencyBadgeClass() : $b->status->operatorBadgeClass(),
+                    'final_price'        => (float) $b->final_price,
+                    'currency'           => $b->currency,
+                    'pax_count'          => $b->pax_count,
+                    'travel_date_from'   => $b->travel_date_from?->toDateString(),
+                    'travel_date_to'     => $b->travel_date_to?->toDateString(),
+                    'confirmed_at'       => $b->confirmed_at?->toDateTimeString(),
+                    'created_at'         => $b->created_at->toDateTimeString(),
+                ];
+
+                if (! $isAgency) {
+                    $data['sell_total_azn'] = (float) $b->sell_total_azn;
+                    $data['cost_total_azn'] = (float) $b->cost_total_azn;
+                    $data['margin_azn']     = (float) $b->margin_azn;
+                }
+
+                return $data;
+            }),
             'suppliers_notified_count' => (int) ($this->suppliers_notified_count ?? 0),
             'offers_count'             => (int) ($this->offers_count ?? 0),
             'agency'              => new AgencyResource($this->whenLoaded('agency')),
