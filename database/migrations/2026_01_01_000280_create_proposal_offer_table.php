@@ -16,6 +16,13 @@ return new class extends Migration
             $table->decimal('markup_pct', 5, 2)->default(0);
             $table->json('selected_item_types')->nullable();
             $table->jsonb('item_markups')->nullable();
+            // Кураторство материалов оператором: какие файлы поставщика увидит агентство.
+            // shared_catalog_media_ids: null = все каталожные фото расшарены (дефолт ВКЛ),
+            //   массив = только эти media id.
+            // shared_attachment_ids: null/[] = ни одно ручное вложение не расшарено (дефолт ВЫКЛ),
+            //   массив = только эти attachment id (картинки и документы).
+            $table->jsonb('shared_catalog_media_ids')->nullable();
+            $table->jsonb('shared_attachment_ids')->nullable();
             // Валюта и курс агентства, замороженные в момент добавления оффера в предложение
             $table->char('agency_currency_code', 3)->nullable();
             $table->decimal('agency_exchange_rate', 12, 6)->nullable();

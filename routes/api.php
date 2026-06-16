@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/proposals', [ProposalController::class, 'indexAll']);
     Route::get('/proposals/{proposal}', [ProposalController::class, 'show']);
     Route::get('/proposals/{proposal}/photos/{attachment}', [ProposalController::class, 'offerPhoto']);
+    Route::get('/proposals/{proposal}/files/{attachment}', [ProposalController::class, 'offerFile']);
     Route::patch('/proposals/{proposal}', [ProposalController::class, 'update']);
     Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy']);
     Route::patch('/proposals/{proposal}/send', [ProposalController::class, 'send']);
@@ -113,6 +114,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::patch('/proposals/{proposal}/reject', [ProposalController::class, 'reject']);
     Route::post('/proposals/{proposal}/offers', [ProposalController::class, 'addOffer']);
     Route::delete('/proposals/{proposal}/offers/{offer}', [ProposalController::class, 'removeOffer']);
+    Route::put('/proposals/{proposal}/offers/{offer}/shared-materials', [ProposalController::class, 'updateSharedMaterials']);
 
     // -----------------------------------------------------------------------
     // Bookings

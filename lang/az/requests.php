@@ -343,6 +343,7 @@ return [
         'modal_description'    => 'Təsvir',
         'modal_composition'    => 'Təklifin tərkibi',
         'modal_total'          => 'Yekun',
+        'modal_files'          => 'Fayllar',
 
         // Status stepper
         'steps' => [
@@ -475,7 +476,8 @@ return [
             'valid_until'    => 'etibarlıdır :date-dək',
             'offers_count'   => ':n təklif',
             'price_na'       => 'Qiymət hesablanmayıb',
-            'details'        => 'Təfərrüatlar',
+            'details'        => 'Bax',
+            'edit'           => 'Redaktə et',
             'delete'         => 'Sil',
             'revoke'         => 'Geri çağır',
             'send_preview'   => 'Bax və göndər',
@@ -641,6 +643,12 @@ return [
             'valid_until'   => 'etibarlıdır: :date-dək',
             'delete_att'    => 'Əlavəni sil',
             'load_error'    => 'Təklif məlumatlarını yükləmək mümkün olmadı.',
+            'mat_title'         => 'Təchizatçı materialları',
+            'mat_hint'          => 'Agentliyin təklifdə hansı təchizatçı şəkillərini və fayllarını görəcəyini seçin. Təchizatçının və faylların adı açıqlanmır.',
+            'mat_catalog_photos' => 'Resurs şəkilləri',
+            'mat_attachments'   => 'Təchizatçı faylları',
+            'mat_save'          => 'Yadda saxla',
+            'mat_saved_toast'   => 'Agentlik üçün materiallar yeniləndi',
         ],
 
         // Карточка заявки

@@ -343,6 +343,7 @@ return [
         'modal_description'    => 'Description',
         'modal_composition'    => 'Proposal contents',
         'modal_total'          => 'Total',
+        'modal_files'          => 'Files',
 
         // Status stepper
         'steps' => [
@@ -475,7 +476,8 @@ return [
             'valid_until'    => 'valid until :date',
             'offers_count'   => ':n offers',
             'price_na'       => 'Price not calculated',
-            'details'        => 'Details',
+            'details'        => 'View',
+            'edit'           => 'Edit',
             'delete'         => 'Delete',
             'revoke'         => 'Revoke',
             'send_preview'   => 'Preview & send',
@@ -641,6 +643,12 @@ return [
             'valid_until'   => 'valid until: :date',
             'delete_att'    => 'Delete attachment',
             'load_error'    => 'Failed to load proposal data.',
+            'mat_title'         => 'Supplier materials',
+            'mat_hint'          => 'Choose which supplier photos and files the agency will see in the proposal. The supplier and file names are not revealed.',
+            'mat_catalog_photos' => 'Resource photos',
+            'mat_attachments'   => 'Supplier files',
+            'mat_save'          => 'Save',
+            'mat_saved_toast'   => 'Materials for the agency updated',
         ],
 
         // Request info card

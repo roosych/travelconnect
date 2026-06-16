@@ -20,6 +20,16 @@ class OfferResource extends JsonResource
         // Suppliers see their own currency.
         $aznUnit = (float) ($this->unit_price_azn ?? $this->unit_price);
 
+        // Кураторство материалов (pivot proposal_offer). Семантика дефолтов:
+        //   shared_catalog_media_ids === null → ВСЕ каталожные фото расшарены;
+        //   shared_attachment_ids null/[]     → НИ ОДНО ручное вложение не расшарено.
+        $decode = static fn ($v) => is_string($v) ? (json_decode($v, true) ?: []) : (is_array($v) ? $v : null);
+        $hasPivot      = $this->pivot && $this->pivot->getTable() === 'proposal_offer';
+        $sharedCatalog = $hasPivot ? $decode($this->pivot->shared_catalog_media_ids ?? null) : null;
+        $sharedAttach  = $hasPivot ? $decode($this->pivot->shared_attachment_ids ?? null) : null;
+        $catalogShared = static fn ($mediaId) => $sharedCatalog === null || in_array($mediaId, $sharedCatalog, false);
+        $attachShared  = static fn ($id) => is_array($sharedAttach) && in_array($id, $sharedAttach, false);
+
         return [
             'id' => $this->id,
             'rfq_id' => $this->rfq_id,
@@ -113,11 +123,55 @@ class OfferResource extends JsonResource
                 'uploader' => $a->uploader ? ['id' => $a->uploader->id, 'name' => $a->uploader->name] : null,
                 'created_at' => $a->created_at->toDateTimeString(),
             ])),
-            // Агентству — только id картинок-вложений для анонимной галереи КП
+            // Агентству — только id РАСШАРЕННЫХ картинок-вложений для анонимной галереи КП
             // (отдаются через /proposals/{p}/photos/{id}, без имени файла и поставщика).
             'photo_attachment_ids' => $this->when($isAgency && $this->relationLoaded('attachments'), fn () => $this->attachments
-                ->filter(fn ($a) => str_starts_with((string) $a->mime_type, 'image/'))
+                ->filter(fn ($a) => str_starts_with((string) $a->mime_type, 'image/') && $attachShared($a->id))
                 ->pluck('id')->values()),
+            // Агентству — расшаренные документы-вложения (не картинки): id + расширение
+            // (скачиваются через /proposals/{p}/files/{id}, нейтральным именем).
+            'file_attachments' => $this->when($isAgency && $this->relationLoaded('attachments'), fn () => $this->attachments
+                ->filter(fn ($a) => ! str_starts_with((string) $a->mime_type, 'image/') && $attachShared($a->id))
+                ->map(fn ($a) => [
+                    'id'  => $a->id,
+                    'ext' => strtolower(pathinfo((string) $a->filename, PATHINFO_EXTENSION) ?: 'file'),
+                ])->values()),
+            // Агентству — расшаренные каталожные фото ресурса (url'ы, отфильтрованные по выбору).
+            'agency_catalog_photos' => $this->when($isAgency && $this->relationLoaded('items'), fn () => $this->items
+                ->flatMap(function ($item) use ($catalogShared) {
+                    if (! $item->relationLoaded('supplierService') || ! $item->supplierService) {
+                        return [];
+                    }
+
+                    return $item->supplierService->getMedia('photos')
+                        ->filter(fn ($m) => $catalogShared($m->id))
+                        ->map(fn ($m) => $m->getUrl());
+                })->values()),
+            // Оператору — полный набор «материалов для агентства» с флагом shared
+            // для рендера чекбоксов в дровере (каталожные фото + ручные вложения).
+            'materials' => $this->when(! $isAgency && $hasPivot && $this->relationLoaded('attachments'), fn () => [
+                'catalog_photos' => $this->relationLoaded('items')
+                    ? $this->items->flatMap(function ($item) use ($catalogShared) {
+                        if (! $item->relationLoaded('supplierService') || ! $item->supplierService) {
+                            return [];
+                        }
+
+                        return $item->supplierService->getMedia('photos')->map(fn ($m) => [
+                            'media_id' => $m->id,
+                            'url'      => $m->getUrl(),
+                            'shared'   => $catalogShared($m->id),
+                        ]);
+                    })->values()
+                    : collect(),
+                'attachments' => $this->attachments->map(fn ($a) => [
+                    'id'         => $a->id,
+                    'filename'   => $a->filename,
+                    'human_size' => $a->humanSize(),
+                    'is_image'   => str_starts_with((string) $a->mime_type, 'image/'),
+                    'url'        => $a->url(),
+                    'shared'     => $attachShared($a->id),
+                ])->values(),
+            ]),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

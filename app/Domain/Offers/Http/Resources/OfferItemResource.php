@@ -36,16 +36,19 @@ class OfferItemResource extends JsonResource
             'price_unit' => $this->price_unit->value,
             'price_unit_label' => $this->price_unit->label(),
             'line_total' => $this->when(! $isAgency, fn () => round($unit * $this->quantity, 2)),
+            // Название/описание ресурса — не агентству (может палить поставщика).
             'catalog_name' => $this->when(
-                $this->relationLoaded('supplierService') && $this->supplierService,
+                ! $isAgency && $this->relationLoaded('supplierService') && $this->supplierService,
                 fn () => $this->supplierService->name
             ),
             'catalog_description' => $this->when(
-                $this->relationLoaded('supplierService') && $this->supplierService,
+                ! $isAgency && $this->relationLoaded('supplierService') && $this->supplierService,
                 fn () => $this->supplierService->description
             ),
+            // Агентству каталожные фото отдаём отфильтрованными на уровне оффера
+            // (OfferResource.agency_catalog_photos); здесь — только оператору/поставщику.
             'catalog_photos' => $this->when(
-                $this->relationLoaded('supplierService') && $this->supplierService,
+                ! $isAgency && $this->relationLoaded('supplierService') && $this->supplierService,
                 fn () => $this->supplierService->getMedia('photos')
                     ->map(fn ($m) => $m->getUrl())
                     ->values()

@@ -64,7 +64,7 @@ class Proposal extends Model
     public function offers(): BelongsToMany
     {
         return $this->belongsToMany(Offer::class, 'proposal_offer', 'proposal_id', 'offer_id')
-            ->withPivot('operator_notes', 'markup_pct', 'selected_item_types', 'item_markups');
+            ->withPivot('operator_notes', 'markup_pct', 'selected_item_types', 'item_markups', 'shared_catalog_media_ids', 'shared_attachment_ids');
     }
 
     public function booking(): HasOne

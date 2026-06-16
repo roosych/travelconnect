@@ -1417,7 +1417,7 @@
                 </div>
                 <div class="d-flex gap-2 mt-4 pt-3 border-top">
                     <button class="btn btn-sm btn-light" onclick="openProposalDrawer(${p.id})">
-                        <i class="ki-outline ki-information-2 fs-5 me-1"></i>${t.show.proposals.details}
+                        <i class="ki-outline ${p.status === 'draft' ? 'ki-pencil' : 'ki-information-2'} fs-5 me-1"></i>${p.status === 'draft' ? t.show.proposals.edit : t.show.proposals.details}
                     </button>
                     ${canDelete ? `
                     <button class="btn btn-sm btn-light-danger" onclick="deleteProposal(${p.id})">
@@ -2665,7 +2665,6 @@
             activeDrawerProposal = p;
 
             renderProposalDrawerBody(p);
-            loadProposalDrawerAttachments(id, p.status === 'draft');
         } catch {
             document.getElementById('dprop-body').innerHTML =
                 `<div class="alert alert-danger">${t.show.dprop.load_error}</div>`;
@@ -2913,7 +2912,7 @@
                     </div>
                 </div>
                 ${itemsHtml}
-                ${_catalogBlock(items.length ? items : allItems, `dprop-offer-${o.id}`)}
+                ${isDraft ? _materialsBlock(o) : _catalogBlock(items.length ? items : allItems, `dprop-offer-${o.id}`)}
                 ${markupHtml}
             </div>`;
         }).join('') : `<div class="text-muted fs-7 mb-5">${t.show.dprop.no_offers}</div>`;
@@ -2949,6 +2948,10 @@
             </div>`;
 
         setTimeout(() => _initPropLightbox('#dprop-body .glightbox-prop'), 50);
+
+        // Тело перерисовывается с плейсхолдером-спиннером в секции вложений —
+        // обязательно перезагружаем вложения, иначе спиннер «висит» вечно.
+        loadProposalDrawerAttachments(p.id, p.status === 'draft');
     }
 
     async function loadProposalDrawerAttachments(proposalId, isDraft) {
@@ -3168,7 +3171,7 @@
                     gross = parseFloat(o.price_with_markup ?? net * (1 + pct / 100));
                 }
                 const typeBadges = offerTypeBadges(o, 'fs-8');
-                const previewCatalogBlock = _catalogBlock(items.length ? items : allItems, `mpp-offer-${o.id}`);
+                const previewCatalogBlock = _previewMaterialsBlock(o, `mpp-offer-${o.id}`);
                 return `
                 <div class="py-3 border-bottom">
                     <div class="d-flex align-items-center justify-content-between">
@@ -3395,6 +3398,126 @@
     }
 
     // Returns HTML for catalog resource photos block
+    // Кураторство материалов для агентства (только черновик): чекбоксы по фото ресурса
+    // и вложениям оффера. Данные приходят в o.materials (только оператору).
+    function _materialsBlock(o) {
+        const mat = o.materials ?? null;
+        if (!mat) return '';
+        const photos = mat.catalog_photos ?? [];
+        const atts   = mat.attachments ?? [];
+        if (!photos.length && !atts.length) return '';
+
+        const photoHtml = photos.length ? `
+            <div class="mb-4">
+                <div class="text-muted fs-7 fw-semibold mb-2">${t.show.dprop.mat_catalog_photos}</div>
+                <div class="d-flex gap-3 flex-wrap">
+                    ${photos.map(ph => `
+                        <label class="position-relative d-inline-block" style="cursor:pointer;">
+                            <span class="form-check form-check-custom form-check-solid form-check-sm position-absolute top-0 start-0 m-2" style="z-index:2;">
+                                <input class="form-check-input" type="checkbox"
+                                       data-mat-cat="${o.id}" value="${ph.media_id}" ${ph.shared ? 'checked' : ''}>
+                            </span>
+                            <img src="${ph.url}" alt="" class="rounded border" style="height:72px;width:104px;object-fit:cover;">
+                        </label>
+                    `).join('')}
+                </div>
+            </div>` : '';
+
+        const attHtml = atts.length ? `
+            <div class="mb-2">
+                <div class="text-muted fs-7 fw-semibold mb-2">${t.show.dprop.mat_attachments}</div>
+                ${atts.map(a => `
+                    <label class="form-check form-check-custom form-check-solid d-flex align-items-center gap-3 py-2" style="cursor:pointer;">
+                        <input class="form-check-input flex-shrink-0" type="checkbox" data-mat-att="${o.id}" value="${a.id}" ${a.shared ? 'checked' : ''}>
+                        <i class="ki-outline ${a.is_image ? 'ki-picture' : 'ki-document'} fs-4 text-muted flex-shrink-0"></i>
+                        <span class="form-check-label text-gray-800 fs-7 text-truncate">${escHtml(a.filename)}</span>
+                        <span class="text-muted fs-8 ms-auto flex-shrink-0">${escHtml(a.human_size ?? '')}</span>
+                    </label>
+                `).join('')}
+            </div>` : '';
+
+        return `
+        <div class="mt-4 pt-4 border-top">
+            <div class="text-gray-800 fs-6 fw-bold mb-1">${t.show.dprop.mat_title}</div>
+            <div class="text-muted fs-7 mb-4">${t.show.dprop.mat_hint}</div>
+            ${photoHtml}
+            ${attHtml}
+            <div class="d-flex align-items-center justify-content-end gap-3 mt-4">
+                <span class="text-success fs-7 d-none" id="mat-saved-${o.id}"><i class="ki-outline ki-check-circle fs-5"></i> ${t.show.dprop.saved}</span>
+                <button type="button" class="btn btn-success" onclick="saveSharedMaterials(${o.id}, this)">
+                    <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>${t.show.dprop.mat_save}</span>
+                    <span class="indicator-progress">${t.show.dprop.mat_save}... <span class="spinner-border spinner-border-sm align-middle ms-1"></span></span>
+                </button>
+            </div>
+        </div>`;
+    }
+
+    // Превью-версия для модалки «Просмотреть и отправить»: показывает ровно то,
+    // что увидит агентство — ТОЛЬКО расшаренные материалы (shared=true).
+    function _previewMaterialsBlock(o, galleryId) {
+        const mat = o.materials ?? null;
+        if (!mat) return '';
+        const photoUrls = [
+            ...(mat.catalog_photos ?? []).filter(p => p.shared).map(p => p.url),
+            ...(mat.attachments ?? []).filter(a => a.shared && a.is_image).map(a => a.url),
+        ];
+        const docs = (mat.attachments ?? []).filter(a => a.shared && !a.is_image);
+        if (!photoUrls.length && !docs.length) return '';
+
+        const gallery = photoUrls.length ? `
+            <div class="d-flex gap-2 mt-3" style="overflow-x:auto;">
+                ${photoUrls.map(url =>
+                    `<a href="${url}" class="glightbox-prop flex-shrink-0" data-gallery="${escHtml(galleryId)}">
+                        <img src="${url}" alt="" class="rounded" style="height:64px;width:92px;object-fit:cover;cursor:pointer;">
+                    </a>`
+                ).join('')}
+            </div>` : '';
+        const files = docs.length ? `
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                ${docs.map(a => {
+                    const isPdf    = /\.pdf$/i.test(a.filename);
+                    const safeName = a.filename.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    const action   = isPdf
+                        ? `openAttachment(${a.id}); return false;`
+                        : `downloadAttachment(${a.id}, '${safeName}'); return false;`;
+                    return `
+                    <a href="#" onclick="${action}"
+                       class="d-inline-flex align-items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-2 text-gray-800 text-hover-primary"
+                       style="max-width:280px;">
+                        <i class="ki-outline ki-paper-clip fs-5 text-muted flex-shrink-0"></i>
+                        <span class="fw-semibold fs-7 text-truncate">${escHtml(a.filename)}</span>
+                        <i class="ki-outline ki-down fs-5 text-muted flex-shrink-0"></i>
+                    </a>`;
+                }).join('')}
+            </div>` : '';
+        return gallery + files;
+    }
+
+    async function saveSharedMaterials(offerId, btn) {
+        const catIds = [...document.querySelectorAll(`input[data-mat-cat="${offerId}"]:checked`)]
+            .map(i => parseInt(i.value, 10));
+        const attIds = [...document.querySelectorAll(`input[data-mat-att="${offerId}"]:checked`)]
+            .map(i => parseInt(i.value, 10));
+
+        window.btnLoading?.(btn, true);
+        try {
+            const res = await api.put(`/proposals/${activeDrawerProposalId}/offers/${offerId}/shared-materials`, {
+                shared_catalog_media_ids: catIds,
+                shared_attachment_ids: attIds,
+            });
+            // Обновляем кэш черновика, чтобы «Просмотреть и отправить» из дровера
+            // сразу показал актуальный набор расшаренных материалов.
+            if (res?.data) activeDrawerProposal = res.data;
+            const saved = document.getElementById(`mat-saved-${offerId}`);
+            if (saved) { saved.classList.remove('d-none'); setTimeout(() => saved.classList.add('d-none'), 2500); }
+            showToast(t.show.dprop.mat_saved_toast, 'success');
+        } catch (e) {
+            showToast(e?.message || t.show.dprop.load_error, 'error');
+        } finally {
+            window.btnLoading?.(btn, false);
+        }
+    }
+
     function _catalogBlock(items, galleryId) {
         const ci = (items ?? []).find(i => i.supplier_service_id && i.catalog_photos?.length);
         if (!ci) return '';

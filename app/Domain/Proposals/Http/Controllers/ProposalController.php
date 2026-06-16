@@ -139,7 +139,7 @@ class ProposalController extends Controller
             $request->user(),
         );
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -151,7 +151,7 @@ class ProposalController extends Controller
     {
         $this->authorize('view', $proposal);
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -166,19 +166,7 @@ class ProposalController extends Controller
      */
     public function offerPhoto(Request $request, Proposal $proposal, Attachment $attachment): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $this->authorize('view', $proposal);
-
-        $model = $attachment->attachable;
-        $offerIds = $proposal->offers()->pluck('offers.id');
-
-        abort_unless(
-            $model instanceof Offer
-                && $offerIds->contains($model->id)
-                && str_starts_with((string) $attachment->mime_type, 'image/'),
-            404
-        );
-
-        abort_unless(\Illuminate\Support\Facades\Storage::disk($attachment->disk)->exists($attachment->path), 404);
+        $this->assertSharedOfferFile($request, $proposal, $attachment, imageOnly: true);
 
         $ext = pathinfo((string) $attachment->filename, PATHINFO_EXTENSION) ?: 'jpg';
 
@@ -189,6 +177,82 @@ class ProposalController extends Controller
         );
     }
 
+    /**
+     * Анонимная inline-отдача документа-вложения оффера этого КП (не картинки).
+     * Те же гарантии дезинтермедиации, что и offerPhoto, плюс агентству — только
+     * РАСШАРЕННЫЕ оператором вложения.
+     */
+    public function offerFile(Request $request, Proposal $proposal, Attachment $attachment): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $this->assertSharedOfferFile($request, $proposal, $attachment, imageOnly: false);
+
+        $ext = strtolower(pathinfo((string) $attachment->filename, PATHINFO_EXTENSION) ?: 'file');
+
+        return \Illuminate\Support\Facades\Storage::disk($attachment->disk)->response(
+            $attachment->path,
+            'file.'.$ext,
+            ['Content-Type' => $attachment->mime_type ?? 'application/octet-stream'],
+        );
+    }
+
+    /**
+     * Общая проверка доступа к файлу-вложению оффера в рамках КП.
+     * Агентство видит только вложения, ОТМЕЧЕННЫЕ оператором как shared (shared_attachment_ids).
+     */
+    private function assertSharedOfferFile(Request $request, Proposal $proposal, Attachment $attachment, bool $imageOnly): void
+    {
+        $this->authorize('view', $proposal);
+
+        $model = $attachment->attachable;
+        $isImage = str_starts_with((string) $attachment->mime_type, 'image/');
+
+        $offer = $model instanceof Offer
+            ? $proposal->offers()->where('offers.id', $model->id)->first()
+            : null;
+
+        abort_unless($offer && ($imageOnly ? $isImage : ! $isImage), 404);
+
+        // Дезинтермедиация: агентству — только расшаренные вложения.
+        if ($request->user()?->isAgency()) {
+            $shared = $offer->pivot->shared_attachment_ids
+                ? (json_decode($offer->pivot->shared_attachment_ids, true) ?: [])
+                : [];
+            abort_unless(in_array($attachment->id, $shared, false), 404);
+        }
+
+        abort_unless(\Illuminate\Support\Facades\Storage::disk($attachment->disk)->exists($attachment->path), 404);
+    }
+
+    public function updateSharedMaterials(Request $request, Proposal $proposal, Offer $offer): JsonResponse
+    {
+        if (! $request->user()->isOperator()) {
+            abort(403, 'Only operators can curate proposal materials.');
+        }
+
+        $this->authorize('view', $proposal);
+
+        $data = $request->validate([
+            'shared_catalog_media_ids'   => ['present', 'nullable', 'array'],
+            'shared_catalog_media_ids.*' => ['integer'],
+            'shared_attachment_ids'      => ['present', 'nullable', 'array'],
+            'shared_attachment_ids.*'    => ['integer'],
+        ]);
+
+        $this->proposalService->updateSharedMaterials(
+            $proposal,
+            $offer,
+            $data['shared_catalog_media_ids'] ?? null,
+            $data['shared_attachment_ids'] ?? null,
+        );
+
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+
+        return response()->json([
+            'success' => true,
+            'data'    => new ProposalResource($proposal),
+        ]);
+    }
+
     public function update(UpdateProposalRequest $request, Proposal $proposal): JsonResponse
     {
         if (! $request->user()->isOperator()) {
@@ -197,7 +261,7 @@ class ProposalController extends Controller
 
         $proposal->fill($request->validated());
         $proposal->save();
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -212,7 +276,7 @@ class ProposalController extends Controller
         }
 
         $proposal = $this->proposalService->send($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -225,7 +289,7 @@ class ProposalController extends Controller
         $this->authorize('decide', $proposal);
 
         $proposal = $this->proposalService->accept($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -238,7 +302,7 @@ class ProposalController extends Controller
         $this->authorize('decide', $proposal);
 
         $proposal = $this->proposalService->reject($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -294,7 +358,7 @@ class ProposalController extends Controller
             $itemMarkups,
         );
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -309,7 +373,7 @@ class ProposalController extends Controller
         }
 
         $proposal = $this->proposalService->cancel($proposal, $request->user());
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,
@@ -340,7 +404,7 @@ class ProposalController extends Controller
         // Step 2: set offer status back to reviewed
         $this->offerService->removeFromProposal($offer, $proposal);
 
-        $proposal->load(['operator', 'offers.supplier', 'offers.rfq', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
+        $proposal->load(['operator', 'offers.supplier', 'offers.rfq.country', 'offers.items.supplierService.media', 'offers.attachments', 'request']);
 
         return response()->json([
             'success' => true,

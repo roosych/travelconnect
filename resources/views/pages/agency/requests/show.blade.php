@@ -406,7 +406,13 @@ async function openAttachment(attachmentId) {
         });
         if (!res.ok) { showToast(L.toast.file_open_error, 'error'); return; }
         const blob = await res.blob();
-        window.open(URL.createObjectURL(blob), '_blank');
+        const url  = URL.createObjectURL(blob);
+        // Картинку — в лайтбокс по размеру окна; прочее (pdf) — в новой вкладке.
+        if ((blob.type || '').startsWith('image/')) {
+            GLightbox({ elements: [{ href: url, type: 'image' }] }).open();
+        } else {
+            window.open(url, '_blank');
+        }
     } catch (e) {
         showToast(L.toast.file_open_error, 'error');
     }
@@ -649,7 +655,7 @@ function proposalCard(p) {
     const hasConversion = p.original_total_price && p.currency && p.original_currency
                        && p.currency !== p.original_currency;
     const conversionLine = hasConversion
-        ? `<div class="text-muted fs-9">≈ ${fmtMoney(p.original_total_price, p.original_currency)}${p.exchange_rate_snapshot ? ` · ${parseFloat(p.exchange_rate_snapshot).toFixed(4)}` : ''}</div>`
+        ? `<div class="text-muted fs-9">≈ ${fmtMoney(p.original_total_price, p.original_currency)}${p.exchange_rate_snapshot ? ` · 1 ${p.original_currency} = ${fmtMoney(1 / parseFloat(p.exchange_rate_snapshot), p.currency)}` : ''}</div>`
         : '';
 
     // ── Status indicator / actions ─────────────────────────────────────────
@@ -756,39 +762,49 @@ async function openProposalModal(proposalId) {
     const hasModalConversion = p.original_total_price && p.currency && p.original_currency
                             && p.currency !== p.original_currency;
     const modalConversionLine = hasModalConversion
-        ? `<div class="text-muted fs-9">≈ ${fmtMoney(p.original_total_price, p.original_currency)}${p.exchange_rate_snapshot ? ` · ${parseFloat(p.exchange_rate_snapshot).toFixed(4)}` : ''}</div>`
+        ? `<div class="text-muted fs-9">≈ ${fmtMoney(p.original_total_price, p.original_currency)}${p.exchange_rate_snapshot ? ` · 1 ${p.original_currency} = ${fmtMoney(1 / parseFloat(p.exchange_rate_snapshot), p.currency)}` : ''}</div>`
         : '';
 
     const offersHtml = Array.isArray(p.offers) && p.offers.length
         ? p.offers.map(o => {
             const svcType  = o.rfq?.service_type ?? o.rfq_service_type ?? '';
             const svcLabel = SERVICE_LABELS[svcType] ?? svcType;
-            const rfqTitle = o.rfq?.title ?? o.rfq_title ?? '';
-            const allItems = o.items ?? [];
-            const ci = allItems.find(i => i.supplier_service_id && (i.catalog_photos?.length || i.catalog_name || i.catalog_description));
-            // Фото = каталог ресурса + ручные фото-вложения оффера (анонимный роут КП).
+            const country  = o.rfq?.country_name ?? '';
+            // Только то, что оператор расшарил: фото (каталог ресурса, отфильтрованный
+            // на сервере + ручные фото-вложения) и документы — всё через анонимные роуты КП.
+            // Личность поставщика и имена файлов агентству не раскрываются.
             const photoUrls = [
-                ...((ci?.catalog_photos) ?? []),
+                ...((o.agency_catalog_photos) ?? []),
                 ...((o.photo_attachment_ids ?? []).map(id => `/api/proposals/${p.id}/photos/${id}`)),
             ];
-            const photosHtml = photoUrls.length ? `
-                <div class="d-flex gap-2 mb-2" style="overflow-x:auto;">
+            const catalogHtml = photoUrls.length ? `
+                <div class="mt-3 d-flex gap-2" style="overflow-x:auto;">
                     ${photoUrls.map(url =>
-                        `<a href="${url}" class="agency-glightbox flex-shrink-0" data-gallery="agency-offer-${o.id}">
+                        `<a href="${url}" class="agency-glightbox flex-shrink-0" data-gallery="agency-offer-${o.id}" data-glightbox="type: image">
                             <img src="${url}" alt="" class="rounded" style="height:60px;width:85px;object-fit:cover;cursor:pointer;">
                         </a>`
                     ).join('')}
                 </div>` : '';
-            const catalogTextHtml = ci ? `
-                ${ci.catalog_name ? `<div class="fw-semibold text-gray-800 fs-7 mb-1">${esc(ci.catalog_name)}</div>` : ''}
-                ${ci.catalog_description ? `<div class="text-gray-600 fs-8 lh-base">${esc(ci.catalog_description)}</div>` : ''}` : '';
-            const catalogHtml = (photosHtml || catalogTextHtml) ? `<div class="mt-3">${photosHtml}${catalogTextHtml}</div>` : '';
+            const files = Array.isArray(o.file_attachments) ? o.file_attachments : [];
+            const filesHtml = files.length ? `
+                <div class="mt-3">
+                    <div class="text-muted fs-9 mb-1">${L.modal_files}</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        ${files.map(f =>
+                            `<a href="/api/proposals/${p.id}/files/${f.id}" target="_blank" rel="noopener"
+                                class="badge badge-light-primary d-inline-flex align-items-center gap-1 text-uppercase">
+                                <i class="ki-outline ki-document fs-7"></i>${esc(f.ext)}
+                            </a>`
+                        ).join('')}
+                    </div>
+                </div>` : '';
             return `
             <div class="py-3 border-bottom">
                 <div class="fw-semibold text-gray-800 fs-7">${esc(svcLabel)}</div>
-                ${rfqTitle && rfqTitle !== svcLabel ? `<div class="text-muted fs-8 mt-1 text-truncate">${esc(rfqTitle)}</div>` : ''}
+                ${country ? `<div class="text-muted fs-8 mt-1">${esc(country)}</div>` : ''}
                 ${o.notes ? `<div class="text-gray-600 fs-8 mt-2 fst-italic">${esc(o.notes)}</div>` : ''}
                 ${catalogHtml}
+                ${filesHtml}
             </div>
         `}).join('')
         : `<div class="text-muted fs-7 py-4 text-center">${L.modal_no_services}</div>`;

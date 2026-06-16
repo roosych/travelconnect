@@ -139,6 +139,32 @@ class ProposalService
         $this->recalculateTotal($proposal);
     }
 
+    /**
+     * Сохраняет кураторство материалов оператором для пары КП↔оффер.
+     * Дефолты в pivot: shared_catalog_media_ids=null (все фото), shared_attachment_ids=null (ничего).
+     * Передавая массивы, оператор фиксирует точный выбор; пустой массив каталога = «скрыть все».
+     */
+    public function updateSharedMaterials(
+        Proposal $proposal,
+        Offer $offer,
+        ?array $sharedCatalogMediaIds,
+        ?array $sharedAttachmentIds,
+    ): void {
+        if ($proposal->status !== ProposalStatus::Draft) {
+            throw new BusinessRuleException('Материалы можно менять только у черновика предложения.');
+        }
+
+        $attached = $proposal->offers()->where('offers.id', $offer->id)->exists();
+        if (! $attached) {
+            throw new BusinessRuleException('Оффер не входит в это предложение.');
+        }
+
+        $proposal->offers()->updateExistingPivot($offer->id, [
+            'shared_catalog_media_ids' => $sharedCatalogMediaIds !== null ? json_encode(array_values($sharedCatalogMediaIds)) : null,
+            'shared_attachment_ids'    => $sharedAttachmentIds !== null ? json_encode(array_values($sharedAttachmentIds)) : null,
+        ]);
+    }
+
     public function removeOffer(Proposal $proposal, Offer $offer): void
     {
         if ($proposal->status !== ProposalStatus::Draft) {
