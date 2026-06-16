@@ -18,7 +18,8 @@ return [
         'supplier' => [
             'received'  => 'Подано',
             'reviewed'  => 'На рассмотрении',
-            'selected'  => 'Выбрано ✓',
+            'selected'  => 'В подборе',
+            'won'       => 'Принято ✓',
             'rejected'  => 'Не выбрано',
             'expired'   => 'Истекло',
             'withdrawn' => 'Отозвано вами',

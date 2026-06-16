@@ -18,7 +18,8 @@ return [
         'supplier' => [
             'received'  => 'Submitted',
             'reviewed'  => 'Under review',
-            'selected'  => 'Selected ✓',
+            'selected'  => 'In selection',
+            'won'       => 'Accepted ✓',
             'rejected'  => 'Not selected',
             'expired'   => 'Expired',
             'withdrawn' => 'Withdrawn by you',

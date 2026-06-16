@@ -189,8 +189,10 @@ async function withdrawOffer() {
     // Срок действия актуален только для активных офферов (получено/рассматривается).
     // У выбранного — срок неважен, показываем позитивную пометку вместо «(истёк)».
     const validEl = document.getElementById('offer-valid');
-    if (o.status === 'selected') {
-        validEl.innerHTML = `<span class="text-success fw-semibold"><i class="ki-outline ki-check-circle fs-7 me-1"></i>${L.selected_by_agency}</span>`;
+    if (o.won) {
+        validEl.innerHTML = `<span class="text-success fw-semibold"><i class="ki-outline ki-check-circle fs-7 me-1"></i>${L.won_note}</span>`;
+    } else if (o.status === 'selected') {
+        validEl.innerHTML = `<span class="text-primary fw-semibold"><i class="ki-outline ki-time fs-7 me-1"></i>${L.in_selection_note}</span>`;
     } else if (o.status === 'received' || o.status === 'reviewed') {
         validEl.textContent = o.valid_until ? L.valid_until.replace(':date', fmtDeadline(o.valid_until)) + (o.is_expired ? L.expired_suffix : '') : '';
     } else if (o.status === 'expired') {
@@ -211,9 +213,8 @@ async function withdrawOffer() {
         document.getElementById('info-notes').textContent = o.notes;
     }
 
-    // Отозвать можно активный оффер (получено/рассматривается) — как на индексе/RFQ.
-    const canWithdraw = o.status === 'received' || o.status === 'reviewed';
-    document.getElementById('btn-withdraw').classList.toggle('d-none', !canWithdraw);
+    // Доступность отзыва решает бэкенд (оффер не в отправленном/принятом КП).
+    document.getElementById('btn-withdraw').classList.toggle('d-none', !o.can_withdraw);
 
     // Вложения — только просмотр/скачивание (управление живёт на странице запроса).
     loadAttachments('offers', offerId, false);

@@ -571,9 +571,9 @@ function renderSvcItem(item) {
 
     if (state === 'submitted') {
         const { offer } = item;
-        // Отзыв доступен для всех активных статусов; жёсткое правило «КП отправлено/принято»
-        // проверяет сервер (и вернёт ошибку в модалку). selected → строгое предупреждение.
-        const canWithdraw = ['received', 'reviewed', 'selected'].includes(offer.status);
+        // Доступность отзыва решает бэкенд (оффер не в отправленном/принятом КП) —
+        // используем готовый флаг, чтобы не показывать кнопку, которая вернёт ошибку.
+        const canWithdraw = !!offer.can_withdraw;
         const { resourceLine } = parseOfferNotes(offer.notes);
         const fileCount = (offer.attachments ?? []).length;
         return `

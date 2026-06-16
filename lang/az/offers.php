@@ -18,7 +18,8 @@ return [
         'supplier' => [
             'received'  => 'Göndərilib',
             'reviewed'  => 'Baxılır',
-            'selected'  => 'Seçilib ✓',
+            'selected'  => 'Seçimdə',
+            'won'       => 'Qəbul edilib ✓',
             'rejected'  => 'Seçilməyib',
             'expired'   => 'Vaxtı bitib',
             'withdrawn' => 'Sizin tərəfdən geri çağırılıb',

@@ -30,6 +30,8 @@ class OfferController extends Controller
         } elseif ($user->isSupplier()) {
             $supplierIds = $user->suppliers()->pluck('suppliers.id');
             $query->whereIn('supplier_id', $supplierIds);
+            // Нужно для производного «выиграно»/«можно отозвать» в OfferResource.
+            $query->with('proposals');
         }
 
         // Filters independent of the status chips, applied before counting.
@@ -139,6 +141,8 @@ class OfferController extends Controller
         if ($user->isSupplier()) {
             $supplierIds = $user->suppliers()->pluck('suppliers.id');
             $query->whereIn('supplier_id', $supplierIds);
+            // Производный статус «выиграно»/доступность отзыва в OfferResource.
+            $query->with('proposals');
         }
 
         if ($request->filled('status')) {
@@ -239,6 +243,10 @@ class OfferController extends Controller
 
         $offer = $this->offerService->checkExpiry($offer);
         $offer->load(['supplier', 'items.supplierService.media', 'rfq.country', 'rfq.request.agency']);
+        // Для поставщика — производный статус «выиграно»/доступность отзыва.
+        if ($user->isSupplier()) {
+            $offer->load('proposals');
+        }
 
         return response()->json([
             'success' => true,

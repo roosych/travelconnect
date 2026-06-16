@@ -2,6 +2,8 @@
 
 namespace App\Domain\Offers\Http\Resources;
 
+use App\Domain\Offers\Enums\OfferStatus;
+use App\Domain\Proposals\Enums\ProposalStatus;
 use App\Domain\Suppliers\Http\Resources\SupplierResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -29,6 +31,30 @@ class OfferResource extends JsonResource
         $sharedAttach  = $hasPivot ? $decode($this->pivot->shared_attachment_ids ?? null) : null;
         $catalogShared = static fn ($mediaId) => $sharedCatalog === null || in_array($mediaId, $sharedCatalog, false);
         $attachShared  = static fn ($id) => is_array($sharedAttach) && in_array($id, $sharedAttach, false);
+
+        // Производный статус для поставщика. Внутреннее «selected» (оператор положил
+        // оффер в КП) НЕ означает победу — пока КП не принято, это «в подборе».
+        // «Выиграно» (won) показываем только когда оффер попал в ПРИНЯТОЕ КП.
+        $won = false;              // оффер в принятом КП → реальная победа
+        $inActiveProposal = false; // оффер в отправленном/принятом КП → отзыв запрещён
+        if ($isSupplier) {
+            if ($this->relationLoaded('proposals')) {
+                $won = $this->proposals->contains(fn ($p) => $p->status === ProposalStatus::Accepted);
+                $inActiveProposal = $this->proposals->contains(
+                    fn ($p) => in_array($p->status, [ProposalStatus::Sent, ProposalStatus::Accepted], true)
+                );
+            } else {
+                $won = $this->proposals()->where('proposals.status', ProposalStatus::Accepted->value)->exists();
+                $inActiveProposal = $this->proposals()
+                    ->whereIn('proposals.status', [ProposalStatus::Sent->value, ProposalStatus::Accepted->value])
+                    ->exists();
+            }
+        }
+        // Отзыв доступен, пока оффер не в отправленном/принятом КП (совпадает с
+        // OfferService::markWithdrawn).
+        $canWithdraw = $isSupplier
+            && in_array($this->status, [OfferStatus::Received, OfferStatus::Reviewed, OfferStatus::Selected], true)
+            && ! $inActiveProposal;
 
         return [
             'id' => $this->id,
@@ -73,8 +99,16 @@ class OfferResource extends JsonResource
             'valid_until' => $this->valid_until?->toIso8601String(),
             'notes' => $this->notes,
             'status' => $this->status->value,
-            'status_label' => $isSupplier ? $this->status->supplierLabel() : $this->status->operatorLabel(),
-            'status_badge_class' => $isSupplier ? $this->status->supplierBadgeClass() : $this->status->operatorBadgeClass(),
+            // Для поставщика «выиграно» (принятое КП) перекрывает сырой статус,
+            // а внутреннее «selected» он видит как нейтральное «в подборе».
+            'status_label' => $isSupplier
+                ? ($won ? __('offers.status.supplier.won') : $this->status->supplierLabel())
+                : $this->status->operatorLabel(),
+            'status_badge_class' => $isSupplier
+                ? ($won ? 'badge-light-success' : $this->status->supplierBadgeClass())
+                : $this->status->operatorBadgeClass(),
+            'won' => $this->when($isSupplier, $won),
+            'can_withdraw' => $this->when($isSupplier, $canWithdraw),
             'is_expired' => $this->isExpired(),
             'operator_notes' => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->operator_notes),
             'markup_pct' => $this->when(! $isAgency, fn () => $this->whenPivotLoaded('proposal_offer', fn () => $this->pivot->markup_pct)),

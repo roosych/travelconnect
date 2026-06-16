@@ -26,7 +26,9 @@ enum OfferStatus: string
         return match($this) {
             self::Received  => 'badge-light-warning',
             self::Reviewed  => 'badge-light-info',
-            self::Selected  => 'badge-light-success',
+            // «selected» поставщику = «в подборе» (нейтрально); победа («won»)
+            // подсвечивается зелёным отдельно в ресурсе.
+            self::Selected  => 'badge-light-primary',
             self::Rejected,
             self::Expired,
             self::Withdrawn => 'badge-light-secondary',

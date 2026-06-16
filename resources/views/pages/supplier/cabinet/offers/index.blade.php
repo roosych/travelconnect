@@ -93,7 +93,7 @@ function renderChips(meta) {
         { status: '',          label: ch.all,       cls: 'secondary', n: meta?.total_all ?? 0,    core: true },
         { status: 'received',  label: ch.received,  cls: 'warning',   n: counts.received ?? 0,    core: true },
         { status: 'reviewed',  label: ch.reviewed,  cls: 'info',      n: counts.reviewed ?? 0,    core: true },
-        { status: 'selected',  label: ch.selected,  cls: 'success',   n: counts.selected ?? 0,    core: true },
+        { status: 'selected',  label: ch.selected,  cls: 'primary',   n: counts.selected ?? 0,    core: true },
         { status: 'rejected',  label: ch.rejected,  cls: 'secondary', n: counts.rejected ?? 0 },
         { status: 'expired',   label: ch.expired,   cls: 'dark',      n: counts.expired ?? 0 },
         { status: 'withdrawn', label: ch.withdrawn, cls: 'secondary', n: counts.withdrawn ?? 0 },
