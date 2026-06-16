@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class BookingWebController extends Controller
 {
@@ -11,8 +12,11 @@ class BookingWebController extends Controller
         return view('pages.bookings.index');
     }
 
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
-        return view('pages.bookings.show', ['id' => $id]);
+        return view('pages.bookings.show', [
+            'id'           => $id,
+            'userTimezone' => $request->user()->effectiveTimezone(),
+        ]);
     }
 }

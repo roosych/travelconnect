@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <div class="card card-flush" id="booking-request-card">
+        <div class="card card-flush mb-6" id="booking-request-card">
             <div class="card-header py-4">
                 <div class="card-title">
                     <h4 class="fw-bold fs-6 mb-0">{{ __('bookings.show.request_card') }}</h4>
@@ -52,6 +52,17 @@
             </div>
             <div class="card-body pt-0">
                 <div class="text-center py-4"><span class="spinner-border text-info spinner-border-sm"></span></div>
+            </div>
+        </div>
+
+        <div class="card card-flush" id="booking-proof-card">
+            <div class="card-header py-4">
+                <div class="card-title">
+                    <h4 class="fw-bold fs-6 mb-0">{{ __('bookings.show.proof_card') }}</h4>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <div class="text-center py-4"><span class="spinner-border text-warning spinner-border-sm"></span></div>
             </div>
         </div>
 
@@ -78,6 +89,7 @@ const bookingId = {{ $id }};
 const t  = @json(__('bookings'));
 const tc = @json(__('common'));
 const ts = t.show;
+const USER_TZ = @json($userTimezone);
 let currentBooking = null;
 
 (async function load() {
@@ -96,6 +108,47 @@ function renderBooking(b) {
     renderDetailCard(b);
     renderProposalCard(b);
     renderRequestCard(b);
+    loadProofCard(b);
+}
+
+// Подтверждения оплаты, загруженные агентством (read-only для оператора).
+async function loadProofCard(b) {
+    const body = document.getElementById('booking-proof-card').querySelector('.card-body');
+    try {
+        const res = await api.get(`/bookings/${b.id}/attachments`);
+        const files = Array.isArray(res.data) ? res.data : [];
+        if (!files.length) {
+            body.innerHTML = `<div class="text-muted fs-7 py-2">${ts.proof_empty}</div>`;
+            return;
+        }
+        body.innerHTML = files.map(f => `
+            <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
+                <i class="ki-outline ki-paper-clip fs-5 text-muted flex-shrink-0"></i>
+                <div class="flex-grow-1 min-w-0">
+                    <a href="#" onclick="downloadBookingFile(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;"
+                       class="fw-semibold text-gray-800 text-hover-primary fs-7 text-truncate d-block">${escHtml(f.filename)}</a>
+                    <div class="text-muted fs-8">${[f.human_size, ts.proof_uploaded.replace(':date', fmtDtTz(f.created_at))].filter(Boolean).join(' · ')}</div>
+                </div>
+            </div>`).join('');
+    } catch {
+        body.innerHTML = `<div class="text-muted fs-7 py-2">${ts.proof_empty}</div>`;
+    }
+}
+
+async function downloadBookingFile(id, filename) {
+    try {
+        const res = await fetch(`/api/attachments/${id}/download`, {
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch {}
 }
 
 function renderToolbar(b) {
@@ -172,7 +225,7 @@ function renderDetailCard(b) {
                 </div>
                 <div class="col-sm-6">
                     <div class="text-gray-500 fw-bold fs-8 text-uppercase mb-1">${t.drawer.confirmed}</div>
-                    <div class="fw-semibold text-gray-800">${formatDate(b.confirmed_at ?? b.created_at)}</div>
+                    <div class="fw-semibold text-gray-800">${fmtDtTz(b.confirmed_at ?? b.created_at)}</div>
                 </div>
                 ${b.travel_date_from ? `
                 <div class="col-sm-6">
@@ -263,7 +316,7 @@ function renderRequestCard(b) {
         const cls  = diff < 0 ? 'text-danger' : diff <= 3 ? 'text-warning' : 'text-muted';
         return `<div class="d-flex align-items-center gap-2 fs-7 ${cls}">
             <i class="ki-outline ki-time fs-6"></i>
-            ${ts.deadline_label.replace(':date', formatDate(request.deadline_at))}
+            ${ts.deadline_label.replace(':date', fmtDtTz(request.deadline_at))}
             ${diff < 0 ? `<span class="badge badge-light-danger ms-1 fs-9">${tc.time.overdue}</span>` : diff <= 3 ? `<span class="text-muted fw-normal">(${tc.time.days.replace(':n', diff)})</span>` : ''}
         </div>`;
     })() : '';
@@ -375,6 +428,20 @@ function formatDate(d) {
     return new Date(d).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+// Дата + время + метка пояса смотрящего. Для всех дат, кроме дат тура.
+function fmtDtTz(iso) {
+    if (!iso) return '—';
+    const dt = new Date(iso).toLocaleString('ru-RU', {
+        timeZone: USER_TZ, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    });
+    let tz = USER_TZ;
+    try {
+        tz = new Intl.DateTimeFormat('ru-RU', { timeZone: USER_TZ, timeZoneName: 'shortOffset' })
+            .formatToParts(new Date(iso)).find(p => p.type === 'timeZoneName')?.value || USER_TZ;
+    } catch (e) {}
+    return `${dt} (${tz})`;
+}
+
 function formatCurrency(v, currency = 'AZN') {
     if (v == null || v === '' || isNaN(v)) return '—';
     const num = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(parseFloat(v));
@@ -481,7 +548,7 @@ function renderProposalDrawerContent(p) {
     <div class="d-flex align-items-center gap-3 flex-wrap mb-5">
         <span class="badge ${sCls} fs-7 py-2 px-3">${sLabel}</span>
         ${p.is_expired ? `<span class="badge badge-light-danger fs-7 py-2 px-3">${ts.drawer.expired}</span>` : ''}
-        ${p.valid_until && !p.is_expired ? `<span class="text-muted fs-7"><i class="ki-outline ki-calendar fs-7 me-1"></i>${ts.drawer.valid_until.replace(':date', formatDate(p.valid_until))}</span>` : ''}
+        ${p.valid_until && !p.is_expired ? `<span class="text-muted fs-7"><i class="ki-outline ki-calendar fs-7 me-1"></i>${ts.drawer.valid_until.replace(':date', fmtDtTz(p.valid_until))}</span>` : ''}
     </div>
 
     <div class="d-flex align-items-center gap-6 mb-6 pb-5 border-bottom">
@@ -494,7 +561,7 @@ function renderProposalDrawerContent(p) {
         </div>` : ''}
         <div>
             <div class="text-gray-400 fs-8 text-uppercase fw-bold mb-1">${ts.drawer.created}</div>
-            <div class="fw-semibold text-gray-800 fs-6">${formatDate(p.created_at)}</div>
+            <div class="fw-semibold text-gray-800 fs-6">${fmtDtTz(p.created_at)}</div>
         </div>
     </div>
 

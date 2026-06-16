@@ -59,12 +59,12 @@ class BookingResource extends JsonResource
                     'status' => $this->proposal->request->status?->value ?? $this->proposal->request->status,
                     'status_label' => $this->proposal->request->status?->operatorLabel() ?? null,
                     'status_badge_class' => $this->proposal->request->status?->operatorBadgeClass() ?? null,
-                    'deadline_at' => $this->proposal->request->deadline_at?->toDateString(),
+                    'deadline_at' => $this->proposal->request->deadline_at?->toIso8601String(),
                     'notes' => $this->proposal->request->notes,
                 ] : null,
             ]),
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => $this->created_at->toIso8601String(),
+            'updated_at' => $this->updated_at->toIso8601String(),
         ];
     }
 }

@@ -55,6 +55,9 @@
     {{-- Payment / next step --}}
     <div id="payment-block"></div>
 
+    {{-- Payment proof (agency uploads receipt; operator confirms) --}}
+    <div id="payment-proof" class="mb-6"></div>
+
     {{-- Info + Proposal --}}
     <div class="row g-6">
 
@@ -151,6 +154,11 @@ function tzOffsetLabel(iso) {
             .find(p => p.type === 'timeZoneName')?.value || USER_TZ;
     } catch (e) { return USER_TZ; }
 }
+// Дата + время + метка пояса. Для всех дат, кроме дат тура.
+function fmtDtTz(iso) {
+    if (!iso) return '—';
+    return `${fmtDateTimeTz(iso)} (${tzOffsetLabel(iso)})`;
+}
 // Вторичная строка с суммой в AZN (рабочая валюта) — если у агентства иная валюта.
 function aznSub(azn, currency, cls = 'fs-8') {
     if (azn == null || isNaN(azn) || currency === 'AZN') return '';
@@ -203,6 +211,9 @@ function render(b) {
     // Payment / next step
     renderPayment(b);
 
+    // Payment proof (receipt upload)
+    loadPaymentProof(b);
+
     // Trip details
     renderTripDetails(b);
 
@@ -250,6 +261,113 @@ function renderPayment(b) {
             </div>
         </div>
     </div>`;
+}
+
+// ── Подтверждение оплаты (агентство грузит чек, оператор подтверждает) ──────────
+let _proofBooking = null;
+async function loadPaymentProof(b) {
+    _proofBooking = b;
+    const el = document.getElementById('payment-proof');
+    if (!el) return;
+    if (b.status === 'cancelled') { el.innerHTML = ''; return; }
+    try {
+        const res = await api.get(`/bookings/${b.id}/attachments`);
+        renderPaymentProof(b, Array.isArray(res.data) ? res.data : []);
+    } catch {
+        renderPaymentProof(b, []);
+    }
+}
+
+function renderPaymentProof(b, files) {
+    const el = document.getElementById('payment-proof');
+    if (!el) return;
+    const P = L.proof;
+    const canUpload = ['confirmed', 'awaiting_payment'].includes(b.status);
+    if (!files.length && !canUpload) { el.innerHTML = ''; return; }
+
+    const list = files.length ? files.map(f => `
+        <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2" id="proof-${f.id}">
+            <i class="ki-outline ki-paper-clip fs-5 text-muted flex-shrink-0"></i>
+            <div class="flex-grow-1 min-w-0">
+                <a href="#" onclick="downloadBookingFile(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;"
+                   class="fw-semibold text-gray-800 text-hover-primary fs-7 text-truncate d-block">${escHtml(f.filename)}</a>
+                <div class="text-muted fs-8">${[f.human_size, P.uploaded.replace(':date', fmtDtTz(f.created_at))].filter(Boolean).join(' · ')}</div>
+            </div>
+            ${canUpload ? `<button class="btn btn-icon btn-sm btn-light-danger flex-shrink-0" title="${P.delete}" onclick="deletePaymentProof(${f.id})"><i class="ki-outline ki-trash fs-5"></i></button>` : ''}
+        </div>`).join('') : `<div class="text-muted fs-7 mb-2">${P.empty}</div>`;
+
+    const uploader = canUpload ? `
+        <label class="btn btn-light-primary btn-sm mb-0">
+            <i class="ki-outline ki-cloud-add fs-5 me-1"></i>${P.upload}
+            <input type="file" class="d-none" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" onchange="uploadPaymentProof(this)">
+        </label>` : '';
+
+    el.innerHTML = `
+    <div class="card card-flush">
+        <div class="card-body py-5">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-1">
+                <div class="fw-bold text-gray-800 fs-6">${P.title}</div>
+                ${uploader}
+            </div>
+            <div class="text-muted fs-8 mb-3">${P.hint}</div>
+            ${list}
+        </div>
+    </div>`;
+}
+
+async function uploadPaymentProof(input) {
+    const file = input.files?.[0];
+    if (!file) return;
+    // Лоадер на кнопке загрузки на время запроса.
+    const label = input.closest('label');
+    if (label) { label.classList.add('disabled'); label.style.pointerEvents = 'none'; }
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+        const res = await fetch(`/api/bookings/${_proofBooking.id}/attachments`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+            body: fd,
+        });
+        if (!res.ok) {
+            let msg = L.proof.error;
+            try { msg = (await res.json())?.message || msg; } catch (e) {}
+            showToast(msg, 'error');
+            return;
+        }
+        showToast(L.proof.success, 'success');
+        loadPaymentProof(_proofBooking);
+    } catch {
+        showToast(L.proof.error, 'error');
+    } finally {
+        input.value = '';
+        if (label) { label.classList.remove('disabled'); label.style.pointerEvents = ''; }
+    }
+}
+
+async function downloadBookingFile(id, filename) {
+    try {
+        const res = await fetch(`/api/attachments/${id}/download`, {
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch {}
+}
+
+async function deletePaymentProof(id) {
+    try {
+        await api.delete(`/attachments/${id}`);
+        showToast(L.proof.deleted, 'success');
+        loadPaymentProof(_proofBooking);
+    } catch (e) { showToast(e?.message ?? L.proof.error, 'error'); }
 }
 
 function renderTimeline(b) {
@@ -315,7 +433,7 @@ function renderTripDetails(b) {
         rows.push(detailRow('ki-user', L.trip.operator, escHtml(b.operator.name)));
     }
 
-    rows.push(detailRow('ki-check-circle', L.trip.confirmed, formatDate(b.confirmed_at ?? b.created_at)));
+    rows.push(detailRow('ki-check-circle', L.trip.confirmed, fmtDtTz(b.confirmed_at ?? b.created_at)));
 
     document.getElementById('trip-details').innerHTML = rows.join('');
 }
@@ -412,7 +530,7 @@ function renderProposal(p) {
         ${p.description ? `<div class="text-gray-600 fs-7 mb-4 fst-italic">${escHtml(p.description)}</div>` : ''}
         ${p.valid_until ? `<div class="text-muted fs-8 mb-3">
             <i class="ki-outline ki-calendar fs-8 me-1"></i>
-            ${L.valid_until.replace(':date', formatDate(p.valid_until))}
+            ${L.valid_until.replace(':date', fmtDtTz(p.valid_until))}
             ${p.is_expired ? `<span class="badge badge-light-danger ms-2 fs-9">${L.expired}</span>` : ''}
         </div>` : ''}
         <div class="mb-2 text-gray-400 fs-8 fw-bold text-uppercase">
