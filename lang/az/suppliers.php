@@ -346,6 +346,13 @@ return [
                 'limit_hint'    => 'Maksimum :n foto',
             ],
 
+            'del_modal' => [
+                'title'   => 'Resursun silinməsi',
+                'body'    => '«:name» resursunu kataloqdan silmək? Bu əməliyyat geri qaytarıla bilməz.',
+                'cancel'  => 'Ləğv et',
+                'confirm' => 'Sil',
+            ],
+
             'card' => [
                 'available'   => 'Mövcud',
                 'unavailable' => 'Əlçatmaz',

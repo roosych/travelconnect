@@ -346,6 +346,13 @@ return [
                 'limit_hint'    => 'Up to :n photos',
             ],
 
+            'del_modal' => [
+                'title'   => 'Delete resource',
+                'body'    => 'Delete the resource “:name” from the catalog? This action cannot be undone.',
+                'cancel'  => 'Cancel',
+                'confirm' => 'Delete',
+            ],
+
             'card' => [
                 'available'   => 'Available',
                 'unavailable' => 'Unavailable',

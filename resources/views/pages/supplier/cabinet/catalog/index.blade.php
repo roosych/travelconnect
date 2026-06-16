@@ -196,6 +196,31 @@
     </div>
 </div>
 
+{{-- Подтверждение удаления ресурса --}}
+<div class="modal fade" id="modal-delete-resource" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">{{ __('suppliers.cabinet.catalog.del_modal.title') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex gap-3">
+                    <i class="ki-outline ki-trash fs-2x text-danger flex-shrink-0"></i>
+                    <p class="text-gray-700 fs-6 mb-0" id="modal-delete-resource-body"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('suppliers.cabinet.catalog.del_modal.cancel') }}</button>
+                <button type="button" class="btn btn-danger" id="modal-delete-resource-confirm">
+                    <span class="indicator-label"><i class="ki-outline ki-trash fs-5 me-1"></i>{{ __('suppliers.cabinet.catalog.del_modal.confirm') }}</span>
+                    <span class="indicator-progress">{{ __('suppliers.cabinet.catalog.del_modal.confirm') }}... <span class="spinner-border spinner-border-sm align-middle ms-1"></span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -531,16 +556,36 @@ document.getElementById('btn-resource-save').addEventListener('click', async fun
     }
 });
 
-async function deleteResource(id) {
-    if (!confirm(L.toast.del_confirm)) return;
+let _deleteResourceModal = null;
+let _pendingDeleteResourceId = null;
+
+function deleteResource(id) {
+    const r = allResources.find(r => r.id === id);
+    _pendingDeleteResourceId = id;
+    document.getElementById('modal-delete-resource-body').textContent =
+        L.del_modal.body.replace(':name', r?.name ?? '');
+    if (!_deleteResourceModal) {
+        _deleteResourceModal = new bootstrap.Modal(document.getElementById('modal-delete-resource'));
+    }
+    _deleteResourceModal.show();
+}
+
+document.getElementById('modal-delete-resource-confirm').addEventListener('click', async function () {
+    const id = _pendingDeleteResourceId;
+    if (!id) return;
+    window.btnLoading?.(this, true);
     try {
         await api.delete(`/suppliers/${supplierId}/services/${id}`);
+        _deleteResourceModal?.hide();
+        _pendingDeleteResourceId = null;
         showToast(L.toast.deleted);
         await loadResources();
     } catch (err) {
         showToast(err?.message ?? L.toast.del_err, 'error');
+    } finally {
+        window.btnLoading?.(this, false);
     }
-}
+});
 
 async function toggleAvailable(id, checkbox) {
     try {
