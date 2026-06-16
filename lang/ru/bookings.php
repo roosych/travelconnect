@@ -73,6 +73,7 @@ return [
         'for_agency'    => 'для агентства: :amount',
         'agency'        => 'Агентство',
         'cancelled_banner' => 'Бронирование отменено',
+        'auto_start_hint'  => 'Статус «В процессе» установится автоматически в день начала тура (:date).',
 
         'toolbar' => [
             'request_payment' => 'Выставить счёт',

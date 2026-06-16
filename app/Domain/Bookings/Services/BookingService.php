@@ -159,6 +159,13 @@ class BookingService
             throw new BusinessRuleException('Notes are required to cancel a booking.');
         }
 
+        // Была ли бронь уже оплачена на момент отмены — решает судьбу заявки.
+        $wasPaid = in_array($booking->status, [
+            BookingStatus::Paid,
+            BookingStatus::InProgress,
+            BookingStatus::Rescheduled,
+        ], true);
+
         $booking->status = BookingStatus::Cancelled;
         $booking->notes = $notes;
         $booking->save();
@@ -166,7 +173,10 @@ class BookingService
         $request = $booking->request;
 
         if (in_array($request->status, [RequestStatus::Booked, RequestStatus::Completed], true)) {
-            $request->status = RequestStatus::Processing;
+            // Неоплаченную бронь отменили — заявку возвращаем в работу для новых КП.
+            // Оплаченную — заявка закрывается (Cancelled): новые КП по ней недоступны,
+            // финансовая история сделки не «обнуляется» переоткрытием.
+            $request->status = $wasPaid ? RequestStatus::Cancelled : RequestStatus::Processing;
             $request->save();
         }
 

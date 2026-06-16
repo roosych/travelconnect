@@ -73,6 +73,7 @@ return [
         'for_agency'    => 'for the agency: :amount',
         'agency'        => 'Agency',
         'cancelled_banner' => 'Booking cancelled',
+        'auto_start_hint'  => 'The status will switch to “In progress” automatically on the tour start date (:date).',
 
         'toolbar' => [
             'request_payment' => 'Issue invoice',

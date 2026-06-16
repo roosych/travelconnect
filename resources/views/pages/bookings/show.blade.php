@@ -195,6 +195,17 @@ function renderDetailCard(b) {
            </div>`
         : `<div id="booking-stepper"></div>`;
 
+    // Между оплатой и началом тура у оператора нет действий — поясняем, что
+    // переход в «В процессе» произойдёт автоматически в день старта тура.
+    const startsFuture = ['confirmed', 'paid'].includes(b.status)
+        && b.travel_date_from && new Date(b.travel_date_from) > new Date();
+    const autoHint = startsFuture
+        ? `<div class="d-flex align-items-center gap-2 text-muted fs-7 mb-5">
+               <i class="ki-outline ki-information-5 fs-5 text-primary"></i>
+               ${ts.auto_start_hint.replace(':date', formatDate(b.travel_date_from))}
+           </div>`
+        : '';
+
     document.getElementById('booking-detail-card').innerHTML = `
         <div class="card-body py-7">
             <div class="d-flex align-items-start justify-content-between flex-wrap gap-4 mb-6">
@@ -213,6 +224,7 @@ function renderDetailCard(b) {
             </div>
 
             <div class="bg-light rounded p-5 mb-5">${stepperHtml}</div>
+            ${autoHint}
 
             <div class="row g-5">
                 <div class="col-sm-6">

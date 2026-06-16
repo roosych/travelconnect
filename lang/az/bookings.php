@@ -73,6 +73,7 @@ return [
         'for_agency'    => 'agentlik üçün: :amount',
         'agency'        => 'Agentlik',
         'cancelled_banner' => 'Bron ləğv edildi',
+        'auto_start_hint'  => 'Status tur başlama tarixində (:date) avtomatik “İcrada” olacaq.',
 
         'toolbar' => [
             'request_payment' => 'Hesab çıxar',
