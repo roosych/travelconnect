@@ -191,6 +191,7 @@ return [
         'no_proposal'         => 'Təklif haqqında məlumat yoxdur.',
         'cancelled_banner'    => 'Rezervasiya ləğv edildi',
         'proposal_load_error' => 'Təklifi yükləmək alınmadı.',
+        'auto_start_hint'     => 'Tur :date tarixində başlayır — status avtomatik yenilənəcək.',
         'stepper' => [
             'confirmed'   => 'Təsdiqlənib',
             'invoiced'    => 'Hesab verilib',

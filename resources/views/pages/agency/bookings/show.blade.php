@@ -401,6 +401,16 @@ function renderTimeline(b) {
         done:   isCompleted || (idx > -1 && i <= idx),
         active: !isCompleted && i === idx + 1,
     })));
+
+    // Между оплатой и началом тура — поясняем, что статус сменится автоматически.
+    const startsFuture = ['confirmed', 'paid'].includes(b.status)
+        && b.travel_date_from && new Date(b.travel_date_from) > new Date();
+    if (startsFuture) {
+        const hint = document.createElement('div');
+        hint.className = 'd-flex align-items-center gap-2 text-muted fs-7 mt-4';
+        hint.innerHTML = `<i class="ki-outline ki-information-5 fs-5 text-primary"></i>${L.auto_start_hint.replace(':date', formatDate(b.travel_date_from))}`;
+        el.appendChild(hint);
+    }
 }
 
 function renderTripDetails(b) {

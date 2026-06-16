@@ -191,6 +191,7 @@ return [
         'no_proposal'         => 'No proposal data.',
         'cancelled_banner'    => 'Booking cancelled',
         'proposal_load_error' => 'Failed to load the proposal.',
+        'auto_start_hint'     => 'The tour starts on :date — the status will update automatically.',
         'stepper' => [
             'confirmed'   => 'Confirmed',
             'invoiced'    => 'Invoiced',
