@@ -15,6 +15,13 @@
     $margin = (float) ($totals->margin ?? 0);
     $markupPct = $cost > 0 ? ($margin / $cost) * 100 : 0;
 
+    // Фактическая касса (по подтверждённым платежам).
+    $received    = (float) ($totals->received ?? 0);
+    $paidOut     = (float) ($totals->paid_out ?? 0);
+    $receivable  = max(0, $sell - $received);   // дебиторка: ещё получить с агентств
+    $payable     = max(0, $cost - $paidOut);    // кредиторка: ещё выплатить поставщикам
+    $netCash     = $received - $paidOut;
+
     $groupLabels = [
         'supplier'     => __('reports.group.supplier'),
         'service_type' => __('reports.group.service_type'),
@@ -106,6 +113,50 @@
                 <span class="fs-2hx fw-bold text-gray-900">{{ $fmt($markupPct) }}</span>
                 <span class="text-muted fs-7 ms-1">%</span>
                 <div class="text-muted fs-8 mt-1">{{ __('reports.margin.deals', ['n' => (int) ($totals->cnt ?? 0)]) }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ── Касса (фактически, по подтверждённым платежам) ──────────────────── --}}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <span class="fw-bold fs-5 text-gray-800">{{ __('reports.margin.cash_title') }}</span>
+    <span class="text-muted fs-8">{{ __('reports.margin.cash_hint') }}</span>
+</div>
+<div class="row g-5 g-xl-6 mb-6">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-flush h-100 bg-light-success">
+            <div class="card-body">
+                <span class="text-muted fw-semibold fs-7 d-block mb-2">{{ __('reports.margin.kpi_received') }}</span>
+                <span class="fs-2hx fw-bold text-success">{{ $fmt($received) }}</span>
+                <span class="text-muted fs-7 ms-1">AZN</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-flush h-100 bg-light-danger">
+            <div class="card-body">
+                <span class="text-muted fw-semibold fs-7 d-block mb-2">{{ __('reports.margin.kpi_paid_out') }}</span>
+                <span class="fs-2hx fw-bold text-danger">{{ $fmt($paidOut) }}</span>
+                <span class="text-muted fs-7 ms-1">AZN</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-flush h-100">
+            <div class="card-body">
+                <span class="text-muted fw-semibold fs-7 d-block mb-2">{{ __('reports.margin.kpi_receivable') }}</span>
+                <span class="fs-2hx fw-bold text-gray-900">{{ $fmt($receivable) }}</span>
+                <span class="text-muted fs-7 ms-1">AZN</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-flush h-100">
+            <div class="card-body">
+                <span class="text-muted fw-semibold fs-7 d-block mb-2">{{ __('reports.margin.kpi_payable') }}</span>
+                <span class="fs-2hx fw-bold text-gray-900">{{ $fmt($payable) }}</span>
+                <span class="text-muted fs-7 ms-1">AZN</span>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ use App\Domain\Agencies\Models\Agency;
 use App\Domain\Bookings\Enums\BookingStatus;
 use App\Domain\Bookings\Models\Booking;
 use App\Domain\Bookings\Models\BookingItem;
+use App\Domain\Payments\Models\Payment;
 use App\Domain\Requests\Enums\RequestStatus;
 use App\Domain\Requests\Models\TravelRequest;
 use App\Domain\Services\ServiceCatalog;
@@ -55,6 +56,24 @@ class ReportWebController extends Controller
              COALESCE(SUM(sell_total_azn), 0) as sell,
              COALESCE(SUM(margin_azn), 0) as margin'
         )->first();
+
+        // Фактическая касса по подтверждённым платежам тех же броней (всё в AZN):
+        // получено от агентств (incoming) и выплачено поставщикам (outgoing).
+        $idsQuery = Booking::query();
+        $applyFilters($idsQuery);
+        $bookingIds = $idsQuery->pluck('id');
+
+        $cash = Payment::query()
+            ->whereNotNull('confirmed_at')
+            ->where('payable_type', (new Booking)->getMorphClass())
+            ->whereIn('payable_id', $bookingIds)
+            ->selectRaw(
+                "COALESCE(SUM(CASE WHEN direction = 'incoming' THEN amount_base ELSE 0 END), 0) as received,
+                 COALESCE(SUM(CASE WHEN direction = 'outgoing' THEN amount_base ELSE 0 END), 0) as paid_out"
+            )->first();
+
+        $totals->received = (float) $cash->received;
+        $totals->paid_out = (float) $cash->paid_out;
 
         // Breakdown by the chosen dimension.
         $rows = $this->breakdown($groupBy, $applyFilters);
