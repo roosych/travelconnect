@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <div class="card card-flush mb-6" id="booking-request-card">
+        <div class="card card-flush" id="booking-request-card">
             <div class="card-header py-4">
                 <div class="card-title">
                     <h4 class="fw-bold fs-6 mb-0">{{ __('bookings.show.request_card') }}</h4>
@@ -52,17 +52,6 @@
             </div>
             <div class="card-body pt-0">
                 <div class="text-center py-4"><span class="spinner-border text-info spinner-border-sm"></span></div>
-            </div>
-        </div>
-
-        <div class="card card-flush" id="booking-proof-card">
-            <div class="card-header py-4">
-                <div class="card-title">
-                    <h4 class="fw-bold fs-6 mb-0">{{ __('bookings.show.proof_card') }}</h4>
-                </div>
-            </div>
-            <div class="card-body pt-0">
-                <div class="text-center py-4"><span class="spinner-border text-warning spinner-border-sm"></span></div>
             </div>
         </div>
 
@@ -108,47 +97,6 @@ function renderBooking(b) {
     renderDetailCard(b);
     renderProposalCard(b);
     renderRequestCard(b);
-    loadProofCard(b);
-}
-
-// Подтверждения оплаты, загруженные агентством (read-only для оператора).
-async function loadProofCard(b) {
-    const body = document.getElementById('booking-proof-card').querySelector('.card-body');
-    try {
-        const res = await api.get(`/bookings/${b.id}/attachments`);
-        const files = Array.isArray(res.data) ? res.data : [];
-        if (!files.length) {
-            body.innerHTML = `<div class="text-muted fs-7 py-2">${ts.proof_empty}</div>`;
-            return;
-        }
-        body.innerHTML = files.map(f => `
-            <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
-                <i class="ki-outline ki-paper-clip fs-5 text-muted flex-shrink-0"></i>
-                <div class="flex-grow-1 min-w-0">
-                    <a href="#" onclick="downloadBookingFile(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;"
-                       class="fw-semibold text-gray-800 text-hover-primary fs-7 text-truncate d-block">${escHtml(f.filename)}</a>
-                    <div class="text-muted fs-8">${[f.human_size, ts.proof_uploaded.replace(':date', fmtDtTz(f.created_at))].filter(Boolean).join(' · ')}</div>
-                </div>
-            </div>`).join('');
-    } catch {
-        body.innerHTML = `<div class="text-muted fs-7 py-2">${ts.proof_empty}</div>`;
-    }
-}
-
-async function downloadBookingFile(id, filename) {
-    try {
-        const res = await fetch(`/api/attachments/${id}/download`, {
-            credentials: 'same-origin',
-            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-        });
-        if (!res.ok) return;
-        const blob = await res.blob();
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href = url; a.download = filename;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    } catch {}
 }
 
 function renderToolbar(b) {

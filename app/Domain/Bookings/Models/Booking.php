@@ -10,7 +10,6 @@ use App\Domain\Users\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Booking extends Model
 {
@@ -77,10 +76,5 @@ class Booking extends Model
     public function items(): HasMany
     {
         return $this->hasMany(BookingItem::class, 'booking_id');
-    }
-
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(\App\Domain\Attachments\Models\Attachment::class, 'attachable');
     }
 }

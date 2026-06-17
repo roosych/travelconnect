@@ -347,9 +347,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/attachments/temp', [AttachmentController::class, 'storeTemp']);
     Route::post('/attachments/claim', [AttachmentController::class, 'claimTemp']);
     Route::get('/{type}/{id}/attachments', [AttachmentController::class, 'index'])
-        ->where('type', 'requests|rfqs|offers|proposals|bookings');
+        ->where('type', 'requests|rfqs|offers|proposals');
     Route::post('/{type}/{id}/attachments', [AttachmentController::class, 'store'])
-        ->where('type', 'requests|rfqs|offers|proposals|bookings');
+        ->where('type', 'requests|rfqs|offers|proposals');
     Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download']);
     Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy']);
 });

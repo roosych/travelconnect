@@ -3,8 +3,6 @@
 namespace App\Domain\Attachments\Http\Controllers;
 
 use App\Domain\Attachments\Models\Attachment;
-use App\Domain\Bookings\Enums\BookingStatus;
-use App\Domain\Bookings\Models\Booking;
 use App\Domain\Offers\Enums\OfferStatus;
 use App\Domain\Offers\Models\Offer;
 use App\Domain\Proposals\Enums\ProposalStatus;
@@ -25,7 +23,6 @@ class AttachmentController extends Controller
         'rfqs'      => Rfq::class,
         'offers'    => Offer::class,
         'proposals' => Proposal::class,
-        'bookings'  => Booking::class,
     ];
 
     /**
@@ -123,15 +120,6 @@ class AttachmentController extends Controller
                 $model->status !== ProposalStatus::Draft,
                 422,
                 'Вложения можно добавлять только к КП в статусе «Черновик».'
-            );
-        }
-
-        // Бронь: агентство прикрепляет подтверждение оплаты только до отметки «Оплачено».
-        if ($model instanceof Booking && $request->user()->isAgency()) {
-            abort_unless(
-                in_array($model->status, [BookingStatus::Confirmed, BookingStatus::AwaitingPayment], true),
-                422,
-                'Подтверждение оплаты можно прикрепить только до отметки об оплате.'
             );
         }
 
@@ -239,17 +227,6 @@ class AttachmentController extends Controller
             );
         }
 
-        // Подтверждение оплаты — иммутабельно после фиксации платежа: удалять можно
-        // только пока бронь не оплачена. Действует на ВСЕ роли, включая оператора —
-        // финансовый артефакт нельзя стирать из аудит-следа задним числом.
-        if ($model instanceof Booking) {
-            abort_unless(
-                in_array($model->status, [BookingStatus::Confirmed, BookingStatus::AwaitingPayment], true),
-                422,
-                'Подтверждение оплаты нельзя удалить после отметки об оплате.'
-            );
-        }
-
         if (! $user->isOperator() && $attachment->uploader_id !== $user->id) {
             abort(403, 'Нет прав на удаление этого файла.');
         }
@@ -348,12 +325,6 @@ class AttachmentController extends Controller
             abort_unless($agencyIds, 403);
             $model->loadMissing('request');
             abort_unless($agencyIds->contains($model->request?->agency_id), 403);
-            return;
-        }
-
-        // Бронь — только агентство-владелец (оператор уже отсеян выше)
-        if ($model instanceof Booking) {
-            abort_unless($agencyIds && $agencyIds->contains($model->agency_id), 403);
             return;
         }
 
