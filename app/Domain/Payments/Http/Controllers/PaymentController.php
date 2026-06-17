@@ -104,6 +104,7 @@ class PaymentController extends Controller
             $direction,
             $counterparty,
             (float) $data['amount'],
+            $data['currency'],
             $data['paid_at'],
             $data['reference'] ?? null,
             $data['notes'] ?? null,

@@ -85,7 +85,11 @@
                         <label class="form-label required fw-semibold">{{ __('payments.panel.f_amount') }}</label>
                         <div class="input-group">
                             <input type="number" step="0.01" min="0.01" class="form-control form-control-solid" id="pay-amount" required>
-                            <span class="input-group-text" id="pay-currency">—</span>
+                            <select class="form-select form-select-solid" id="pay-currency" style="max-width:110px">
+                                @foreach(\App\Domain\Settings\Models\Currency::where('is_active', true)->orderBy('code')->pluck('code') as $code)
+                                    <option value="{{ $code }}">{{ $code }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-text" id="pay-amount-hint"></div>
                     </div>
@@ -137,6 +141,7 @@ const t  = @json(__('bookings'));
 const tc = @json(__('common'));
 const ts = t.show;
 const PM = @json(__('payments'));
+const CURRENCIES = @json(\App\Domain\Settings\Models\Currency::where('is_active', true)->orderBy('code')->pluck('code'));
 const USER_TZ = @json($userTimezone);
 let currentBooking = null;
 
@@ -179,15 +184,28 @@ function renderPayments(rows) {
     _payTargets = {};
     if (!rows.length) { body.innerHTML = `<div class="text-muted fs-7 py-4">${PM.panel.no_payments}</div>`; return; }
 
-    body.innerHTML = financeSummary(rows) + rows.map((row, idx) => {
+    const incoming = rows.filter(r => r.direction === 'incoming');
+    const outgoing = rows.filter(r => r.direction === 'outgoing');
+    body.innerHTML = financeSummary(rows)
+        + targetCard(PM.direction.incoming, incoming)
+        + targetCard(PM.direction.outgoing, outgoing);
+}
+
+// Карточка направления (входящие/исходящие) с её целями.
+function targetCard(title, rows) {
+    if (!rows.length) return '';
+    const inner = rows.map(row => {
         const key = `${row.direction}:${row.counterparty.type}:${row.counterparty.id}`;
         _payTargets[key] = row;
         const stCls = PAY_STATUS_CLS[row.status] ?? 'badge-light-secondary';
         const cpName = escHtml(row.counterparty?.name ?? '');
+        const refDue = (row.ref_currency && row.ref_currency !== 'AZN')
+            ? `<span class="text-muted fs-8 ms-1">≈ ${formatCurrency(row.ref_due, row.ref_currency)}</span>` : '';
 
         const payments = (row.payments ?? []).map(p => {
             const proof = (p.proof ?? []).map(f =>
                 `<a href="#" onclick="downloadProof(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;" class="text-primary fs-8 ms-2"><i class="ki-outline ki-paper-clip fs-7 me-1"></i>${PM.panel.proof}</a>`).join('');
+            const azn = p.currency !== 'AZN' ? ` <span class="text-muted fs-8">(≈ ${formatCurrency(p.amount_base, 'AZN')})</span>` : '';
             const badge = p.confirmed
                 ? `<span class="badge badge-light-success fs-9 ms-1">${PM.panel.confirmed}</span>`
                 : `<span class="badge badge-light-warning fs-9 ms-1">${PM.panel.awaiting}</span>`;
@@ -196,7 +214,7 @@ function renderPayments(rows) {
             return `
             <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
                 <div class="flex-grow-1 min-w-0">
-                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${badge}</div>
+                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${azn}${badge}</div>
                     <div class="text-muted fs-8">${formatDate(p.paid_at)}${p.reference ? ' · ' + escHtml(p.reference) : ''}${proof}</div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
@@ -207,24 +225,29 @@ function renderPayments(rows) {
         }).join('') || `<div class="text-muted fs-8 mb-2">${PM.panel.no_payments}</div>`;
 
         return `
-        <div class="${idx ? 'border-top pt-4 mt-4' : ''}">
+        <div class="border border-gray-300 border-dashed rounded p-4 mb-3">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                 <div>
-                    <span class="fw-bold text-gray-800 fs-6">${PM.direction[row.direction]}</span>
-                    ${cpName ? `<span class="text-muted fs-7 ms-2">${cpName}</span>` : ''}
+                    ${cpName ? `<span class="fw-bold text-gray-800 fs-6">${cpName}</span>` : ''}
                     <span class="badge ${stCls} ms-2">${PM.status[row.status]}</span>
                 </div>
                 ${row.remaining > 0 ? `<button class="btn btn-sm btn-light-primary" onclick="openPaymentModal('${key}')"><i class="ki-outline ki-plus fs-5"></i>${PM.panel.record}</button>` : ''}
             </div>
             <div class="d-flex flex-wrap gap-6 mb-3">
-                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, row.currency)}</div></div>
-                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, row.currency)}</div></div>
-                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, row.currency)}</div></div>
-                ${row.pending > 0 ? `<div><div class="text-muted fs-8 text-uppercase">${PM.panel.pending}</div><div class="fw-bold fs-6 text-muted">${formatCurrency(row.pending, row.currency)}</div></div>` : ''}
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, 'AZN')}${refDue}</div></div>
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, 'AZN')}</div></div>
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, 'AZN')}</div></div>
+                ${row.pending > 0 ? `<div><div class="text-muted fs-8 text-uppercase">${PM.panel.pending}</div><div class="fw-bold fs-6 text-muted">${formatCurrency(row.pending, 'AZN')}</div></div>` : ''}
             </div>
             ${payments}
         </div>`;
     }).join('');
+
+    return `
+    <div class="mb-5">
+        <div class="text-gray-800 fw-bold fs-5 mb-3">${title}</div>
+        ${inner}
+    </div>`;
 }
 
 // Финансовая сводка по брони: снимок маржи (при бронировании) + фактическая
@@ -232,8 +255,8 @@ function renderPayments(rows) {
 function financeSummary(rows) {
     const b = currentBooking || {};
     const S = PM.summary;
-    const received = rows.filter(r => r.direction === 'incoming').reduce((s, r) => s + (r.paid_base || 0), 0);
-    const paidOut  = rows.filter(r => r.direction === 'outgoing').reduce((s, r) => s + (r.paid_base || 0), 0);
+    const received = rows.filter(r => r.direction === 'incoming').reduce((s, r) => s + (r.paid || 0), 0);
+    const paidOut  = rows.filter(r => r.direction === 'outgoing').reduce((s, r) => s + (r.paid || 0), 0);
     const cell = (label, val, cls = '') => `<div><div class="text-muted fs-8">${label}</div><div class="fw-bold fs-6 ${cls}">${formatCurrency(val, 'AZN')}</div></div>`;
 
     return `
@@ -264,10 +287,12 @@ function openPaymentModal(key) {
     const row = _payTargets[key];
     if (!row) return;
     document.getElementById('pay-target-label').textContent = `${PM.direction[row.direction]} · ${row.counterparty?.name ?? ''}`;
-    document.getElementById('pay-currency').textContent = row.currency;
-    const amt = document.getElementById('pay-amount');
-    amt.value = ''; amt.max = row.remaining;
-    document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, row.currency));
+    // Валюта платежа: по умолчанию валюта контрагента, но можно выбрать любую.
+    const sel = document.getElementById('pay-currency');
+    sel.value = CURRENCIES.includes(row.ref_currency) ? row.ref_currency : 'AZN';
+    document.getElementById('pay-amount').value = '';
+    // Остаток показываем в AZN (рабочая валюта расчёта).
+    document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, 'AZN'));
     document.getElementById('pay-paid-at').value = new Date().toISOString().slice(0, 10);
     document.getElementById('pay-reference').value = '';
     document.getElementById('pay-proof').value = '';
@@ -293,6 +318,7 @@ document.getElementById('payment-form').addEventListener('submit', async functio
     fd.append('counterparty_type', row.counterparty.type);
     fd.append('counterparty_id', row.counterparty.id);
     fd.append('amount', document.getElementById('pay-amount').value);
+    fd.append('currency', document.getElementById('pay-currency').value);
     fd.append('paid_at', document.getElementById('pay-paid-at').value);
     fd.append('reference', document.getElementById('pay-reference').value);
     fd.append('proof', file);

@@ -57,13 +57,17 @@ function render(rows) {
         const dates = (b.travel_date_from || b.travel_date_to)
             ? `${formatDate(b.travel_date_from)} — ${formatDate(b.travel_date_to)}` : '';
 
+        const refDue = (row.ref_currency && row.ref_currency !== 'AZN')
+            ? `<span class="text-muted fs-8 ms-1">≈ ${formatCurrency(row.ref_due, row.ref_currency)}</span>` : '';
+
         const payments = (row.payments ?? []).map(p => {
             const proof = (p.proof ?? []).map(f =>
                 `<a href="#" onclick="downloadProof(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;" class="text-primary fs-8 ms-2"><i class="ki-outline ki-paper-clip fs-7 me-1"></i>${PM.panel.proof}</a>`).join('');
+            const azn = p.currency !== 'AZN' ? ` <span class="text-muted fs-8">(≈ ${formatCurrency(p.amount_base, 'AZN')})</span>` : '';
             return `
             <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
                 <div class="flex-grow-1 min-w-0">
-                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}</div>
+                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${azn}</div>
                     <div class="text-muted fs-8">${formatDate(p.paid_at)}${p.reference ? ' · ' + escHtml(p.reference) : ''}${proof}</div>
                 </div>
             </div>`;
@@ -81,9 +85,9 @@ function render(rows) {
                     <span class="badge ${stCls} fs-7">${PM.status[row.status]}</span>
                 </div>
                 <div class="d-flex flex-wrap gap-6 mb-3">
-                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, row.currency)}</div></div>
-                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, row.currency)}</div></div>
-                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, row.currency)}</div></div>
+                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, 'AZN')}${refDue}</div></div>
+                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, 'AZN')}</div></div>
+                    <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, 'AZN')}</div></div>
                 </div>
                 ${payments}
             </div>

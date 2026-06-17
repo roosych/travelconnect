@@ -7,6 +7,7 @@ use App\Domain\Payments\DTO\SettlementTarget;
 use App\Domain\Payments\Enums\PaymentDirection;
 use App\Domain\Payments\Events\PaymentConfirmed;
 use App\Domain\Payments\Models\Payment;
+use App\Domain\Settings\Services\CurrencyConverter;
 use App\Domain\Users\Models\User;
 use App\Exceptions\Domain\BusinessRuleException;
 use Illuminate\Database\Eloquent\Model;
@@ -15,8 +16,13 @@ use Illuminate\Support\Collection;
 
 class PaymentService
 {
+    public function __construct(private readonly CurrencyConverter $currency) {}
+
     /**
      * Записать платёж по цели расчёта payable-модели.
+     * Платёж может быть в ЛЮБОЙ валюте — нормализуем в базовую (AZN) и ведём
+     * расчёт в ней. Валюта контрагента → по курсу-снимку payable (совпадает с
+     * котировкой); прочие → по текущему курсу из справочника.
      * Исходящие (оператор→поставщик) подтверждаются сразу; входящие от агентства —
      * только если их вносит оператор (агентство — самозаявка, ждёт подтверждения).
      */
@@ -25,6 +31,7 @@ class PaymentService
         PaymentDirection $direction,
         Model $counterparty,
         float $amount,
+        string $currency,
         string $paidAt,
         ?string $reference,
         ?string $notes,
@@ -34,21 +41,31 @@ class PaymentService
             throw new BusinessRuleException('Сумма платежа должна быть больше нуля.');
         }
 
-        $target = $this->resolveTarget($payable, $direction, $counterparty);
+        $target  = $this->resolveTarget($payable, $direction, $counterparty);
+        $currency = strtoupper($currency);
+        $base     = config('payments.base_currency', 'AZN');
 
-        // Запрет переплаты: новый платёж ≤ остатка (по всем не удалённым платежам).
+        // Перевод суммы платежа в базовую (AZN).
+        if ($currency === strtoupper($target->currency)) {
+            $ratio      = $target->baseRatio();        // снимок payable
+            $amountBase = round($amount * $ratio, 2);
+        } elseif ($currency === strtoupper($base)) {
+            $ratio      = 1.0;
+            $amountBase = round($amount, 2);
+        } else {
+            $amountBase = round($this->currency->convert($amount, $currency, $base), 2);
+            $ratio      = $amount > 0 ? round($amountBase / $amount, 8) : 1.0;
+        }
+
+        // Запрет переплаты: новый платёж ≤ остатка в AZN (по всем не удалённым).
         if (! config('payments.allow_overpayment', false)) {
             $alreadyBase = $this->paymentsFor($payable, $target)->sum(fn (Payment $p) => (float) $p->amount_base);
-            $newBase = round($amount * $target->baseRatio(), 2);
-            if ($newBase - ($target->amountDueBase - $alreadyBase) > 0.01) {
+            if ($amountBase - ($target->amountDueBase - $alreadyBase) > 0.01) {
                 throw new BusinessRuleException('Сумма платежа превышает остаток по расчёту.');
             }
         }
 
-        $ratio = $target->baseRatio();
-
-        $isOperator = $recorder->isOperator();
-        $autoConfirm = $direction === PaymentDirection::Outgoing || $isOperator;
+        $autoConfirm = $direction === PaymentDirection::Outgoing || $recorder->isOperator();
 
         /** @var Model $payable */
         $payment = new Payment([
@@ -56,8 +73,8 @@ class PaymentService
             'counterparty_type' => $counterparty->getMorphClass(),
             'counterparty_id'   => $counterparty->getKey(),
             'amount'            => round($amount, 2),
-            'currency'          => $target->currency,
-            'amount_base'       => round($amount * $ratio, 2),
+            'currency'          => $currency,
+            'amount_base'       => $amountBase,
             'fx_rate'           => $ratio,
             'paid_at'           => $paidAt,
             'reference'         => $reference,
@@ -107,16 +124,17 @@ class PaymentService
     {
         return $payable->settlementTargets()->map(function (SettlementTarget $target) use ($payable) {
             $payments  = $this->paymentsFor($payable, $target);
-            $confirmed = $payments->where('confirmed_at', '!=', null);
+            $confirmed = $payments->whereNotNull('confirmed_at');
 
-            $paid     = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount);
-            $paidBase = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount_base);
-            $pending  = (float) $payments->whereNull('confirmed_at')->sum(fn (Payment $p) => (float) $p->amount);
-            $remaining = max(0, round($target->amountDue - $paid, 2));
+            // Всё считаем в базовой валюте (AZN) — платежи бывают в разных валютах.
+            $paidBase    = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount_base);
+            $pendingBase = (float) $payments->whereNull('confirmed_at')->sum(fn (Payment $p) => (float) $p->amount_base);
+            $dueBase     = round($target->amountDueBase, 2);
+            $remaining   = max(0, round($dueBase - $paidBase, 2));
 
-            $status = $paid <= 0
+            $status = $paidBase <= 0
                 ? 'pending'
-                : ($paid + 0.01 >= $target->amountDue ? 'settled' : 'partial');
+                : ($paidBase + 0.01 >= $dueBase ? 'settled' : 'partial');
 
             return [
                 'direction'    => $target->direction->value,
@@ -125,15 +143,15 @@ class PaymentService
                     'id'   => $target->counterparty->getKey(),
                     'name' => $target->label ?? ($target->counterparty->name ?? null),
                 ],
-                'currency'  => $target->currency,
-                'due'       => round($target->amountDue, 2),
-                'due_base'  => round($target->amountDueBase, 2),
-                'paid'      => round($paid, 2),
-                'paid_base' => round($paidBase, 2),
-                'pending'   => round($pending, 2),
-                'remaining' => $remaining,
-                'status'    => $status,
-                'payments'  => $payments->sortByDesc('paid_at')->values(),
+                // Основные суммы — в AZN. Валюта контрагента — справочно (ref_*).
+                'due'          => $dueBase,
+                'paid'         => round($paidBase, 2),
+                'pending'      => round($pendingBase, 2),
+                'remaining'    => $remaining,
+                'status'       => $status,
+                'ref_currency' => $target->currency,
+                'ref_due'      => round($target->amountDue, 2),
+                'payments'     => $payments->sortByDesc('paid_at')->values(),
             ];
         });
     }
@@ -149,11 +167,11 @@ class PaymentService
         }
 
         return $incoming->every(function (SettlementTarget $t) use ($payable) {
-            $paid = (float) $this->paymentsFor($payable, $t)
+            $paidBase = (float) $this->paymentsFor($payable, $t)
                 ->whereNotNull('confirmed_at')
-                ->sum(fn (Payment $p) => (float) $p->amount);
+                ->sum(fn (Payment $p) => (float) $p->amount_base);
 
-            return $paid + 0.01 >= $t->amountDue;
+            return $paidBase + 0.01 >= $t->amountDueBase;
         });
     }
 

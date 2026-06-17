@@ -116,7 +116,11 @@
                         <label class="form-label required fw-semibold">{{ __('payments.panel.f_amount') }}</label>
                         <div class="input-group">
                             <input type="number" step="0.01" min="0.01" class="form-control form-control-solid" id="pay-amount" required>
-                            <span class="input-group-text" id="pay-currency">—</span>
+                            <select class="form-select form-select-solid" id="pay-currency" style="max-width:110px">
+                                @foreach(\App\Domain\Settings\Models\Currency::where('is_active', true)->orderBy('code')->pluck('code') as $code)
+                                    <option value="{{ $code }}">{{ $code }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-text" id="pay-amount-hint"></div>
                     </div>
@@ -157,6 +161,8 @@ const bookingId = {{ $id }};
 // Локализация (bookings.agency_show.*). :id/:n/:date — через .replace().
 const L  = @json(__('bookings.agency_show'));
 const PS = @json(__('bookings.show.prop_status'));
+const PM = @json(__('payments'));
+const CURRENCIES = @json(\App\Domain\Settings\Models\Currency::where('is_active', true)->orderBy('code')->pluck('code'));
 // Локализованные названия типов услуг (value => label).
 const SERVICE_LABELS = @json(collect(app(\App\Domain\Services\ServiceCatalog::class)->activeTypes())->pluck('label', 'value'));
 
@@ -271,9 +277,7 @@ function render(b) {
     }
 }
 
-// Блок «что сейчас» — поясняет текущий статус и сумму к оплате (если ожидается).
 // ── Расчёты (агентство заявляет входящие платежи, оператор подтверждает) ───────
-const PM = @json(__('payments'));
 const PAY_STATUS_CLS = { pending: 'badge-light-secondary', partial: 'badge-light-warning', settled: 'badge-light-success' };
 let _payTargets = {};
 let _payModal = null;
@@ -300,19 +304,23 @@ function renderPayments(rows) {
         _payTargets[key] = row;
         const stCls = PAY_STATUS_CLS[row.status] ?? 'badge-light-secondary';
 
+        const refDue = (row.ref_currency && row.ref_currency !== 'AZN')
+            ? `<span class="text-muted fs-8 ms-1">≈ ${formatCurrency(row.ref_due, row.ref_currency)}</span>` : '';
+
         const payments = (row.payments ?? []).map(p => {
             const proof = (p.proof ?? []).map(f =>
                 `<a href="#" onclick="downloadProof(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;" class="text-primary fs-8 ms-2"><i class="ki-outline ki-paper-clip fs-7 me-1"></i>${PM.panel.proof}</a>`).join('');
+            const azn = p.currency !== 'AZN' ? ` <span class="text-muted fs-8">(≈ ${formatCurrency(p.amount_base, 'AZN')})</span>` : '';
             const badge = p.confirmed
                 ? `<span class="badge badge-light-success fs-9 ms-1">${PM.panel.confirmed}</span>`
                 : `<span class="badge badge-light-warning fs-9 ms-1">${PM.panel.awaiting}</span>`;
-            // Своё незаявленное-неподтверждённое можно удалить (для исправления).
+            // Своё ещё не подтверждённое можно удалить (для исправления).
             const delBtn = p.confirmed ? '' :
                 `<button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment(${p.id})"><i class="ki-outline ki-trash fs-6"></i></button>`;
             return `
             <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
                 <div class="flex-grow-1 min-w-0">
-                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${badge}</div>
+                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${azn}${badge}</div>
                     <div class="text-muted fs-8">${formatDate(p.paid_at)}${p.reference ? ' · ' + escHtml(p.reference) : ''}${proof}</div>
                 </div>
                 <div class="flex-shrink-0">${delBtn}</div>
@@ -325,10 +333,10 @@ function renderPayments(rows) {
             ${row.remaining > 0 ? `<button class="btn btn-sm btn-light-primary" onclick="openPaymentModal('${key}')"><i class="ki-outline ki-plus fs-5"></i>${PM.panel.record}</button>` : ''}
         </div>
         <div class="d-flex flex-wrap gap-6 mb-3">
-            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, row.currency)}</div></div>
-            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, row.currency)}</div></div>
-            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, row.currency)}</div></div>
-            ${row.pending > 0 ? `<div><div class="text-muted fs-8 text-uppercase">${PM.panel.pending}</div><div class="fw-bold fs-6 text-muted">${formatCurrency(row.pending, row.currency)}</div></div>` : ''}
+            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, 'AZN')}${refDue}</div></div>
+            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, 'AZN')}</div></div>
+            <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, 'AZN')}</div></div>
+            ${row.pending > 0 ? `<div><div class="text-muted fs-8 text-uppercase">${PM.panel.pending}</div><div class="fw-bold fs-6 text-muted">${formatCurrency(row.pending, 'AZN')}</div></div>` : ''}
         </div>
         ${payments}`;
     }).join('');
@@ -343,10 +351,10 @@ function renderPayments(rows) {
 function openPaymentModal(key) {
     const row = _payTargets[key];
     if (!row) return;
-    document.getElementById('pay-currency').textContent = row.currency;
-    const amt = document.getElementById('pay-amount');
-    amt.value = ''; amt.max = row.remaining;
-    document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, row.currency));
+    const sel = document.getElementById('pay-currency');
+    sel.value = CURRENCIES.includes(row.ref_currency) ? row.ref_currency : 'AZN';
+    document.getElementById('pay-amount').value = '';
+    document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, 'AZN'));
     document.getElementById('pay-paid-at').value = new Date().toISOString().slice(0, 10);
     document.getElementById('pay-reference').value = '';
     document.getElementById('pay-proof').value = '';
@@ -373,6 +381,7 @@ async function submitPayment(e) {
     fd.append('counterparty_type', row.counterparty.type);
     fd.append('counterparty_id', row.counterparty.id);
     fd.append('amount', document.getElementById('pay-amount').value);
+    fd.append('currency', document.getElementById('pay-currency').value);
     fd.append('paid_at', document.getElementById('pay-paid-at').value);
     fd.append('reference', document.getElementById('pay-reference').value);
     fd.append('proof', file);
