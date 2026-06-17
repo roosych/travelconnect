@@ -20,6 +20,8 @@ use App\Domain\Notifications\Listeners\SendRfqNotification;
 use App\Domain\Offers\Events\OfferAccepted;
 use App\Domain\Offers\Events\OfferRejected;
 use App\Domain\Offers\Events\OfferSubmitted;
+use App\Domain\Payments\Events\PaymentConfirmed;
+use App\Domain\Bookings\Listeners\AdvanceBookingOnPaymentConfirmed;
 use App\Domain\Notifications\Listeners\SendRequestStatusNotification;
 use App\Domain\Proposals\Events\ProposalDecided;
 use App\Domain\Proposals\Events\ProposalSent;
@@ -70,6 +72,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(OfferSubmitted::class, SendOperatorOfferNotification::class);
         Event::listen(ProposalDecided::class, SendOperatorProposalNotification::class);
         Event::listen(RequestSubmitted::class, SendOperatorRequestNotification::class);
+
+        // Расчёты: подтверждённый входящий платёж может авто-перевести бронь в paid.
+        Event::listen(PaymentConfirmed::class, AdvanceBookingOnPaymentConfirmed::class);
 
         // Global API rate limit: 120 req/min per authenticated user (or per IP
         // for unauthenticated requests such as the public supplier portal).

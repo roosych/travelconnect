@@ -4,6 +4,7 @@ use App\Domain\Agencies\Http\Controllers\AgencyController;
 use App\Domain\Agencies\Http\Controllers\AgencyMemberController;
 use App\Domain\Attachments\Http\Controllers\AttachmentController;
 use App\Domain\Bookings\Http\Controllers\BookingController;
+use App\Domain\Payments\Http\Controllers\PaymentController;
 use App\Domain\Clients\Http\Controllers\ClientController;
 use App\Domain\Notifications\Http\Controllers\NotificationController;
 use App\Domain\Notifications\Http\Controllers\NotificationSettingsController;
@@ -126,6 +127,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::patch('/bookings/{booking}/paid', [BookingController::class, 'markPaid']);
     Route::patch('/bookings/{booking}/complete', [BookingController::class, 'complete']);
     Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
+
+    // Расчёты/оплаты (полиморфный модуль Payments)
+    Route::get('/payments/ledger', [PaymentController::class, 'ledger']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+    Route::patch('/payments/{payment}/confirm', [PaymentController::class, 'confirm']);
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
 
     // -----------------------------------------------------------------------
     // Suppliers + their service catalog

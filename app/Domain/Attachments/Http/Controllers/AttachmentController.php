@@ -5,6 +5,7 @@ namespace App\Domain\Attachments\Http\Controllers;
 use App\Domain\Attachments\Models\Attachment;
 use App\Domain\Offers\Enums\OfferStatus;
 use App\Domain\Offers\Models\Offer;
+use App\Domain\Payments\Models\Payment;
 use App\Domain\Proposals\Enums\ProposalStatus;
 use App\Domain\Proposals\Models\Proposal;
 use App\Domain\Requests\Models\TravelRequest;
@@ -326,6 +327,19 @@ class AttachmentController extends Controller
             $model->loadMissing('request');
             abort_unless($agencyIds->contains($model->request?->agency_id), 403);
             return;
+        }
+
+        // Чек платежа (пруф) — только контрагент этого платежа (своё агентство/поставщик).
+        if ($model instanceof Payment) {
+            if ($agencyIds && $model->counterparty_type === \App\Domain\Agencies\Models\Agency::class) {
+                abort_unless($agencyIds->contains($model->counterparty_id), 403);
+                return;
+            }
+            if ($supplierIds && $model->counterparty_type === \App\Domain\Suppliers\Models\Supplier::class) {
+                abort_unless($supplierIds->contains($model->counterparty_id), 403);
+                return;
+            }
+            abort(403);
         }
 
         abort(403);
