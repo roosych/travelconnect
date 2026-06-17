@@ -17,6 +17,10 @@
     <div id="booking-actions" class="d-flex gap-2 flex-wrap"></div>
 @endsection
 
+@push('styles')
+<link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
 
 <div class="row g-6">
@@ -95,7 +99,7 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label required fw-semibold">{{ __('payments.panel.f_paid_at') }}</label>
-                        <input type="date" class="form-control form-control-solid" id="pay-paid-at" required>
+                        <input type="text" class="form-control form-control-solid" id="pay-paid-at" autocomplete="off" required>
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-semibold">{{ __('payments.panel.f_reference') }}</label>
@@ -103,8 +107,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label required fw-semibold">{{ __('payments.panel.f_proof') }}</label>
-                        <input type="file" class="form-control form-control-solid" id="pay-proof"
-                               accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" required>
+                        <input type="file" id="pay-proof" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                     </div>
                     <div id="pay-error" class="text-danger fs-8 mt-2 d-none"></div>
                 </div>
@@ -135,6 +138,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <script>
 const bookingId = {{ $id }};
 const t  = @json(__('bookings'));
@@ -166,8 +170,11 @@ function renderBooking(b) {
 
 // ── Расчёты (леджер платежей) ───────────────────────────────────────────────
 const PAY_STATUS_CLS = { pending: 'badge-light-secondary', partial: 'badge-light-warning', settled: 'badge-light-success' };
+const FP_IDLE = @json(__('attachments.fp_idle'));
 let _payTargets = {};
 let _payModal = null;
+let _payDate = null;   // flatpickr
+let _payPond = null;   // FilePond
 
 async function loadPayments(b) {
     const body = document.getElementById('payments-body');
@@ -186,9 +193,11 @@ function renderPayments(rows) {
 
     const incoming = rows.filter(r => r.direction === 'incoming');
     const outgoing = rows.filter(r => r.direction === 'outgoing');
-    body.innerHTML = financeSummary(rows)
-        + targetCard(PM.direction.incoming, incoming)
-        + targetCard(PM.direction.outgoing, outgoing);
+    body.innerHTML = financeSummary(rows) + `
+        <div class="row g-5">
+            <div class="col-xl-6">${targetCard(PM.direction.incoming, incoming)}</div>
+            <div class="col-xl-6">${targetCard(PM.direction.outgoing, outgoing)}</div>
+        </div>`;
 }
 
 // Карточка направления (входящие/исходящие) с её целями.
@@ -293,11 +302,22 @@ function openPaymentModal(key) {
     document.getElementById('pay-amount').value = '';
     // Остаток показываем в AZN (рабочая валюта расчёта).
     document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, 'AZN'));
-    document.getElementById('pay-paid-at').value = new Date().toISOString().slice(0, 10);
     document.getElementById('pay-reference').value = '';
-    document.getElementById('pay-proof').value = '';
     document.getElementById('pay-error').classList.add('d-none');
     document.getElementById('payment-form').dataset.key = key;
+
+    // flatpickr на дате (раз) + дефолт сегодня.
+    if (!_payDate) {
+        _payDate = flatpickr('#pay-paid-at', { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd.m.Y', maxDate: 'today', allowInput: false, disableMobile: true });
+    }
+    _payDate.setDate(new Date(), true);
+
+    // FilePond на файле-чеке (раз), очищаем перед каждым открытием.
+    if (!_payPond) {
+        _payPond = FilePond.create(document.getElementById('pay-proof'), { allowMultiple: false, labelIdle: FP_IDLE });
+    }
+    _payPond.removeFiles();
+
     if (!_payModal) _payModal = new bootstrap.Modal(document.getElementById('modal-payment'));
     _payModal.show();
 }
@@ -308,8 +328,8 @@ document.getElementById('payment-form').addEventListener('submit', async functio
     if (!row) return;
     const errEl = document.getElementById('pay-error'); errEl.classList.add('d-none');
     const btn = document.getElementById('pay-submit');
-    const file = document.getElementById('pay-proof').files[0];
-    if (!file) return;
+    const file = _payPond?.getFile()?.file;
+    if (!file) { errEl.textContent = PM.panel.f_proof; errEl.classList.remove('d-none'); return; }
 
     const fd = new FormData();
     fd.append('payable_type', 'booking');
