@@ -308,7 +308,7 @@ function openPaymentModal(key) {
 
     // flatpickr на дате (раз) + дефолт сегодня.
     if (!_payDate) {
-        _payDate = flatpickr('#pay-paid-at', { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd.m.Y', maxDate: 'today', allowInput: false, disableMobile: true });
+        _payDate = flatpickr('#pay-paid-at', { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd.m.Y', maxDate: 'today', defaultDate: 'today', allowInput: false, disableMobile: true });
     }
     _payDate.setDate(new Date(), true);
 
