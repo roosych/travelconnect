@@ -58,6 +58,64 @@
     </div>
 </div>
 
+{{-- Settlements panel --}}
+<div class="card card-flush mb-6" id="payments-card">
+    <div class="card-header py-4">
+        <div class="card-title">
+            <h4 class="fw-bold fs-6 mb-0">{{ __('payments.panel.title') }}</h4>
+        </div>
+    </div>
+    <div class="card-body pt-2" id="payments-body">
+        <div class="text-center py-6"><span class="spinner-border text-primary spinner-border-sm"></span></div>
+    </div>
+</div>
+
+{{-- Record payment modal --}}
+<div class="modal fade" id="modal-payment" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="payment-form">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><span id="pay-modal-title">{{ __('payments.panel.modal_title') }}</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="pay-target-label" class="text-muted fs-7 mb-4"></div>
+                    <div class="mb-4">
+                        <label class="form-label required fw-semibold">{{ __('payments.panel.f_amount') }}</label>
+                        <div class="input-group">
+                            <input type="number" step="0.01" min="0.01" class="form-control form-control-solid" id="pay-amount" required>
+                            <span class="input-group-text" id="pay-currency">—</span>
+                        </div>
+                        <div class="form-text" id="pay-amount-hint"></div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label required fw-semibold">{{ __('payments.panel.f_paid_at') }}</label>
+                        <input type="date" class="form-control form-control-solid" id="pay-paid-at" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">{{ __('payments.panel.f_reference') }}</label>
+                        <input type="text" maxlength="255" class="form-control form-control-solid" id="pay-reference">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label required fw-semibold">{{ __('payments.panel.f_proof') }}</label>
+                        <input type="file" class="form-control form-control-solid" id="pay-proof"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" required>
+                    </div>
+                    <div id="pay-error" class="text-danger fs-8 mt-2 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary" id="pay-submit">
+                        <span class="indicator-label">{{ __('payments.panel.submit') }}</span>
+                        <span class="indicator-progress">{{ __('payments.panel.submit') }}... <span class="spinner-border spinner-border-sm align-middle ms-1"></span></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- Proposal drawer --}}
 <div class="offcanvas offcanvas-end" id="proposalDrawer" tabindex="-1" style="width:520px;max-width:95vw">
     <div class="offcanvas-header border-bottom py-5 px-8">
@@ -78,6 +136,7 @@ const bookingId = {{ $id }};
 const t  = @json(__('bookings'));
 const tc = @json(__('common'));
 const ts = t.show;
+const PM = @json(__('payments'));
 const USER_TZ = @json($userTimezone);
 let currentBooking = null;
 
@@ -97,6 +156,174 @@ function renderBooking(b) {
     renderDetailCard(b);
     renderProposalCard(b);
     renderRequestCard(b);
+    loadPayments(b);
+}
+
+// ── Расчёты (леджер платежей) ───────────────────────────────────────────────
+const PAY_STATUS_CLS = { pending: 'badge-light-secondary', partial: 'badge-light-warning', settled: 'badge-light-success' };
+let _payTargets = {};
+let _payModal = null;
+
+async function loadPayments(b) {
+    const body = document.getElementById('payments-body');
+    try {
+        const res = await api.get(`/payments/ledger?payable_type=booking&payable_id=${b.id}`);
+        renderPayments(Array.isArray(res.data) ? res.data : []);
+    } catch {
+        body.innerHTML = `<div class="text-danger fs-7 py-3">${PM.panel.load_error}</div>`;
+    }
+}
+
+function renderPayments(rows) {
+    const body = document.getElementById('payments-body');
+    _payTargets = {};
+    if (!rows.length) { body.innerHTML = `<div class="text-muted fs-7 py-4">${PM.panel.no_payments}</div>`; return; }
+
+    body.innerHTML = rows.map((row, idx) => {
+        const key = `${row.direction}:${row.counterparty.type}:${row.counterparty.id}`;
+        _payTargets[key] = row;
+        const stCls = PAY_STATUS_CLS[row.status] ?? 'badge-light-secondary';
+        const cpName = escHtml(row.counterparty?.name ?? '');
+
+        const payments = (row.payments ?? []).map(p => {
+            const proof = (p.proof ?? []).map(f =>
+                `<a href="#" onclick="downloadProof(${f.id}, '${String(f.filename).replace(/'/g, "\\'")}'); return false;" class="text-primary fs-8 ms-2"><i class="ki-outline ki-paper-clip fs-7 me-1"></i>${PM.panel.proof}</a>`).join('');
+            const badge = p.confirmed
+                ? `<span class="badge badge-light-success fs-9 ms-1">${PM.panel.confirmed}</span>`
+                : `<span class="badge badge-light-warning fs-9 ms-1">${PM.panel.awaiting}</span>`;
+            const confirmBtn = p.confirmed ? '' :
+                `<button class="btn btn-sm btn-light-success py-1" onclick="confirmPayment(${p.id})">${PM.panel.confirm}</button>`;
+            return `
+            <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
+                <div class="flex-grow-1 min-w-0">
+                    <div class="fw-semibold text-gray-800 fs-7">${formatCurrency(p.amount, p.currency)}${badge}</div>
+                    <div class="text-muted fs-8">${formatDate(p.paid_at)}${p.reference ? ' · ' + escHtml(p.reference) : ''}${proof}</div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    ${confirmBtn}
+                    <button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment(${p.id})"><i class="ki-outline ki-trash fs-6"></i></button>
+                </div>
+            </div>`;
+        }).join('') || `<div class="text-muted fs-8 mb-2">${PM.panel.no_payments}</div>`;
+
+        return `
+        <div class="${idx ? 'border-top pt-4 mt-4' : ''}">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <div>
+                    <span class="fw-bold text-gray-800 fs-6">${PM.direction[row.direction]}</span>
+                    ${cpName ? `<span class="text-muted fs-7 ms-2">${cpName}</span>` : ''}
+                    <span class="badge ${stCls} ms-2">${PM.status[row.status]}</span>
+                </div>
+                ${row.remaining > 0 ? `<button class="btn btn-sm btn-light-primary" onclick="openPaymentModal('${key}')"><i class="ki-outline ki-plus fs-5"></i>${PM.panel.record}</button>` : ''}
+            </div>
+            <div class="d-flex flex-wrap gap-6 mb-3">
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.due}</div><div class="fw-bold fs-6">${formatCurrency(row.due, row.currency)}</div></div>
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.paid}</div><div class="fw-bold fs-6 text-success">${formatCurrency(row.paid, row.currency)}</div></div>
+                <div><div class="text-muted fs-8 text-uppercase">${PM.panel.remaining}</div><div class="fw-bold fs-6 ${row.remaining > 0 ? 'text-warning' : ''}">${formatCurrency(row.remaining, row.currency)}</div></div>
+                ${row.pending > 0 ? `<div><div class="text-muted fs-8 text-uppercase">${PM.panel.pending}</div><div class="fw-bold fs-6 text-muted">${formatCurrency(row.pending, row.currency)}</div></div>` : ''}
+            </div>
+            ${payments}
+        </div>`;
+    }).join('');
+}
+
+function openPaymentModal(key) {
+    const row = _payTargets[key];
+    if (!row) return;
+    document.getElementById('pay-target-label').textContent = `${PM.direction[row.direction]} · ${row.counterparty?.name ?? ''}`;
+    document.getElementById('pay-currency').textContent = row.currency;
+    const amt = document.getElementById('pay-amount');
+    amt.value = ''; amt.max = row.remaining;
+    document.getElementById('pay-amount-hint').textContent = PM.panel.f_amount_hint.replace(':amount', formatCurrency(row.remaining, row.currency));
+    document.getElementById('pay-paid-at').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('pay-reference').value = '';
+    document.getElementById('pay-proof').value = '';
+    document.getElementById('pay-error').classList.add('d-none');
+    document.getElementById('payment-form').dataset.key = key;
+    if (!_payModal) _payModal = new bootstrap.Modal(document.getElementById('modal-payment'));
+    _payModal.show();
+}
+
+document.getElementById('payment-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const row = _payTargets[this.dataset.key];
+    if (!row) return;
+    const errEl = document.getElementById('pay-error'); errEl.classList.add('d-none');
+    const btn = document.getElementById('pay-submit');
+    const file = document.getElementById('pay-proof').files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append('payable_type', 'booking');
+    fd.append('payable_id', bookingId);
+    fd.append('direction', row.direction);
+    fd.append('counterparty_type', row.counterparty.type);
+    fd.append('counterparty_id', row.counterparty.id);
+    fd.append('amount', document.getElementById('pay-amount').value);
+    fd.append('paid_at', document.getElementById('pay-paid-at').value);
+    fd.append('reference', document.getElementById('pay-reference').value);
+    fd.append('proof', file);
+
+    window.btnLoading?.(btn, true);
+    try {
+        const res = await fetch('/api/payments', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+            body: fd,
+        });
+        if (!res.ok) {
+            let msg = PM.panel.err;
+            try { msg = (await res.json())?.message || msg; } catch (e) {}
+            errEl.textContent = msg; errEl.classList.remove('d-none');
+            return;
+        }
+        _payModal?.hide();
+        showToast(PM.panel.saved);
+        await reloadBooking();
+    } catch {
+        errEl.textContent = PM.panel.err; errEl.classList.remove('d-none');
+    } finally {
+        window.btnLoading?.(btn, false);
+    }
+});
+
+async function confirmPayment(id) {
+    try {
+        await api.patch(`/payments/${id}/confirm`);
+        showToast(PM.panel.confirmed_ok);
+        await reloadBooking();
+    } catch (e) { showToast(e?.message ?? PM.panel.err, 'error'); }
+}
+
+async function deletePayment(id) {
+    if (!confirm(PM.panel.del_confirm)) return;
+    try {
+        await api.delete(`/payments/${id}`);
+        showToast(PM.panel.deleted);
+        await reloadBooking();
+    } catch (e) { showToast(e?.message ?? PM.panel.err, 'error'); }
+}
+
+async function downloadProof(id, filename) {
+    try {
+        const res = await fetch(`/api/attachments/${id}/download`, {
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch {}
+}
+
+async function reloadBooking() {
+    const d = await api.get(`/bookings/${bookingId}`);
+    currentBooking = d.data ?? d;
+    renderBooking(currentBooking);
 }
 
 function renderToolbar(b) {
@@ -109,11 +336,8 @@ function renderToolbar(b) {
             <i class="ki-outline ki-bill fs-2"></i> ${ts.toolbar.request_payment}
         </button>`);
     }
-    if (b.status === 'awaiting_payment') {
-        buttons.push(`<button class="btn btn-sm btn-success" onclick="doMarkPaid()">
-            <i class="ki-outline ki-check-circle fs-2"></i> ${ts.toolbar.mark_paid}
-        </button>`);
-    }
+    // «Оплачено» больше не вручную — статус выводится из леджера расчётов
+    // (бронь авто → paid, когда подтверждённые входящие закрывают сумму).
     if (b.status === 'in_progress') {
         buttons.push(`<button class="btn btn-sm btn-success" onclick="doComplete()">
             <i class="ki-outline ki-check-circle fs-2"></i> ${ts.toolbar.complete}

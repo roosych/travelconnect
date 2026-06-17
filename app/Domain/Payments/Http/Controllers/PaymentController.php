@@ -31,6 +31,12 @@ class PaymentController extends Controller
         $this->authorizeView($request, $payable);
 
         $rows = $this->payments->ledger($payable)
+            ->map(function ($row) {
+                // FQCN контрагента → короткий алиас (agency/supplier) для фронта.
+                $row['counterparty']['type'] = array_search($row['counterparty']['type'], self::COUNTERPARTIES, true)
+                    ?: $row['counterparty']['type'];
+                return $row;
+            })
             ->filter(fn ($row) => $this->canSeeTarget($request, $row))
             ->map(function ($row) {
                 $row['payments'] = PaymentResource::collection(
@@ -184,12 +190,12 @@ class PaymentController extends Controller
         }
         if ($user->isAgency()) {
             return $row['direction'] === PaymentDirection::Incoming->value
-                && $row['counterparty']['type'] === Agency::class
+                && $row['counterparty']['type'] === 'agency'
                 && $user->agencies()->whereKey($row['counterparty']['id'])->exists();
         }
         if ($user->isSupplier()) {
             return $row['direction'] === PaymentDirection::Outgoing->value
-                && $row['counterparty']['type'] === Supplier::class
+                && $row['counterparty']['type'] === 'supplier'
                 && $user->suppliers()->whereKey($row['counterparty']['id'])->exists();
         }
 
