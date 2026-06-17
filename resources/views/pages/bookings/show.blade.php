@@ -23,7 +23,7 @@
 
 @section('content')
 
-<div class="row g-6">
+<div class="row g-6 mb-6">
 
     {{-- Main detail card --}}
     <div class="col-lg-8">
