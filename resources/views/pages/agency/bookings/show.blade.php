@@ -369,11 +369,27 @@ function openPaymentModal(key) {
     _payDate.setDate(new Date(), true);
 
     if (!_payPond) {
-        _payPond = FilePond.create(document.getElementById('pay-proof'), { allowMultiple: false, labelIdle: FP_IDLE });
+        _payPond = FilePond.create(document.getElementById('pay-proof'), {
+            allowMultiple: false,
+            labelIdle: FP_IDLE,
+            // Локально, без загрузки на сервер: фейковый process помечает файл
+            // «готов» (зелёный индикатор). Реальная отправка — на сабмите формы.
+            server: {
+                process: (field, file, meta, load) => { load(Date.now().toString()); return { abort: () => {} }; },
+                revert: (id, load) => load(),
+            },
+        });
     }
     _payPond.removeFiles();
 
-    if (!_payModal) _payModal = new bootstrap.Modal(document.getElementById('modal-payment'));
+    if (!_payModal) {
+        const el = document.getElementById('modal-payment');
+        _payModal = new bootstrap.Modal(el);
+        el.addEventListener('hidden.bs.modal', () => {
+            _payPond?.removeFiles();
+            document.getElementById('pay-error').classList.add('d-none');
+        });
+    }
     _payModal.show();
 }
 
