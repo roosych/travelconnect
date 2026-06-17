@@ -179,7 +179,7 @@ function renderPayments(rows) {
     _payTargets = {};
     if (!rows.length) { body.innerHTML = `<div class="text-muted fs-7 py-4">${PM.panel.no_payments}</div>`; return; }
 
-    body.innerHTML = rows.map((row, idx) => {
+    body.innerHTML = financeSummary(rows) + rows.map((row, idx) => {
         const key = `${row.direction}:${row.counterparty.type}:${row.counterparty.id}`;
         _payTargets[key] = row;
         const stCls = PAY_STATUS_CLS[row.status] ?? 'badge-light-secondary';
@@ -225,6 +225,39 @@ function renderPayments(rows) {
             ${payments}
         </div>`;
     }).join('');
+}
+
+// Финансовая сводка по брони: снимок маржи (при бронировании) + фактическая
+// касса из подтверждённых платежей (всё в AZN). Только оператору.
+function financeSummary(rows) {
+    const b = currentBooking || {};
+    const S = PM.summary;
+    const received = rows.filter(r => r.direction === 'incoming').reduce((s, r) => s + (r.paid_base || 0), 0);
+    const paidOut  = rows.filter(r => r.direction === 'outgoing').reduce((s, r) => s + (r.paid_base || 0), 0);
+    const cell = (label, val, cls = '') => `<div><div class="text-muted fs-8">${label}</div><div class="fw-bold fs-6 ${cls}">${formatCurrency(val, 'AZN')}</div></div>`;
+
+    return `
+    <div class="bg-light rounded p-4 mb-5">
+        <div class="d-flex flex-wrap gap-3 align-items-stretch">
+            <div class="flex-grow-1">
+                <div class="text-muted fs-8 text-uppercase fw-bold mb-2">${S.snapshot}</div>
+                <div class="d-flex gap-6 flex-wrap">
+                    ${cell(S.sell, b.sell_total_azn)}
+                    ${cell(S.cost, b.cost_total_azn)}
+                    ${cell(S.margin, b.margin_azn, 'text-success')}
+                </div>
+            </div>
+            <div class="border-start ps-6 flex-grow-1">
+                <div class="text-muted fs-8 text-uppercase fw-bold mb-2">${S.cash}</div>
+                <div class="d-flex gap-6 flex-wrap">
+                    ${cell(S.received, received, 'text-success')}
+                    ${cell(S.paid_out, paidOut, 'text-danger')}
+                    ${cell(S.net, received - paidOut)}
+                </div>
+            </div>
+        </div>
+        <div class="text-muted fs-9 mt-2">${S.in_base}</div>
+    </div>`;
 }
 
 function openPaymentModal(key) {

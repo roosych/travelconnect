@@ -109,8 +109,9 @@ class PaymentService
             $payments  = $this->paymentsFor($payable, $target);
             $confirmed = $payments->where('confirmed_at', '!=', null);
 
-            $paid    = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount);
-            $pending = (float) $payments->whereNull('confirmed_at')->sum(fn (Payment $p) => (float) $p->amount);
+            $paid     = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount);
+            $paidBase = (float) $confirmed->sum(fn (Payment $p) => (float) $p->amount_base);
+            $pending  = (float) $payments->whereNull('confirmed_at')->sum(fn (Payment $p) => (float) $p->amount);
             $remaining = max(0, round($target->amountDue - $paid, 2));
 
             $status = $paid <= 0
@@ -126,7 +127,9 @@ class PaymentService
                 ],
                 'currency'  => $target->currency,
                 'due'       => round($target->amountDue, 2),
+                'due_base'  => round($target->amountDueBase, 2),
                 'paid'      => round($paid, 2),
+                'paid_base' => round($paidBase, 2),
                 'pending'   => round($pending, 2),
                 'remaining' => $remaining,
                 'status'    => $status,

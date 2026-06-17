@@ -37,6 +37,18 @@ return [
         'del_confirm'  => 'Bu ödənişi silmək?',
         'err'          => 'Ödəniş əməliyyatı alınmadı',
     ],
+    'summary' => [
+        'title'     => 'Bron üzrə maliyyə',
+        'snapshot'  => 'Anlıq (bron zamanı)',
+        'sell'      => 'Satış',
+        'cost'      => 'Maya dəyəri',
+        'margin'    => 'Marja',
+        'cash'      => 'Kassa (faktiki)',
+        'received'  => 'Daxil olub',
+        'paid_out'  => 'Ödənilib',
+        'net'       => 'Əldə qalıb',
+        'in_base'   => 'Bütün məbləğlər AZN-də',
+    ],
     'my' => [
         'title'      => 'Hesablaşmalar',
         'subtitle'   => 'Qazandığınız sorğular üzrə ödənişlər',

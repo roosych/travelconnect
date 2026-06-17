@@ -37,6 +37,18 @@ return [
         'del_confirm'  => 'Delete this payment?',
         'err'          => 'Payment operation failed',
     ],
+    'summary' => [
+        'title'     => 'Booking finances',
+        'snapshot'  => 'Snapshot (at booking)',
+        'sell'      => 'Sell',
+        'cost'      => 'Cost',
+        'margin'    => 'Margin',
+        'cash'      => 'Cash (actual)',
+        'received'  => 'Received',
+        'paid_out'  => 'Paid out',
+        'net'       => 'Net on hand',
+        'in_base'   => 'All amounts in AZN',
+    ],
     'my' => [
         'title'      => 'Settlements',
         'subtitle'   => 'Payouts for your won requests',
