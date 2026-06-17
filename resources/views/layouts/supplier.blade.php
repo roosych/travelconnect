@@ -311,6 +311,16 @@
                                 </div>
 
                                 <div class="menu-item me-0 me-lg-2">
+                                    <a class="menu-link py-3 {{ request()->routeIs('supplier.settlements.*') ? 'active' : '' }}"
+                                       href="{{ route('supplier.settlements.index') }}">
+                                        <span class="menu-icon me-2">
+                                            <i class="ki-outline ki-wallet fs-4"></i>
+                                        </span>
+                                        <span class="menu-title">{{ __('nav.supplier.settlements') }}</span>
+                                    </a>
+                                </div>
+
+                                <div class="menu-item me-0 me-lg-2">
                                     <a class="menu-link py-3 {{ request()->routeIs('supplier.employees') ? 'active' : '' }}"
                                        href="{{ route('supplier.employees') }}">
                                         <span class="menu-icon me-2">

@@ -39,6 +39,7 @@ return [
         'rfqs_badge'  => 'Cavabınızı gözləyən sorğular',
         'offers'      => 'Təkliflər',
         'catalog'     => 'Resurslarım',
+        'settlements' => 'Hesablaşmalar',
     ],
 
     // Кабинет агентства

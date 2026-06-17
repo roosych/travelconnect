@@ -130,6 +130,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     // Расчёты/оплаты (полиморфный модуль Payments)
     Route::get('/payments/ledger', [PaymentController::class, 'ledger']);
+    Route::get('/payments/my-settlements', [PaymentController::class, 'mySettlements']);
     Route::post('/payments', [PaymentController::class, 'store']);
     Route::patch('/payments/{payment}/confirm', [PaymentController::class, 'confirm']);
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);

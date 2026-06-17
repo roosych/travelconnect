@@ -37,4 +37,11 @@ return [
         'del_confirm'  => 'Delete this payment?',
         'err'          => 'Payment operation failed',
     ],
+    'my' => [
+        'title'      => 'Settlements',
+        'subtitle'   => 'Payouts for your won requests',
+        'empty'      => 'No settlements yet.',
+        'booking'    => 'Booking #:id',
+        'load_error' => 'Failed to load settlements.',
+    ],
 ];

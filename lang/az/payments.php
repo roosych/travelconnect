@@ -37,4 +37,11 @@ return [
         'del_confirm'  => 'Bu ödənişi silmək?',
         'err'          => 'Ödəniş əməliyyatı alınmadı',
     ],
+    'my' => [
+        'title'      => 'Hesablaşmalar',
+        'subtitle'   => 'Qazandığınız sorğular üzrə ödənişlər',
+        'empty'      => 'Hələ hesablaşma yoxdur.',
+        'booking'    => 'Bron #:id',
+        'load_error' => 'Hesablaşmaları yükləmək olmadı.',
+    ],
 ];

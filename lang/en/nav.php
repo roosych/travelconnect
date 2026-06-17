@@ -39,6 +39,7 @@ return [
         'rfqs_badge'  => 'Requests awaiting your response',
         'offers'      => 'Offers',
         'catalog'     => 'My resources',
+        'settlements' => 'Settlements',
     ],
 
     // Кабинет агентства

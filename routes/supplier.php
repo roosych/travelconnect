@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Supplier\OfferController;
 use App\Http\Controllers\Web\Supplier\ProfileController;
 use App\Http\Controllers\Web\Supplier\RfqController;
 use App\Http\Controllers\Web\Supplier\SettingsController;
+use App\Http\Controllers\Web\Supplier\SettlementsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('supplier')->name('supplier.')->middleware(['auth', 'role:supplier'])->group(function () {
@@ -23,6 +24,8 @@ Route::prefix('supplier')->name('supplier.')->middleware(['auth', 'role:supplier
     Route::get('/offers/{id}', [OfferController::class, 'show'])->name('offers.show');
 
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+
+    Route::get('/settlements', [SettlementsController::class, 'index'])->name('settlements.index');
 
     Route::get('/employees', [EmployeesController::class, 'index'])->name('employees');
 

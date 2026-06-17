@@ -49,6 +49,46 @@ class PaymentController extends Controller
         return response()->json(['success' => true, 'data' => $rows]);
     }
 
+    /** Расчёты поставщика по всем его броням (read-only кабинет). */
+    public function mySettlements(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        abort_unless($user->isSupplier(), 403);
+
+        $supplierIds = $user->suppliers()->pluck('suppliers.id');
+
+        $bookings = Booking::with(['items', 'request'])
+            ->whereHas('items', fn ($q) => $q->whereIn('supplier_id', $supplierIds))
+            ->latest()
+            ->get();
+
+        $rows = [];
+        foreach ($bookings as $booking) {
+            foreach ($this->payments->ledger($booking) as $row) {
+                if ($row['direction'] !== PaymentDirection::Outgoing->value
+                    || $row['counterparty']['type'] !== Supplier::class
+                    || ! $supplierIds->contains($row['counterparty']['id'])) {
+                    continue;
+                }
+
+                $row['counterparty']['type'] = 'supplier';
+                $row['booking'] = [
+                    'id'               => $booking->id,
+                    'travel_date_from' => $booking->travel_date_from?->toDateString(),
+                    'travel_date_to'   => $booking->travel_date_to?->toDateString(),
+                    'destination'      => $booking->request?->destination,
+                ];
+                $row['payments'] = PaymentResource::collection(
+                    collect($row['payments'])->each->loadMissing(['attachments', 'recordedBy'])
+                )->resolve($request);
+
+                $rows[] = $row;
+            }
+        }
+
+        return response()->json(['success' => true, 'data' => $rows]);
+    }
+
     public function store(StorePaymentRequest $request): JsonResponse
     {
         $data = $request->validated();
