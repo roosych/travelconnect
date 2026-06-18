@@ -207,6 +207,28 @@
     </div>
 </div>
 
+{{-- Cannot-delete info modal (тип используется — нельзя удалить) --}}
+<div class="modal fade" id="modal-delete-blocked" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h3 class="fw-bold d-flex align-items-center gap-2">
+                    <i class="ki-outline ki-information-5 fs-2 text-warning"></i>{{ __('settings.services.cannot_delete_title') }}
+                </h3>
+                <button type="button" class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+                    <i class="ki-outline ki-cross fs-1"></i>
+                </button>
+            </div>
+            <div class="modal-body py-6 px-7">
+                <p class="text-gray-700 fs-6 mb-0" id="delete-blocked-msg"></p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('common.close') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -259,6 +281,7 @@ let attrsTypeName = '';
 const typeModal  = new bootstrap.Modal(byId('modal-type'));
 const attrsModal = new bootstrap.Modal(byId('modal-attributes'));
 const attrModal  = new bootstrap.Modal(byId('modal-attr'));
+const deleteBlockedModal = new bootstrap.Modal(byId('modal-delete-blocked'));
 
 const typeCodeSuggest = wireCodeSuggest('type-name', 'type-code');
 const attrCodeSuggest = wireCodeSuggest('attr-name', 'attr-code');
@@ -398,7 +421,9 @@ async function deleteType(id) {
         showToast(t.type_deleted);
         await loadTypes();
     } catch (err) {
-        showToast(err?.message ?? tc.unexpected_error, 'error');
+        // Сообщение «тип используется» показываем модалкой, чтобы успеть прочитать.
+        byId('delete-blocked-msg').textContent = err?.message ?? tc.unexpected_error;
+        deleteBlockedModal.show();
     }
 }
 

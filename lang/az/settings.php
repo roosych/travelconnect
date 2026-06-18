@@ -55,6 +55,7 @@ return [
         'delete_type_confirm' => 'Bu xidmət növünü atributları ilə birlikdə silmək?',
         'delete_attr_confirm' => 'Bu atributu silmək?',
         'type_in_use'         => 'Növ sorğularda/kataloqda/təkliflərdə istifadə olunur — silmək olmaz. Onu deaktiv edin (“Aktiv” işarəsini götürün).',
+        'cannot_delete_title' => 'Növü silmək mümkün deyil',
     ],
 
     // ──────────────────────────────── Валюты ──────────────────────────────────

@@ -55,6 +55,7 @@ return [
         'delete_type_confirm' => 'Delete this service type along with its attributes?',
         'delete_attr_confirm' => 'Delete this attribute?',
         'type_in_use'         => 'The type is used in requests/catalog/offers — cannot delete. Deactivate it instead (uncheck “Active”).',
+        'cannot_delete_title' => 'Cannot delete the type',
     ],
 
     // ──────────────────────────────── Валюты ──────────────────────────────────
