@@ -12,7 +12,7 @@ class AdminCreate extends Command
     protected $signature = 'admin:create
                             {email : Email администратора}
                             {name : Имя администратора}
-                            {--password=password : Пароль (по умолчанию "password")}';
+                            {password : Пароль администратора}';
 
     protected $description = 'Создать администратора (роль operator)';
 
@@ -20,7 +20,7 @@ class AdminCreate extends Command
     {
         $email    = strtolower(trim($this->argument('email')));
         $name     = trim($this->argument('name'));
-        $password = (string) $this->option('password');
+        $password = (string) $this->argument('password');
 
         $validator = Validator::make(
             ['email' => $email, 'name' => $name, 'password' => $password],
