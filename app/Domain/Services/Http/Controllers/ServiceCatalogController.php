@@ -25,7 +25,7 @@ class ServiceCatalogController extends Controller
         ['supplier_services', 'type'],
         ['rfqs', 'service_type'],
         ['offer_items', 'type'],
-        ['booking_items', 'type'],
+        ['booking_items', 'service_type'],
     ];
 
     // -------------------------------------------------------------------------
