@@ -4,12 +4,13 @@ namespace App\Console\Commands;
 
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\CurrencySeeder;
+use Database\Seeders\ServiceCatalogSeeder;
 use Illuminate\Console\Command;
 
 class AppInstall extends Command
 {
     protected $signature   = 'app:install';
-    protected $description = 'Засеять справочники, нужные для работы приложения (валюты, страны)';
+    protected $description = 'Засеять справочники, нужные для работы приложения (валюты, страны, типы услуг)';
 
     /**
      * Справочные сидеры. Дополнять список по мере появления новых
@@ -20,6 +21,7 @@ class AppInstall extends Command
     protected array $seeders = [
         CurrencySeeder::class,
         CountrySeeder::class,
+        ServiceCatalogSeeder::class,
     ];
 
     public function handle(): int
