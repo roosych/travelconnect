@@ -326,13 +326,6 @@
                                         <a href="{{ route('admin.profile') }}" class="menu-link px-5">{{ __('common.my_profile') }}</a>
                                     </div>
 
-                                    {{-- My Requests --}}
-                                    <div class="menu-item px-5">
-                                        <a href="{{ route('admin.requests.index') }}" class="menu-link px-5">
-                                            {{ __('common.my_requests') }}
-                                        </a>
-                                    </div>
-
                                     <div class="separator my-2"></div>
 
                                     {{-- Mode toggle --}}
