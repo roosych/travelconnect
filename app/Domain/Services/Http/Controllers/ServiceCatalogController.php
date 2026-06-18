@@ -113,7 +113,12 @@ class ServiceCatalogController extends Controller
             return response()->json(['message' => __('settings.services.type_in_use')], 422);
         }
 
-        $type->delete(); // атрибуты уйдут каскадом
+        // Подкатегории сносим явно, не полагаясь на FK-каскад БД: на части окружений
+        // он мог не примениться (старая миграция), и тогда delete() падал с FK-violation.
+        DB::transaction(function () use ($type) {
+            $type->serviceAttributes()->delete();
+            $type->delete();
+        });
 
         return response()->json(['data' => true]);
     }
