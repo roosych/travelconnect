@@ -249,9 +249,9 @@ class DashboardController extends Controller
             ->limit(6)
             ->get()
             ->map(fn (Rfq $r) => [
-                'id'           => $r->id,
-                'request_id'   => $r->request_id,
-                'title'        => $r->title ?? $r->request?->title ?? __('dashboard.supplier.request_fallback', ['id' => $r->id]),
+                'id'           => $r->public_code,
+                'request_id'   => $r->request?->public_code,
+                'title'        => $r->title ?? $r->request?->title ?? __('dashboard.supplier.request_fallback', ['id' => $r->public_code]),
                 'service_type' => $r->service_type,
                 'deadline_at'  => $r->deadline_at?->toIso8601String(),
                 'responded'    => $r->my_offers_count > 0,

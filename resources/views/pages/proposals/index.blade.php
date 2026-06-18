@@ -165,7 +165,7 @@
                 : `<span class="text-muted">—</span>`;
 
             const requestCell = p.request?.id
-                ? `<a href="/admin/requests/${p.request.id}" class="fw-semibold text-gray-800 text-hover-primary">#${p.request.id}</a>`
+                ? `<a href="/admin/requests/${p.request.id}" class="fw-semibold text-gray-800 text-hover-primary">${p.request.id}</a>`
                 : `<span class="text-muted">—</span>`;
 
             const agency = p.request?.agency ?? p.agency ?? null;
@@ -180,7 +180,7 @@
             <tr>
                 <td>
                     <span class="fw-bold text-gray-900 d-block">${escHtml(p.title ?? t.index.proposal_ref.replace(':id', p.id))}</span>
-                    <span class="text-muted fs-7">#${p.id}</span>
+                    <span class="text-muted fs-7">${p.id}</span>
                 </td>
                 <td>${requestCell}</td>
                 <td>${agencyCell}</td>
@@ -250,14 +250,14 @@
 
         // Quick view
         btns += `<button class="btn btn-sm btn-icon btn-light" title="${t.index.actions.quick_view}"
-                    onclick="openPreviewDrawer(${id})">
+                    onclick="openPreviewDrawer('${id}')">
                     <i class="ki-outline ki-eye fs-4"></i>
                  </button>`;
 
         // Send (draft only, request not booked)
         if (p.status === 'draft' && p.request?.status !== 'booked') {
             btns += ` <button class="btn btn-sm btn-icon btn-light-primary" title="${t.index.actions.send}"
-                        onclick="sendProposal(${id})">
+                        onclick="sendProposal('${id}')">
                         <i class="ki-outline ki-send fs-4"></i>
                       </button>`;
         }
@@ -265,7 +265,7 @@
         // Cancel (draft or sent)
         if (['draft', 'sent'].includes(p.status)) {
             btns += ` <button class="btn btn-sm btn-icon btn-light-danger" title="${t.index.actions.cancel}"
-                        onclick="cancelProposal(${id})">
+                        onclick="cancelProposal('${id}')">
                         <i class="ki-outline ki-cross-circle fs-4"></i>
                       </button>`;
         }
@@ -291,7 +291,7 @@
         const op = p.operator;
         const opLabel = op?.name ? `· <span class="text-muted">${t.drawer.operator.replace(':name', escHtml(op.name))}</span>` : '';
         document.getElementById('dprev-meta').innerHTML =
-            `${escHtml(agency?.name ?? '—')} · <a href="/admin/requests/${p.request?.id}" class="text-muted text-hover-primary">#${p.request?.id ?? '—'} ${escHtml(reqTitle)}</a> ${opLabel}`;
+            `${escHtml(agency?.name ?? '—')} · <a href="/admin/requests/${p.request?.id}" class="text-muted text-hover-primary">${p.request?.id ?? '—'} ${escHtml(reqTitle)}</a> ${opLabel}`;
 
         const total     = parseFloat(p.total_price ?? 0);
         const origTotal = parseFloat(p.original_total_price ?? 0);
@@ -413,7 +413,7 @@
                             <i class="ki-outline ki-arrow-right fs-5 me-1"></i>${t.drawer.open}
                           </a>`;
         if (p.status === 'draft' && p.request?.status !== 'booked') {
-            footerBtns += `<button class="btn btn-primary btn-sm flex-fill" onclick="sendProposal(${id}); bootstrap.Offcanvas.getInstance(document.getElementById('drawer-proposal-preview'))?.hide()">
+            footerBtns += `<button class="btn btn-primary btn-sm flex-fill" onclick="sendProposal('${id}'); bootstrap.Offcanvas.getInstance(document.getElementById('drawer-proposal-preview'))?.hide()">
                             <i class="ki-outline ki-send fs-5 me-1"></i>${t.drawer.send}
                            </button>`;
         }

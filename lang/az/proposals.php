@@ -15,8 +15,8 @@ return [
         ],
         'load_error'   => 'Kommersiya təkliflərini yükləmək alınmadı.',
         'empty'        => 'Kommersiya təklifi tapılmadı.',
-        'proposal_ref' => 'Təklif #:id',
-        'request_ref'  => 'Sorğu #:id',
+        'proposal_ref' => 'Təklif :id',
+        'request_ref'  => 'Sorğu :id',
         'pagination'   => ':from–:to / :total',
 
         'chips' => [
@@ -59,7 +59,7 @@ return [
         'markup'        => 'Əlavə',
         'total'         => 'Yekun',
         'offers'        => 'Offerlər (:n)',
-        'offer_ref'     => 'Offer #:id',
+        'offer_ref'     => 'Offer :id',
         'net_short'     => 'maya',
         'no_offers'     => 'Offer əlavə edilməyib',
         'open'          => 'Aç',
@@ -69,10 +69,10 @@ return [
     // ── Konstruktor səhifəsi (show) ────────────────────────────────────────
     'show' => [
         'title'          => 'Təklif konstruktoru',
-        'breadcrumb'     => 'Təklif #:id',
+        'breadcrumb'     => 'Təklif :id',
         'load_error'     => 'Kommersiya təklifini yükləmək alınmadı.',
-        'proposal_ref'   => 'Təklif #:id',
-        'request_ref'    => 'Tur sorğusu #:id',
+        'proposal_ref'   => 'Təklif :id',
+        'request_ref'    => 'Tur sorğusu :id',
         'included_title' => 'Daxil edilmiş offerlər',
         'included_empty' => 'Hələ offer əlavə edilməyib. Onları sağ paneldən əlavə edin.',
         'quick_view'     => 'Sürətli baxış',
@@ -212,7 +212,7 @@ return [
         'notes_ph'          => 'Agentlik üçün hər hansı qeyd və ya şərtlər...',
         'submit'            => 'Yarat və təklifi qur',
         'creating'          => 'Yaradılır...',
-        'request_ref'       => 'Sorğu #:id',
+        'request_ref'       => 'Sorğu :id',
         'default_title'     => 'Təklif',
         'err_no_request'    => 'Sorğu bağlanmayıb. Sorğu detalları səhifəsindən başlayın.',
         'toast_created'     => 'Təklif yaradıldı. İndi offerlər əlavə edin.',

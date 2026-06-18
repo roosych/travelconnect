@@ -16,7 +16,7 @@ class ProposalWebController extends Controller
         return view('pages.proposals.create');
     }
 
-    public function show(int $id)
+    public function show(string $id)
     {
         return view('pages.proposals.show', ['id' => $id]);
     }

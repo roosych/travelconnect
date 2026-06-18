@@ -33,7 +33,7 @@ return [
         'load_error' => 'Failed to load requests.',
         'empty'      => 'No requests found.',
         'of'         => 'of',
-        'request_ref' => 'Request #:id',
+        'request_ref' => 'Request :id',
 
         'chips' => [
             'all'       => 'All',
@@ -67,9 +67,9 @@ return [
     // ── Detail page (show) ─────────────────────────────────────────────────
     'show' => [
         'title'          => 'Supplier request details',
-        'breadcrumb'     => 'Request #:id',
-        'rfq_ref'        => 'Request #:id',
-        'request_ref'    => 'Tour request #:id',
+        'breadcrumb'     => 'Request :id',
+        'rfq_ref'        => 'Request :id',
+        'request_ref'    => 'Tour request :id',
         'created_label'  => 'Created :date',
         'deadline_label' => 'Deadline: :date',
         'requirements'   => 'Requirements:',
@@ -89,7 +89,7 @@ return [
         'offers_title'      => 'Supplier offers',
         'offers_load_error' => 'Failed to load offers.',
         'offers_empty'      => 'No offers received yet.',
-        'offer_ref'         => 'Offer #:id',
+        'offer_ref'         => 'Offer :id',
         'valid_until_short' => 'until :date',
         'total'             => 'Total',
 

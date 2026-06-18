@@ -240,8 +240,8 @@ class DashboardController extends Controller
             ->limit(5)
             ->get()
             ->map(fn (Booking $b) => [
-                'id'           => $b->id,
-                'title'        => $b->proposal?->request?->title ?? $b->proposal?->title ?? __('dashboard.agency.booking_fallback', ['id' => $b->id]),
+                'id'           => $b->public_code,
+                'title'        => $b->proposal?->request?->title ?? $b->proposal?->title ?? __('dashboard.agency.booking_fallback', ['id' => $b->public_code]),
                 'date_from'    => $b->travel_date_from?->toDateString(),
                 'date_to'      => $b->travel_date_to?->toDateString(),
                 'days_until'   => (int) Carbon::today()->diffInDays($b->travel_date_from, false),
@@ -272,7 +272,7 @@ class DashboardController extends Controller
             ->limit(6)
             ->get()
             ->map(fn (TravelRequest $r) => [
-                'id'                 => $r->id,
+                'id'                 => $r->public_code,
                 'title'              => $r->title,
                 'destination'        => $r->destination,
                 'pax_count'          => $r->pax_count,

@@ -190,25 +190,25 @@ function renderTable(rfqs, meta) {
                 </a>
                 ${r.status === 'sent' || r.status === 'awaiting' ? `
                 <button class="btn btn-sm btn-icon btn-light-warning btn-active-warning"
-                        title="${t.index.actions.close}" onclick="closeRfq(${r.id})">
+                        title="${t.index.actions.close}" onclick="closeRfq('${r.id}')">
                     <i class="ki-outline ki-lock fs-5"></i>
                 </button>` : ''}
                 ${isActive && r.status !== 'awaiting' ? `
                 <button class="btn btn-sm btn-icon btn-light-danger btn-active-danger"
-                        title="${t.index.actions.cancel}" onclick="cancelRfq(${r.id})">
+                        title="${t.index.actions.cancel}" onclick="cancelRfq('${r.id}')">
                     <i class="ki-outline ki-cross fs-5"></i>
                 </button>` : ''}
             </div>`;
 
         return `
         <tr>
-            <td>
-                <a href="/admin/rfqs/${r.id}" class="fw-bold text-gray-800 text-hover-primary">#${r.id}</a>
+            <td class="w-100px pe-2">
+                <a href="/admin/rfqs/${r.id}" class="fw-bold text-gray-800 text-hover-primary">${r.id}</a>
             </td>
             <td>
-                <a href="/admin/requests/${r.request?.id ?? r.request_id}"
+                <a href="/admin/requests/${r.request?.id}"
                    class="fw-semibold text-gray-800 text-hover-primary d-flex align-items-center gap-1 mb-2">
-                   ${escHtml(r.request?.title ?? t.index.request_ref.replace(':id', r.request?.id ?? r.request_id ?? '—'))}
+                   ${escHtml(r.request?.title ?? t.index.request_ref.replace(':id', r.request?.id ?? '—'))}
                    <i class="ki-outline ki-arrow-up-right fs-8 text-gray-400"></i>
                 </a>
                 <span class="badge ${svc.cls} fs-8">${svc.label}</span>
@@ -226,7 +226,7 @@ function renderTable(rfqs, meta) {
         <table class="table align-middle table-row-dashed fs-6 gy-4">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="w-60px">${t.index.cols.id}</th>
+                    <th class="w-100px pe-2">${t.index.cols.id}</th>
                     <th class="min-w-220px">${t.index.cols.request_service}</th>
                     <th class="min-w-130px">${t.index.cols.responses}</th>
                     <th class="min-w-110px">${t.index.cols.status}</th>

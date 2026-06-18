@@ -21,7 +21,7 @@ class ProposalSentNotification extends BaseNotification
 
     private function url(): string
     {
-        return url('/agency/requests/'.$this->proposal->request_id);
+        return url('/agency/requests/'.$this->proposal->request->public_code);
     }
 
     protected function bellTitle(): string

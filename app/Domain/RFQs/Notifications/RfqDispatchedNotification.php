@@ -28,7 +28,7 @@ class RfqDispatchedNotification extends BaseNotification
     {
         return $this->magicToken
             ? route('supplier.rfq', $this->magicToken)
-            : url('/supplier/rfqs/'.$this->rfq->id);
+            : url('/supplier/rfqs/'.$this->rfq->public_code);
     }
 
     protected function bellTitle(): string

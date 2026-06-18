@@ -140,7 +140,7 @@
 @push('scripts')
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <script>
-const bookingId = {{ $id }};
+const bookingId = @json($id);
 const t  = @json(__('bookings'));
 const tc = @json(__('common'));
 const ts = t.show;
@@ -219,7 +219,7 @@ function targetCard(title, rows) {
                 ? `<span class="badge badge-light-success fs-9 ms-1">${PM.panel.confirmed}</span>`
                 : `<span class="badge badge-light-warning fs-9 ms-1">${PM.panel.awaiting}</span>`;
             const confirmBtn = p.confirmed ? '' :
-                `<button class="btn btn-sm btn-light-success py-1" onclick="confirmPayment(${p.id})">${PM.panel.confirm}</button>`;
+                `<button class="btn btn-sm btn-light-success py-1" onclick="confirmPayment('${p.id}')">${PM.panel.confirm}</button>`;
             return `
             <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
                 <div class="flex-grow-1 min-w-0">
@@ -228,7 +228,7 @@ function targetCard(title, rows) {
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     ${confirmBtn}
-                    <button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment(${p.id})"><i class="ki-outline ki-trash fs-6"></i></button>
+                    <button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment('${p.id}')"><i class="ki-outline ki-trash fs-6"></i></button>
                 </div>
             </div>`;
         }).join('') || `<div class="text-muted fs-8 mb-2">${PM.panel.no_payments}</div>`;
@@ -563,11 +563,11 @@ function renderProposalCard(b) {
         <div class="d-flex flex-column gap-3">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-gray-500 fs-7 fw-semibold">${ts.proposal_label}</span>
-                <a href="/admin/proposals/${proposal.id}" class="fw-semibold text-primary fs-7">#${proposal.id}</a>
+                <a href="/admin/proposals/${proposal.id}" class="fw-semibold text-primary fs-7">${proposal.id}</a>
             </div>
             <div class="fw-semibold text-gray-800 fs-6">${escHtml(proposal.title ?? ts.proposal_ref.replace(':id', proposal.id))}</div>
             <div class="mt-2">
-                <button class="btn btn-light-success btn-sm w-100" onclick="openProposalDrawer(${proposal.id})">
+                <button class="btn btn-light-success btn-sm w-100" onclick="openProposalDrawer('${proposal.id}')">
                     <i class="ki-outline ki-eye fs-5 me-1"></i>${ts.view_proposal}
                 </button>
             </div>

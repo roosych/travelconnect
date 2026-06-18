@@ -23,9 +23,10 @@ class RequestController extends Controller
         return view('pages.agency.requests.create', $this->formData($request) + ['editData' => null]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, string $id)
     {
-        $tr = TravelRequest::with(['legs.destinations', 'legs.services', 'attachments'])->findOrFail($id);
+        $tr = TravelRequest::with(['legs.destinations', 'legs.services', 'attachments'])
+            ->where('public_code', $id)->firstOrFail();
 
         // Владелец-агентство + только черновик можно редактировать.
         abort_unless($request->user()->agencies()->whereKey($tr->agency_id)->exists(), 403);
@@ -34,7 +35,7 @@ class RequestController extends Controller
         $tz = $request->user()->effectiveTimezone();
 
         $editData = [
-            'id'          => $tr->id,
+            'id'          => $tr->public_code,
             'title'       => $tr->title,
             'pax_count'   => $tr->pax_count,
             'deadline_at' => $tr->deadline_at?->setTimezone($tz)->format('Y-m-d H:i'),
@@ -61,7 +62,7 @@ class RequestController extends Controller
         return view('pages.agency.requests.create', $this->formData($request) + ['editData' => $editData]);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         return view('pages.agency.requests.show', [
             'id'           => $id,

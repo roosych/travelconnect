@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('rfqs', function (Blueprint $table) {
             $table->id()->startingValue(1001);
+            $table->string('public_code')->unique();
             $table->foreignId('request_id')->constrained('travel_requests');
             // Сегментное измерение RFQ: страна-сегмент + конкретный leg заявки.
             // RFQ рассылается по паре (сегмент × тип услуги): страна нужна для

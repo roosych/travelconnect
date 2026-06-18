@@ -57,12 +57,12 @@ class OfferResource extends JsonResource
             && ! $inActiveProposal;
 
         return [
-            'id' => $this->id,
+            'id' => $this->public_code,
             'rfq_id' => $this->rfq_id,
             'rfq_title' => $this->whenLoaded('rfq', fn () => $this->rfq->title ?? ucfirst($this->rfq->service_type ?? '')),
             'rfq_service_type' => $this->whenLoaded('rfq', fn () => $this->rfq->service_type),
             'rfq' => $this->whenLoaded('rfq', fn () => [
-                'id' => $this->rfq->id,
+                'id' => $this->rfq->public_code,
                 'title' => $this->rfq->title,
                 'service_type' => $this->rfq->service_type,
                 'deadline_at' => $this->rfq->deadline_at?->toIso8601String(),
@@ -70,7 +70,7 @@ class OfferResource extends JsonResource
                 'country_flag' => $this->rfq->country_code ? asset('flags/' . strtolower($this->rfq->country_code) . '.svg') : null,
                 'country_name' => $this->rfq->relationLoaded('country') ? $this->rfq->country?->name : null,
                 'request' => $this->rfq->relationLoaded('request') && $this->rfq->request ? [
-                    'id' => $this->rfq->request->id,
+                    'id' => $this->rfq->request->public_code,
                     'title' => $this->rfq->request->title,
                     'destination' => $this->rfq->request->destination,
                     'travel_date_from' => $this->rfq->request->travel_date_from?->toDateString(),

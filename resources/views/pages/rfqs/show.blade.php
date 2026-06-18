@@ -154,7 +154,7 @@
 
 @push('scripts')
 <script>
-    const rfqId = {{ $id }};
+    const rfqId = @json($id);
     const t  = @json(__('rfqs'));
     const tc = @json(__('common'));
     const ts = t.show;
@@ -420,7 +420,7 @@
                 priceBlock = `<div class="mt-3 fw-bold text-gray-800">${formatCurrency(o.unit_price)}</div>`;
             }
 
-            const actions = `<button class="btn btn-sm btn-light btn-active-light-primary" onclick="openOfferDrawer(${o.id})">
+            const actions = `<button class="btn btn-sm btn-light btn-active-light-primary" onclick="openOfferDrawer('${o.id}')">
                     <i class="ki-outline ki-eye fs-5 me-1"></i>${tc.open}
                 </button>`;
 
@@ -437,7 +437,7 @@
                             <div class="symbol symbol-35px symbol-circle flex-shrink-0">${offerAvatar}</div>
                             <div class="min-w-0">
                                 <button class="btn btn-link p-0 fw-bold text-gray-800 text-hover-primary fs-6 text-start"
-                                        onclick="openOfferDrawer(${o.id})">${supplierName}</button>
+                                        onclick="openOfferDrawer('${o.id}')">${supplierName}</button>
                                 <div class="text-muted fs-8">${ts.offer_ref.replace(':id', o.id)} · ${ts.valid_until_short.replace(':date', formatDate(o.valid_until))}</div>
                             </div>
                         </div>

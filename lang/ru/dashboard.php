@@ -118,7 +118,7 @@ return [
         'q_review_hint'          => 'Предложения у оператора',
         'q_won_label'            => 'Выигранные',
         'q_won_hint'             => 'Ваши предложения выбраны',
-        'request_fallback'       => 'Запрос #:id',
+        'request_fallback'       => 'Запрос :id',
     ],
 
     // ── Дашборд агентства ───────────────────────────────────────────────────
@@ -196,6 +196,6 @@ return [
         'q_payment_hint'     => 'Брони в ожидании оплаты',
         'q_upcoming_label'   => 'Поездки на подходе',
         'q_upcoming_hint'    => 'Старт в ближайшие 14 дней',
-        'booking_fallback'   => 'Бронь #:id',
+        'booking_fallback'   => 'Бронь :id',
     ],
 ];

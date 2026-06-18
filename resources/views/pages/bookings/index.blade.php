@@ -171,7 +171,7 @@
 
             return `
             <tr>
-                <td><a href="/admin/bookings/${b.id}" class="fw-bold text-gray-800 text-hover-primary">#${b.id}</a></td>
+                <td class="w-100px pe-2"><a href="/admin/bookings/${b.id}" class="fw-bold text-gray-800 text-hover-primary">${b.id}</a></td>
                 <td>${titleCell}</td>
                 <td>${agencyCell}</td>
                 <td>${priceCell}</td>
@@ -181,7 +181,7 @@
                 <td class="text-end">
                     <div class="d-flex gap-1 justify-content-end">
                         <button class="btn btn-sm btn-icon btn-light" title="${t.index.quick_view}"
-                                onclick="openBookingDrawer(${b.id})">
+                                onclick="openBookingDrawer('${b.id}')">
                             <i class="ki-outline ki-eye fs-4"></i>
                         </button>
                         <a href="/admin/bookings/${b.id}" class="btn btn-sm btn-icon btn-light" title="${t.index.open}">
@@ -196,7 +196,7 @@
             <table class="table align-middle table-row-dashed fs-6 gy-4">
                 <thead>
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                        <th class="w-50px">#</th>
+                        <th class="w-100px pe-2">#</th>
                         <th class="min-w-200px">${t.index.cols.tour}</th>
                         <th class="min-w-130px">${t.index.cols.agency}</th>
                         <th class="min-w-110px">${t.index.cols.amount}</th>

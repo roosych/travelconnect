@@ -7,6 +7,7 @@ use App\Domain\Offers\Enums\OfferStatus;
 use App\Domain\Proposals\Models\Proposal;
 use App\Domain\RFQs\Models\Rfq;
 use App\Domain\Suppliers\Models\Supplier;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +17,10 @@ use Illuminate\Support\Carbon;
 
 class Offer extends Model
 {
+    use HasPublicCode;
+
+    protected string $publicCodePrefix = 'O';
+
     protected $table = 'offers';
 
     protected $fillable = [

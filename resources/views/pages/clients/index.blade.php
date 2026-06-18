@@ -176,7 +176,7 @@
             const agency = allAgencies.find(a => a.id === c.agency_id);
             return `
             <tr>
-                <td class="fw-bold text-gray-800">#${c.id}</td>
+                <td class="fw-bold text-gray-800">${c.id}</td>
                 <td>
                     <div class="d-flex align-items-center gap-3">
                         ${avatarHtml(c.name, 35)}

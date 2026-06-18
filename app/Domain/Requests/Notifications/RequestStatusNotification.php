@@ -47,7 +47,7 @@ class RequestStatusNotification extends BaseNotification
 
     protected function bellUrl(): ?string
     {
-        return url('/agency/requests/'.$this->request->id);
+        return url('/agency/requests/'.$this->request->public_code);
     }
 
     public function toMail(object $notifiable): MailMessage

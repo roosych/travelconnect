@@ -63,7 +63,7 @@ return [
     // ── Страница деталей (show) ────────────────────────────────────────────
     'show' => [
         'title'         => 'Детали бронирования',
-        'breadcrumb'    => 'Бронирование #:id',
+        'breadcrumb'    => ':id',
         'proposal_card' => 'Коммерч. предложение',
         'request_card'  => 'Заявка на тур',
         'load_error'    => 'Не удалось загрузить детали бронирования.',
@@ -88,11 +88,11 @@ return [
 
         'proposal_unavailable' => 'Информация о предложении недоступна.',
         'proposal_label'       => 'Коммерч. предложение',
-        'proposal_ref'         => 'Предложение #:id',
+        'proposal_ref'         => 'Предложение :id',
         'view_proposal'        => 'Просмотреть предложение',
 
         'request_unavailable' => 'Информация о заявке недоступна.',
-        'request_ref'         => 'Заявка #:id',
+        'request_ref'         => 'Заявка :id',
         'deadline_label'      => 'Дедлайн: :date',
         'travellers'          => ':n туристов',
         'open_request'        => 'Открыть заявку',
@@ -127,7 +127,7 @@ return [
             'no_offers'            => 'Нет услуг в предложении',
             'supplier_price'       => 'поставщик: :price',
             'in_supplier_currency' => 'в валюте поставщика: :amount',
-            'service_ref'          => 'Услуга #:id',
+            'service_ref'          => 'Услуга :id',
         ],
         'prop_status' => [
             'draft'    => 'Черновик',
@@ -177,8 +177,8 @@ return [
     // ── Детали бронирования агентства (agency show) ────────────────────────
     'agency_show' => [
         'title'               => 'Детали бронирования',
-        'breadcrumb'          => 'Бронирование #:id',
-        'request_fallback'    => 'Заявка #:id',
+        'breadcrumb'          => ':id',
+        'request_fallback'    => 'Заявка :id',
         'total'               => 'Итоговая сумма',
         'trip_details'        => 'Детали поездки',
         'proposal_title'      => 'Коммерческое предложение',
@@ -211,13 +211,13 @@ return [
         'composition'      => 'Состав',
         'total_line'       => 'Итого',
         'no_offers'        => 'Нет услуг в предложении.',
-        'service_fallback' => 'Услуга #:id',
+        'service_fallback' => 'Услуга :id',
     ],
 
     // ── Drawer быстрого просмотра ──────────────────────────────────────────
     'drawer' => [
         'title_ph'     => 'Бронирование',
-        'ref'          => 'Бронирование #:id',
+        'ref'          => ':id',
         'load_error'   => 'Не удалось загрузить бронирование.',
         'total'        => 'Итоговая сумма',
         'for_agency'   => '· для агентства :amount',
@@ -233,6 +233,6 @@ return [
         'net_short'    => 'себест.',
         'notes'        => 'Примечания',
         'open_full'    => 'Открыть полностью',
-        'proposal_ref' => 'КП #:id',
+        'proposal_ref' => 'КП :id',
     ],
 ];

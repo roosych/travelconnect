@@ -14,7 +14,7 @@ class AddOfferToProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'offer_id'              => ['required', 'integer', 'exists:offers,id'],
+            'offer_id'              => ['required', 'string', 'exists:offers,public_code'],
             'operator_notes'        => ['nullable', 'string'],
             'markup_pct'            => ['nullable', 'numeric', 'min:0', 'max:200'],
             'selected_item_types'   => ['nullable', 'array'],

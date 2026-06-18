@@ -44,7 +44,7 @@ class OfferDecisionNotification extends BaseNotification
 
     protected function bellUrl(): ?string
     {
-        return url('/supplier/offers/'.$this->offer->id);
+        return url('/supplier/offers/'.$this->offer->public_code);
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -55,7 +55,7 @@ class OfferDecisionNotification extends BaseNotification
             ->subject($subject.': '.$this->title())
             ->greeting($subject)
             ->line($this->message())
-            ->action('Открыть оффер', url('/supplier/offers/'.$this->offer->id));
+            ->action('Открыть оффер', url('/supplier/offers/'.$this->offer->public_code));
     }
 
     public function toTelegram(object $notifiable): TelegramMessage
@@ -63,6 +63,6 @@ class OfferDecisionNotification extends BaseNotification
         $icon = $this->accepted ? '✅' : '❌';
 
         return TelegramMessage::create("{$icon} ".$this->message())
-            ->button('Открыть оффер', url('/supplier/offers/'.$this->offer->id));
+            ->button('Открыть оффер', url('/supplier/offers/'.$this->offer->public_code));
     }
 }

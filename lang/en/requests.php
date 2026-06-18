@@ -272,8 +272,8 @@ return [
     // ── Agency request detail page (agency show) ───────────────────────────
     'agency_show' => [
         'title'        => 'Request details',
-        'breadcrumb'   => 'Request #:id',
-        'req_fallback' => 'Request #:id',
+        'breadcrumb'   => 'Request :id',
+        'req_fallback' => 'Request :id',
 
         // Toolbar
         'edit'       => 'Edit',
@@ -343,7 +343,7 @@ return [
 
         // Proposal modal
         'proposal_modal_title' => 'Proposal',
-        'modal_title'          => 'Proposal #:id',
+        'modal_title'          => 'Proposal :id',
         'modal_load_error'     => 'Failed to load the proposal',
         'modal_no_services'    => 'No services listed',
         'modal_created'        => 'Created:',
@@ -427,8 +427,8 @@ return [
     // ── Request page (show) ────────────────────────────────────────────────
     'show' => [
         'title'             => 'Request details',
-        'breadcrumb'        => 'Request #:id',
-        'rfq_ref'           => 'Request #:id',
+        'breadcrumb'        => 'Request :id',
+        'rfq_ref'           => 'Request :id',
 
         'toolbar' => [
             'submit'    => 'Submit',
@@ -498,7 +498,7 @@ return [
             'delete'         => 'Delete',
             'revoke'         => 'Revoke',
             'send_preview'   => 'Preview & send',
-            'default_title'  => 'Proposal #:id',
+            'default_title'  => 'Proposal :id',
         ],
 
         // Broadcast modal
@@ -580,7 +580,7 @@ return [
             'create_error'      => 'Failed to create the commercial proposal.',
             'created'           => 'Proposal created, :n offers attached.',
             'created_partial'   => 'Proposal created, but :n offers not attached: :msg',
-            'offer_fail'        => 'Offer #:id not attached',
+            'offer_fail'        => 'Offer :id not attached',
         ],
 
         // Proposal preview modal

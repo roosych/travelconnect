@@ -93,7 +93,7 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
-    const offerId = {{ $id }};
+    const offerId = @json($id);
     const t  = @json(__('offers'));
     const tc = @json(__('common'));
     const USER_TZ = @json($userTimezone);
@@ -202,24 +202,27 @@
             ? items.reduce((s, i) => s + parseFloat(i.unit_price ?? 0), 0)
             : parseFloat(offer.unit_price ?? 0);
 
-        // Catalog resource block (shown when supplier picked a service from catalog)
-        const catalogItem = items.find(i => i.supplier_service_id && (i.catalog_photos?.length || i.catalog_name || i.catalog_description));
-        const catalogBlock = catalogItem ? `
+        // Catalog resource block — по одному на каждую позицию из каталога поставщика.
+        const catalogItems = items.filter(i => i.supplier_service_id && (i.catalog_photos?.length || i.catalog_name || i.catalog_description));
+        const catalogBlock = catalogItems.length ? `
             <div class="separator my-4"></div>
             <div>
                 <div class="text-gray-500 fw-bold fs-8 text-uppercase mb-3">
                     <i class="ki-outline ki-archive fs-6 me-1 text-muted"></i>${t.show.catalog_resource}
                 </div>
-                ${catalogItem.catalog_photos?.length ? `
-                <div class="d-flex gap-2 mb-3" style="overflow-x:auto;">
-                    ${catalogItem.catalog_photos.map(url =>
-                        `<a href="${url}" class="glightbox flex-shrink-0" data-gallery="catalog-resource">
-                            <img src="${url}" alt="" class="rounded" style="height:80px;width:110px;object-fit:cover;cursor:pointer;">
-                        </a>`
-                    ).join('')}
-                </div>` : ''}
-                ${catalogItem.catalog_name ? `<div class="fw-semibold text-gray-800 fs-6 mb-1">${escHtml(catalogItem.catalog_name)}</div>` : ''}
-                ${catalogItem.catalog_description ? `<div class="text-gray-600 fs-7 lh-base">${escHtml(catalogItem.catalog_description)}</div>` : ''}
+                ${catalogItems.map((ci, idx) => `
+                <div class="${idx > 0 ? 'mt-4 pt-4 border-top border-gray-200' : ''}">
+                    ${ci.catalog_photos?.length ? `
+                    <div class="d-flex gap-2 mb-3" style="overflow-x:auto;">
+                        ${ci.catalog_photos.map(url =>
+                            `<a href="${url}" class="glightbox flex-shrink-0" data-gallery="catalog-resource-${idx}">
+                                <img src="${url}" alt="" class="rounded" style="height:80px;width:110px;object-fit:cover;cursor:pointer;">
+                            </a>`
+                        ).join('')}
+                    </div>` : ''}
+                    ${ci.catalog_name ? `<div class="fw-semibold text-gray-800 fs-6 mb-1">${escHtml(ci.catalog_name)}</div>` : ''}
+                    ${ci.catalog_description ? `<div class="text-gray-600 fs-7 lh-base">${escHtml(ci.catalog_description)}</div>` : ''}
+                </div>`).join('')}
             </div>` : '';
 
         const totalRow = covered.length > 1 ? `
@@ -273,7 +276,7 @@
                 </div>` : ''}
             </div>`;
 
-        if (catalogItem?.catalog_photos?.length) {
+        if (catalogItems.some(ci => ci.catalog_photos?.length)) {
             const lb = GLightbox({ selector: '#offer-header-card .glightbox', loop: true });
             document.getElementById('offer-header-card')._lightbox = lb;
         }

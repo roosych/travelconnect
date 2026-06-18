@@ -96,7 +96,7 @@ input[type=number].form-control-solid { -moz-appearance: textfield; }
 
 @push('scripts')
 <script>
-const proposalId = {{ $id }};
+const proposalId = @json($id);
 const t  = @json(__('proposals'));
 const tc = @json(__('common'));
 const ts = t.show;
@@ -150,7 +150,7 @@ async function loadProposal() {
 async function loadAvailableOffers() {
     if (!proposal) return;
 
-    const requestId = proposal.request_id ?? proposal.request?.id;
+    const requestId = proposal.request?.id;
     if (!requestId) {
         renderRightPanelEmpty(ts.avail.no_request_link);
         return;
@@ -195,9 +195,9 @@ function renderHeaderCard(p) {
     const markupTotal = grossTotal - netTotal;
     const count       = includedOffers.length;
 
-    const requestLink = (p.request_id || p.request?.id)
-        ? `<a href="/admin/requests/${p.request_id ?? p.request.id}" class="text-primary fw-semibold text-hover-primary">
-               <i class="ki-outline ki-arrow-left fs-6 me-1"></i>${escHtml(p.request?.title ?? ts.request_ref.replace(':id', p.request_id ?? p.request?.id))}
+    const requestLink = p.request?.id
+        ? `<a href="/admin/requests/${p.request.id}" class="text-primary fw-semibold text-hover-primary">
+               <i class="ki-outline ki-arrow-left fs-6 me-1"></i>${escHtml(p.request?.title ?? ts.request_ref.replace(':id', p.request.id))}
            </a>`
         : '<span class="text-muted">—</span>';
 
@@ -369,7 +369,7 @@ function renderIncludedOffers(offers) {
 
                 const removeBtn = proposal?.status === 'draft' && proposal?.request?.status !== 'booked'
                     ? (isFirst
-                        ? `<button class="btn btn-sm btn-icon btn-light-danger ms-1" onclick="removeOffer(${o.id})"
+                        ? `<button class="btn btn-sm btn-icon btn-light-danger ms-1" onclick="removeOffer('${o.id}')"
                                title="${ts.table.remove_whole}">
                                <i class="ki-outline ki-trash fs-5"></i>
                            </button>`
@@ -390,7 +390,7 @@ function renderIncludedOffers(offers) {
                     <td class="text-end fw-bold text-gray-900">${formatCurrency(gross)}</td>
                     <td>${isFirst ? validUntil : ''}</td>
                     <td class="pe-4 text-end">
-                        ${isFirst ? `<button class="btn btn-sm btn-icon btn-light" onclick="openOfferDrawer(${o.id})" title="${ts.quick_view}">
+                        ${isFirst ? `<button class="btn btn-sm btn-icon btn-light" onclick="openOfferDrawer('${o.id}')" title="${ts.quick_view}">
                             <i class="ki-outline ki-eye fs-4"></i>
                         </button>` : ''}
                         ${removeBtn}
@@ -411,7 +411,7 @@ function renderIncludedOffers(offers) {
         rowCount++;
 
         const removeBtn = proposal?.status === 'draft' && proposal?.request?.status !== 'booked'
-            ? `<button class="btn btn-sm btn-icon btn-light-danger ms-1" onclick="removeOffer(${o.id})" title="${ts.table.remove}">
+            ? `<button class="btn btn-sm btn-icon btn-light-danger ms-1" onclick="removeOffer('${o.id}')" title="${ts.table.remove}">
                    <i class="ki-outline ki-trash fs-5"></i>
                </button>`
             : statusBadge(o.status);
@@ -430,7 +430,7 @@ function renderIncludedOffers(offers) {
             <td class="text-end fw-bold text-gray-900">${formatCurrency(gross)}</td>
             <td>${validUntil}</td>
             <td class="pe-4 text-end">
-                <button class="btn btn-sm btn-icon btn-light" onclick="openOfferDrawer(${o.id})" title="${ts.quick_view}">
+                <button class="btn btn-sm btn-icon btn-light" onclick="openOfferDrawer('${o.id}')" title="${ts.quick_view}">
                     <i class="ki-outline ki-eye fs-4"></i>
                 </button>
                 ${removeBtn}
@@ -540,8 +540,8 @@ function renderProposalDetailsPanel(p) {
                 </div>
             </div>
 
-            ${p.request_id || p.request?.id ? `
-            <a href="/admin/requests/${p.request_id ?? p.request.id}" class="btn btn-light-primary btn-sm">
+            ${p.request?.id ? `
+            <a href="/admin/requests/${p.request.id}" class="btn btn-light-primary btn-sm">
                 <i class="ki-outline ki-arrow-left fs-5 me-1"></i>${ts.panel.back_to_request}
             </a>` : ''}
 
@@ -636,7 +636,7 @@ function renderAvailableOffers(offers) {
                         <div class="text-success fw-bold fs-7 mt-1">${formatCurrency(gross)}</div>
                     </div>
                     <button class="btn btn-sm btn-icon btn-light-danger flex-shrink-0"
-                            onclick="removeOffer(${covered.id})" title="${ts.table.remove}">
+                            onclick="removeOffer('${covered.id}')" title="${ts.table.remove}">
                         <i class="ki-outline ki-trash fs-5"></i>
                     </button>
                 </div>
@@ -686,12 +686,12 @@ function renderAvailableOffers(offers) {
                         <span class="input-group-text px-2 fs-8" style="border:none;background:var(--bs-gray-100)">%</span>
                     </div>
                     <button class="btn btn-sm btn-icon btn-light"
-                            onclick="openOfferDrawer(${o.id})"
+                            onclick="openOfferDrawer('${o.id}')"
                             title="${ts.quick_view}">
                         <i class="ki-outline ki-eye fs-4"></i>
                     </button>
                     <button class="btn btn-sm btn-icon btn-light-success"
-                            onclick="addOfferWithMarkup(${o.id})"
+                            onclick="addOfferWithMarkup('${o.id}')"
                             title="${ts.avail.add_title}">
                         <i class="ki-outline ki-plus fs-4"></i>
                     </button>
@@ -745,11 +745,11 @@ function buildAvailOfferCard(o, coveredByType) {
                 <span class="input-group-text px-2 fs-8">%</span>
             </div>
             <button class="btn btn-sm btn-icon btn-light"
-                    onclick="openOfferDrawer(${o.id})" title="${ts.quick_view}">
+                    onclick="openOfferDrawer('${o.id}')" title="${ts.quick_view}">
                 <i class="ki-outline ki-eye fs-4"></i>
             </button>
             <button class="btn btn-sm btn-icon btn-light-success"
-                    onclick="addOfferWithMarkup(${o.id})" title="${ts.avail.add_title}">
+                    onclick="addOfferWithMarkup('${o.id}')" title="${ts.avail.add_title}">
                 <i class="ki-outline ki-plus fs-4"></i>
             </button>
         </div>

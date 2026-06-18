@@ -316,7 +316,7 @@ class ProposalController extends Controller
             abort(403, 'Only operators can add offers to proposals.');
         }
 
-        $offer = Offer::findOrFail($request->validated('offer_id'));
+        $offer = Offer::where('public_code', $request->validated('offer_id'))->firstOrFail();
 
         // Load rfq and items so we can resolve per-type markups
         $offer->load(['rfq', 'items']);

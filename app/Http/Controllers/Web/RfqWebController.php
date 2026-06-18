@@ -11,7 +11,7 @@ class RfqWebController extends Controller
         return view('pages.rfqs.index');
     }
 
-    public function show(int $id)
+    public function show(string $id)
     {
         return view('pages.rfqs.show', ['id' => $id]);
     }

@@ -23,7 +23,7 @@ class BookingStatusNotification extends BaseNotification
 
     private function url(): string
     {
-        return url('/agency/bookings/'.$this->booking->id);
+        return url('/agency/bookings/'.$this->booking->public_code);
     }
 
     /**

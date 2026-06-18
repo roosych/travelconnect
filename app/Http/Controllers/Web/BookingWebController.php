@@ -12,7 +12,7 @@ class BookingWebController extends Controller
         return view('pages.bookings.index');
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         return view('pages.bookings.show', [
             'id'           => $id,

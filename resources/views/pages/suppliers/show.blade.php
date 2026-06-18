@@ -202,7 +202,7 @@
         const offersRows = offers.length
             ? offers.map(o => `
                 <tr>
-                    <td><a href="/admin/offers/${o.id}" class="text-hover-primary">#${o.id}</a></td>
+                    <td><a href="/admin/offers/${o.id}" class="text-hover-primary">${o.id}</a></td>
                     <td>${escHtml(o.rfq?.title ?? '—')}</td>
                     <td>${escHtml(o.unit_price ?? '—')} ${escHtml(o.currency ?? '')}</td>
                     <td>${o.status_label ? `<span class="badge ${o.status_badge_class}">${escHtml(o.status_label)}</span>` : `<span class="badge badge-light">${escHtml(o.status ?? '—')}</span>`}</td>

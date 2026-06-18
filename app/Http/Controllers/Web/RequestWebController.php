@@ -23,7 +23,7 @@ class RequestWebController extends Controller
         return redirect()->route('admin.requests.index');
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         return view('pages.requests.show', [
             'id'           => $id,

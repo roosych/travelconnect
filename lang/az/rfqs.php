@@ -33,7 +33,7 @@ return [
         'load_error' => 'Sorğuları yükləmək alınmadı.',
         'empty'      => 'Sorğu tapılmadı.',
         'of'         => '/',
-        'request_ref' => 'Sorğu #:id',
+        'request_ref' => 'Sorğu :id',
 
         'chips' => [
             'all'       => 'Hamısı',
@@ -67,9 +67,9 @@ return [
     // ── Detal səhifəsi (show) ──────────────────────────────────────────────
     'show' => [
         'title'          => 'Təchizatçı sorğusunun detalları',
-        'breadcrumb'     => 'Sorğu #:id',
-        'rfq_ref'        => 'Sorğu #:id',
-        'request_ref'    => 'Tur sorğusu #:id',
+        'breadcrumb'     => 'Sorğu :id',
+        'rfq_ref'        => 'Sorğu :id',
+        'request_ref'    => 'Tur sorğusu :id',
         'created_label'  => 'Yaradılıb :date',
         'deadline_label' => 'Müddət: :date',
         'requirements'   => 'Tələblər:',
@@ -89,7 +89,7 @@ return [
         'offers_title'      => 'Təchizatçı təklifləri',
         'offers_load_error' => 'Təklifləri yükləmək alınmadı.',
         'offers_empty'      => 'Hələ təklif alınmayıb.',
-        'offer_ref'         => 'Təklif #:id',
+        'offer_ref'         => 'Təklif :id',
         'valid_until_short' => ':date tarixinədək',
         'total'             => 'Yekun',
 

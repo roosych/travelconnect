@@ -410,7 +410,7 @@
                 <td class="text-muted fs-7">${formatDate(r.created_at)}</td>
                 <td class="text-end">
                     <button class="btn btn-sm btn-icon btn-light me-1" title="${t.requests.quick_view}"
-                            onclick="openRequestDrawer(${r.id})">
+                            onclick="openRequestDrawer('${r.id}')">
                         <i class="ki-outline ki-eye fs-4"></i>
                     </button>
                     <a href="/admin/requests/${r.id}" class="btn btn-sm btn-icon btn-light" title="${t.requests.open_page}">

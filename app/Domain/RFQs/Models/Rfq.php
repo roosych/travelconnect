@@ -7,6 +7,7 @@ use App\Domain\Offers\Models\Offer;
 use App\Domain\Requests\Models\TravelRequest;
 use App\Domain\RFQs\Enums\RfqStatus;
 use App\Domain\Users\Models\User;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,6 +16,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Rfq extends Model
 {
+    use HasPublicCode;
+
+    protected string $publicCodePrefix = 'Q';
+
     protected $table = 'rfqs';
 
     protected $fillable = [

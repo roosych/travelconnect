@@ -5,6 +5,7 @@ namespace App\Domain\Payments\Models;
 use App\Domain\Attachments\Models\Attachment;
 use App\Domain\Payments\Enums\PaymentDirection;
 use App\Domain\Users\Models\User;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
+    use HasPublicCode;
     use SoftDeletes;
+
+    protected string $publicCodePrefix = 'P';
 
     protected $fillable = [
         'payable_type', 'payable_id',

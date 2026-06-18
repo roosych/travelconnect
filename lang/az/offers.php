@@ -65,12 +65,12 @@ return [
         'load_error' => 'Təklifləri yükləmək mümkün olmadı. Səhifəni yeniləyin.',
         'empty'      => 'Təklif tapılmadı.',
         'cols' => [
+            'id'          => 'ID',
             'request'     => 'Sorğu / Təchizatçıya sorğu',
             'supplier'    => 'Təchizatçı',
             'price'       => 'Qiymət',
             'status'      => 'Status',
             'valid_until' => 'Etibarlıdır',
-            'received'    => 'Alınıb',
             'actions'     => 'Əməliyyatlar',
         ],
         'pagination' => ':total-dan :from–:to',
@@ -81,14 +81,14 @@ return [
 
     // Дровер быстрого просмотра
     'drawer' => [
-        'default_title' => 'Təklif #:id',
+        'default_title' => 'Təklif :id',
         'no_supplier'   => 'Təchizatçı göstərilməyib.',
         'context'       => 'Kontekst',
         'rfq'           => 'Təchizatçıya sorğu',
         'request'       => 'Tur sorğusu',
         'deadline'      => 'Cavab müddəti: :date',
-        'rfq_ref'       => 'Sorğu #:id',
-        'request_ref'   => 'Sorğu #:id',
+        'rfq_ref'       => 'Sorğu :id',
+        'request_ref'   => 'Sorğu :id',
         'open_page'     => 'Səhifəni aç',
         'reject'        => 'Rədd et',
         'error'         => 'Xəta: :msg',
@@ -97,8 +97,8 @@ return [
     // Страница (show)
     'show' => [
         'title'                => 'Təklif təfərrüatları',
-        'breadcrumb'           => 'Təklif #:id',
-        'offer_title'          => 'Təklif #:id',
+        'breadcrumb'           => 'Təklif :id',
+        'offer_title'          => 'Təklif :id',
         'add_to_proposal'      => 'Təklifə əlavə et',
         'reject'               => 'Rədd et',
         'supplier_card'        => 'Təchizatçı',
@@ -111,7 +111,7 @@ return [
         'context_unavailable'  => 'Məlumat yoxdur.',
         'agency'               => 'Agentlik',
         'request'              => 'Sorğu',
-        'request_ref'          => 'Sorğu #:id',
+        'request_ref'          => 'Sorğu :id',
         'service_type'         => 'Xidmət növü',
         'pax'                  => ':n nəfər',
         'confirm_reject'       => 'Bu təklifi rədd etmək? Əməliyyat geri qaytarılmır.',

@@ -163,7 +163,7 @@ function renderTable(bookings, meta) {
         <table class="table align-middle table-row-dashed fs-6 gy-4">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="w-50px">${t.cols.num}</th>
+                    <th class="w-100px pe-2">${t.cols.num}</th>
                     <th class="min-w-220px">${t.cols.request}</th>
                     <th class="min-w-150px">${t.cols.dates_pax}</th>
                     <th class="min-w-110px">${t.cols.amount}</th>
@@ -185,8 +185,8 @@ function renderRow(b) {
 
     return `
         <tr data-id="${b.id}">
-            <td>
-                <a href="/agency/bookings/${b.id}" class="fw-bold text-gray-800 text-hover-primary">#${b.id}</a>
+            <td class="w-100px pe-2">
+                <a href="/agency/bookings/${b.id}" class="fw-bold text-gray-800 text-hover-primary">${b.id}</a>
             </td>
             <td>
                 <a href="/agency/bookings/${b.id}" class="fw-semibold text-gray-800 text-hover-primary d-block">${escHtml(requestTitle)}</a>

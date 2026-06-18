@@ -272,8 +272,8 @@ return [
     // ── Agentlik sorğusunun detal səhifəsi (agency show) ───────────────────
     'agency_show' => [
         'title'        => 'Sorğu təfərrüatları',
-        'breadcrumb'   => 'Sorğu #:id',
-        'req_fallback' => 'Sorğu #:id',
+        'breadcrumb'   => 'Sorğu :id',
+        'req_fallback' => 'Sorğu :id',
 
         // Alətlər paneli
         'edit'       => 'Redaktə et',
@@ -343,7 +343,7 @@ return [
 
         // Təklif modalı
         'proposal_modal_title' => 'Təklif',
-        'modal_title'          => 'KT #:id',
+        'modal_title'          => 'KT :id',
         'modal_load_error'     => 'Təklifi yükləmək alınmadı',
         'modal_no_services'    => 'Xidmət siyahısı göstərilməyib',
         'modal_created'        => 'Yaradılıb:',
@@ -427,8 +427,8 @@ return [
     // ── Страница заявки (show) ─────────────────────────────────────────────
     'show' => [
         'title'             => 'Sorğu təfərrüatları',
-        'breadcrumb'        => 'Sorğu #:id',
-        'rfq_ref'           => 'Sorğu #:id',
+        'breadcrumb'        => 'Sorğu :id',
+        'rfq_ref'           => 'Sorğu :id',
 
         'toolbar' => [
             'submit'    => 'Təqdim et',
@@ -498,7 +498,7 @@ return [
             'delete'         => 'Sil',
             'revoke'         => 'Geri çağır',
             'send_preview'   => 'Bax və göndər',
-            'default_title'  => 'Təklif #:id',
+            'default_title'  => 'Təklif :id',
         ],
 
         // Модалка рассылки
@@ -580,7 +580,7 @@ return [
             'create_error'      => 'Kommersiya təklifi yaratmaq mümkün olmadı.',
             'created'           => 'Təklif yaradıldı, :n təklif əlavə edildi.',
             'created_partial'   => 'Təklif yaradıldı, lakin :n təklif əlavə edilmədi: :msg',
-            'offer_fail'        => 'Offer #:id əlavə edilmədi',
+            'offer_fail'        => 'Offer :id əlavə edilmədi',
         ],
 
         // Модалка предпросмотра КП

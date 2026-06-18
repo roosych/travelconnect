@@ -139,7 +139,7 @@ function renderTable(offers, meta) {
             : `<span class="text-muted">${escHtml(o.rfq_title ?? '—')}</span>`;
         return `
             <tr>
-                <td><a href="/supplier/offers/${o.id}" class="fw-bold text-gray-800 text-hover-primary">#${o.id}</a></td>
+                <td class="w-100px pe-2"><a href="/supplier/offers/${o.id}" class="fw-bold text-gray-800 text-hover-primary">${o.id}</a></td>
                 <td>${reqCell}</td>
                 <td>
                     <i class="${sm.icon} fs-6 text-gray-500 me-1"></i>
@@ -159,7 +159,7 @@ function renderTable(offers, meta) {
         <table class="table align-middle table-row-dashed fs-6 gy-3">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="w-90px">${L.cols.offer}</th>
+                    <th class="w-100px pe-2">${L.cols.offer}</th>
                     <th class="min-w-180px">${L.cols.request}</th>
                     <th class="min-w-120px">${L.cols.service}</th>
                     <th class="min-w-100px">${L.cols.price}</th>

@@ -15,8 +15,8 @@ return [
         ],
         'load_error'   => 'Failed to load commercial proposals.',
         'empty'        => 'No commercial proposals found.',
-        'proposal_ref' => 'Proposal #:id',
-        'request_ref'  => 'Request #:id',
+        'proposal_ref' => 'Proposal :id',
+        'request_ref'  => 'Request :id',
         'pagination'   => ':from–:to of :total',
 
         'chips' => [
@@ -59,7 +59,7 @@ return [
         'markup'        => 'Markup',
         'total'         => 'Total',
         'offers'        => 'Offers (:n)',
-        'offer_ref'     => 'Offer #:id',
+        'offer_ref'     => 'Offer :id',
         'net_short'     => 'cost',
         'no_offers'     => 'No offers added',
         'open'          => 'Open',
@@ -69,10 +69,10 @@ return [
     // ── Builder page (show) ────────────────────────────────────────────────
     'show' => [
         'title'          => 'Proposal builder',
-        'breadcrumb'     => 'Proposal #:id',
+        'breadcrumb'     => 'Proposal :id',
         'load_error'     => 'Failed to load the commercial proposal.',
-        'proposal_ref'   => 'Proposal #:id',
-        'request_ref'    => 'Travel request #:id',
+        'proposal_ref'   => 'Proposal :id',
+        'request_ref'    => 'Travel request :id',
         'included_title' => 'Included offers',
         'included_empty' => 'No offers added yet. Add them from the right panel.',
         'quick_view'     => 'Quick view',
@@ -212,7 +212,7 @@ return [
         'notes_ph'          => 'Any notes or terms for the agency...',
         'submit'            => 'Create and build proposal',
         'creating'          => 'Creating...',
-        'request_ref'       => 'Request #:id',
+        'request_ref'       => 'Request :id',
         'default_title'     => 'Proposal',
         'err_no_request'    => 'No request linked. Start from the request details page.',
         'toast_created'     => 'Proposal created. Now add offers.',

@@ -53,7 +53,7 @@ return [
         'title'      => 'Settlements',
         'subtitle'   => 'Payouts for your won requests',
         'empty'      => 'No settlements yet.',
-        'booking'    => 'Booking #:id',
+        'booking'    => 'Booking :id',
         'load_error' => 'Failed to load settlements.',
     ],
 ];

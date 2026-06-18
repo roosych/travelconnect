@@ -370,7 +370,7 @@ const RECENT = @json($recent);
                 </td>
                 <td>${statusBadge(r)}</td>
                 <td class="text-end">
-                    <button type="button" onclick="quickView(${r.id})" class="btn btn-icon btn-sm btn-light-primary me-1" title="${@json(__('dashboard.agency.quick_view'))}">
+                    <button type="button" onclick="quickView('${r.id}')" class="btn btn-icon btn-sm btn-light-primary me-1" title="${@json(__('dashboard.agency.quick_view'))}">
                         <i class="ki-outline ki-eye fs-4"></i>
                     </button>
                     <a href="/agency/requests/${r.id}" class="btn btn-icon btn-sm btn-light-primary" title="${@json(__('common.open'))}">

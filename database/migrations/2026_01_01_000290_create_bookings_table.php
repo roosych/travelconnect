@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('public_code')->unique();
             $table->foreignId('proposal_id')->constrained('proposals');
             $table->foreignId('request_id')->constrained('travel_requests');
             $table->foreignId('agency_id')->constrained('users');

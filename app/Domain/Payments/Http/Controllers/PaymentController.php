@@ -27,7 +27,7 @@ class PaymentController extends Controller
     /** Леджер по payable, отфильтрованный под роль смотрящего. */
     public function ledger(Request $request): JsonResponse
     {
-        $payable = $this->resolvePayable($request->query('payable_type'), (int) $request->query('payable_id'));
+        $payable = $this->resolvePayable($request->query('payable_type'), (string) $request->query('payable_id'));
         $this->authorizeView($request, $payable);
 
         $rows = $this->payments->ledger($payable)
@@ -73,7 +73,7 @@ class PaymentController extends Controller
 
                 $row['counterparty']['type'] = 'supplier';
                 $row['booking'] = [
-                    'id'               => $booking->id,
+                    'id'               => $booking->public_code,
                     'travel_date_from' => $booking->travel_date_from?->toDateString(),
                     'travel_date_to'   => $booking->travel_date_to?->toDateString(),
                     'destination'      => $booking->request?->destination,
@@ -93,7 +93,7 @@ class PaymentController extends Controller
     {
         $data = $request->validated();
 
-        $payable      = $this->resolvePayable($data['payable_type'], (int) $data['payable_id']);
+        $payable      = $this->resolvePayable($data['payable_type'], (string) $data['payable_id']);
         $counterparty = $this->resolveCounterparty($data['counterparty_type'], (int) $data['counterparty_id']);
         $direction    = PaymentDirection::from($data['direction']);
 
@@ -145,10 +145,14 @@ class PaymentController extends Controller
 
     // -------------------------------------------------------------------------
 
-    private function resolvePayable(?string $type, int $id): Settleable
+    private function resolvePayable(?string $type, string $id): Settleable
     {
         abort_unless($type && isset(self::PAYABLES[$type]), 404, 'Неизвестный тип записи.');
-        $model = self::PAYABLES[$type]::with(['agency', 'items'])->find($id);
+        $class = self::PAYABLES[$type];
+        // Резолвим по публичному коду (route key), а не по числовому PK.
+        $model = $class::with(['agency', 'items'])
+            ->where((new $class)->getRouteKeyName(), $id)
+            ->first();
         abort_unless($model instanceof Settleable, 404);
 
         return $model;

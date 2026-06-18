@@ -10,7 +10,7 @@ class PaymentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
+            'id'           => $this->public_code,
             'direction'    => $this->direction->value,
             'amount'       => (float) $this->amount,
             'currency'     => $this->currency,

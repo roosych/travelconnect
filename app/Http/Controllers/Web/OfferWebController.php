@@ -14,7 +14,7 @@ class OfferWebController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         // Offer detail page - reuse request/show pattern.
         // Show a simple detail view that loads data via JS.

@@ -14,7 +14,7 @@ class OfferController extends Controller
         return view('pages.supplier.cabinet.offers.index', compact('supplier'));
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, string $id)
     {
         $supplier = $request->user()->suppliers()->first();
 

@@ -242,7 +242,7 @@
 <script>
 FilePond.registerPlugin(FilePondPluginFileValidateSize);
 
-const requestId        = {{ $requestId }};
+const requestId        = @json($requestId);
 const supplierId       = {{ $supplier?->id ?? 'null' }};
 const supplierCurrency = '{{ strtoupper($supplier?->currency_code ?? 'AZN') }}';
 const USER_TZ          = @json($userTimezone);
@@ -591,7 +591,7 @@ function renderSvcItem(item) {
                 <div class="fw-bolder text-gray-900 fs-4">${fmtMoney(offer.unit_price, offer.currency)}</div>
                 <div class="d-flex gap-2">
                     ${canWithdraw
-                        ? `<button class="btn btn-sm btn-light-danger" onclick="withdrawOffer(${offer.id}, ${rfq.id}, '${offer.status}')">
+                        ? `<button class="btn btn-sm btn-light-danger" onclick="withdrawOffer('${offer.id}', '${rfq.id}', '${offer.status}')">
                                <i class="ki-outline ki-cross-circle fs-7 me-1"></i>${C.wd_confirm}
                            </button>`
                         : ''}
@@ -686,7 +686,6 @@ function svcFileChip(a) {
 // ── Modal ─────────────────────────────────────────────────────────────────────
 
 function openSvcModal(rfqId, type) {
-    rfqId = parseInt(rfqId);
     modalCtx = { rfqId, type };
 
     const label   = SERVICE_LABELS[type] ?? type;

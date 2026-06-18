@@ -52,7 +52,7 @@ class SupplierIncident extends Model
         int $supplierId,
         int $offerId,
         OfferStatus $fromStatus,
-        int $rfqId,
+        ?string $rfqCode,
     ): self {
         $severity = $fromStatus === OfferStatus::Selected
             ? IncidentSeverity::High
@@ -66,7 +66,7 @@ class SupplierIncident extends Model
             'subject_id'   => $offerId,
             'context'      => [
                 'from_status' => $fromStatus->value,
-                'rfq_id'      => $rfqId,
+                'rfq_id'      => $rfqCode,
             ],
         ]);
     }

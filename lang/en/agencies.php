@@ -93,7 +93,7 @@ return [
         'col_actions'  => 'Actions',
         'quick_view'   => 'Quick view',
         'open_page'    => 'Open page',
-        'default_title' => 'Request #:id',
+        'default_title' => 'Request :id',
         'whole_country' => 'across the whole country',
     ],
 
@@ -108,7 +108,7 @@ return [
         'col_status'    => 'Status',
         'col_created'   => 'Created',
         'col_open'      => 'Open',
-        'default_title' => 'Proposal #:id',
+        'default_title' => 'Proposal :id',
     ],
 
     // Members tab

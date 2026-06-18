@@ -63,7 +63,7 @@ return [
     // ── Detail page (show) ─────────────────────────────────────────────────
     'show' => [
         'title'         => 'Booking details',
-        'breadcrumb'    => 'Booking #:id',
+        'breadcrumb'    => ':id',
         'proposal_card' => 'Commercial proposal',
         'request_card'  => 'Tour request',
         'load_error'    => 'Failed to load booking details.',
@@ -88,11 +88,11 @@ return [
 
         'proposal_unavailable' => 'Proposal information is unavailable.',
         'proposal_label'       => 'Commercial proposal',
-        'proposal_ref'         => 'Proposal #:id',
+        'proposal_ref'         => 'Proposal :id',
         'view_proposal'        => 'View proposal',
 
         'request_unavailable' => 'Request information is unavailable.',
-        'request_ref'         => 'Request #:id',
+        'request_ref'         => 'Request :id',
         'deadline_label'      => 'Deadline: :date',
         'travellers'          => ':n travellers',
         'open_request'        => 'Open request',
@@ -127,7 +127,7 @@ return [
             'no_offers'            => 'No services in the proposal',
             'supplier_price'       => 'supplier: :price',
             'in_supplier_currency' => 'in supplier currency: :amount',
-            'service_ref'          => 'Service #:id',
+            'service_ref'          => 'Service :id',
         ],
         'prop_status' => [
             'draft'    => 'Draft',
@@ -177,8 +177,8 @@ return [
     // ── Agency booking details (agency show) ───────────────────────────────
     'agency_show' => [
         'title'               => 'Booking details',
-        'breadcrumb'          => 'Booking #:id',
-        'request_fallback'    => 'Request #:id',
+        'breadcrumb'          => ':id',
+        'request_fallback'    => 'Request :id',
         'total'               => 'Total amount',
         'trip_details'        => 'Trip details',
         'proposal_title'      => 'Proposal',
@@ -211,13 +211,13 @@ return [
         'composition'      => 'Contents',
         'total_line'       => 'Total',
         'no_offers'        => 'No services in the proposal.',
-        'service_fallback' => 'Service #:id',
+        'service_fallback' => 'Service :id',
     ],
 
     // ── Quick-view drawer ──────────────────────────────────────────────────
     'drawer' => [
         'title_ph'     => 'Booking',
-        'ref'          => 'Booking #:id',
+        'ref'          => ':id',
         'load_error'   => 'Failed to load the booking.',
         'total'        => 'Total amount',
         'for_agency'   => '· for the agency :amount',
@@ -233,6 +233,6 @@ return [
         'net_short'    => 'cost',
         'notes'        => 'Notes',
         'open_full'    => 'Open in full',
-        'proposal_ref' => 'Proposal #:id',
+        'proposal_ref' => 'Proposal :id',
     ],
 ];

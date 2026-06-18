@@ -93,7 +93,7 @@ return [
         'col_actions'  => 'Əməliyyatlar',
         'quick_view'   => 'Sürətli baxış',
         'open_page'    => 'Səhifəni aç',
-        'default_title' => 'Sorğu #:id',
+        'default_title' => 'Sorğu :id',
         'whole_country' => 'bütün ölkə üzrə',
     ],
 
@@ -108,7 +108,7 @@ return [
         'col_status'    => 'Status',
         'col_created'   => 'Yaradılıb',
         'col_open'      => 'Aç',
-        'default_title' => 'Təklif #:id',
+        'default_title' => 'Təklif :id',
     ],
 
     // Вкладка «Сотрудники»

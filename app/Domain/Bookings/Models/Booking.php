@@ -11,6 +11,7 @@ use App\Domain\Requests\Models\TravelRequest;
 use App\Domain\Agencies\Models\Agency;
 use App\Domain\Suppliers\Models\Supplier;
 use App\Domain\Users\Models\User;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,10 @@ use Illuminate\Support\Collection;
 
 class Booking extends Model implements Settleable
 {
+    use HasPublicCode;
+
+    protected string $publicCodePrefix = 'B';
+
     protected $table = 'bookings';
 
     protected $fillable = [

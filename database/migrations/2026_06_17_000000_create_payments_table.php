@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->string('public_code')->unique();
 
             // К чему относится расчёт (полиморфно: Booking и др. в будущем).
             $table->morphs('payable');

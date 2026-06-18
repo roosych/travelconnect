@@ -44,7 +44,7 @@ class OfferSubmittedNotification extends BaseNotification
 
     protected function bellUrl(): ?string
     {
-        return url('/admin/offers/'.$this->offer->id);
+        return url('/admin/offers/'.$this->offer->public_code);
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -561,7 +561,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
-    const requestId = {{ $id }};
+    const requestId = @json($id);
     const USER_TZ   = @json($userTimezone);
 
     // Локализация: словари страницы и общий + локаль-зависимая плюрализация.
@@ -690,7 +690,7 @@
     // Переход со страницы оффера (/admin/offers/{id} → «Добавить в предложение»):
     // открыть вкладку «Предложения от поставщиков», предвыбрать оффер, проскроллить.
     function maybePreselectOfferFromUrl() {
-        const offerId = parseInt(new URLSearchParams(window.location.search).get('offer'), 10);
+        const offerId = new URLSearchParams(window.location.search).get('offer');
         if (!offerId) return;
         const offer = requestOffers.find(o => o.id === offerId);
         if (!offer) return;
@@ -751,7 +751,7 @@
                         <span class="badge ${b.status_badge_class}">${escHtml(b.status_label)}</span>
                     </div>
                     <div class="text-muted fs-7">${tb.subtitle}</div>
-                    <div class="text-muted fs-8 mt-1">#${b.id}${dates ? ` · ${escHtml(dates)}` : ''} · ${tb.created.replace(':date', formatDateTime(b.created_at))}</div>
+                    <div class="text-muted fs-8 mt-1">${b.id}${dates ? ` · ${escHtml(dates)}` : ''} · ${tb.created.replace(':date', formatDateTime(b.created_at))}</div>
                 </div>
                 <div class="text-end">
                     <div class="text-muted fs-8">${tb.price}</div>
@@ -1043,12 +1043,12 @@
             const suppliersCount = r.suppliers?.length ?? r.suppliers_count ?? '—';
             return `
             <tr>
-                <td class="fw-bold"><a href="/admin/rfqs/${r.id}" class="text-gray-800 text-hover-primary">#${r.id}</a></td>
+                <td class="fw-bold"><a href="/admin/rfqs/${r.id}" class="text-gray-800 text-hover-primary">${r.id}</a></td>
                 <td><a href="/admin/rfqs/${r.id}" class="fw-semibold text-gray-800 text-hover-primary">${escHtml(r.title ?? '—')}</a></td>
                 <td>${(() => { const m = SERVICE_META[r.service_type]; return m ? `<span class="badge badge-light-${m.color}">${m.label}</span>` : `<span class="badge badge-light-secondary">${escHtml(r.service_type ?? '—')}</span>`; })()}</td>
                 <td>
                     ${r.status === 'draft' && currentRequest?.status !== 'booked'
-                        ? `<button class="btn btn-icon btn-sm btn-primary" title="${t.show.rfqs.send_tooltip}" onclick="sendRfqInline(${r.id})">
+                        ? `<button class="btn btn-icon btn-sm btn-primary" title="${t.show.rfqs.send_tooltip}" onclick="sendRfqInline('${r.id}')">
                                <i class="ki-outline ki-send fs-5"></i>
                            </button>`
                         : statusBadge(r)}
@@ -1057,7 +1057,7 @@
                 <td class="text-muted">${formatDateTimeTZ(r.deadline_at ?? r.deadline)}</td>
                 <td class="text-end">
                     <button class="btn btn-icon btn-sm btn-light btn-active-light-primary" title="${t.show.rfqs.quick_view}"
-                            onclick="openRfqDrawer(${r.id})">
+                            onclick="openRfqDrawer('${r.id}')">
                         <i class="ki-outline ki-eye fs-4"></i>
                     </button>
                 </td>
@@ -1154,7 +1154,7 @@
                                       ${isItemSel ? 'checked' : ''}
                                       ${isItemBlocked ? 'disabled' : ''}
                                       onclick="event.stopPropagation()"
-                                      onchange="toggleItemInOffer(${o.id}, '${item.type}', this.checked)" />
+                                      onchange="toggleItemInOffer('${o.id}', '${item.type}', this.checked)" />
                            </div>`
                         : `<div style="width:16px;flex-shrink:0"></div>`;
                     const hasDesc = item.name && item.name !== item.type;
@@ -1210,7 +1210,7 @@
                             <input class="form-check-input offer-checkbox" type="checkbox"
                                    value="${o.id}" ${isSelected ? 'checked' : ''}
                                    ${(allBlocked || isNonSelectable) ? 'disabled' : ''}
-                                   onchange="toggleOfferSelection(${o.id}, this.checked)" />
+                                   onchange="toggleOfferSelection('${o.id}', this.checked)" />
                         </div>` : ''}
                         <div class="min-w-0">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -1227,7 +1227,7 @@
                         ${!hasItems && totalPrice != null ? `<span class="fw-bold text-gray-900 fs-6">${formatCurrency(totalPrice, totalCurrency)}</span>` : ''}
                         ${offerStatusBadge(o.status)}
                         <button class="btn btn-icon btn-sm btn-light" title="${t.show.offers.quick_view}"
-                                onclick="openOfferDrawer(${o.id})">
+                                onclick="openOfferDrawer('${o.id}')">
                             <i class="ki-outline ki-information-2 fs-4"></i>
                         </button>
                     </div>
@@ -1252,7 +1252,7 @@
             const types = items.length > 0
                 ? items.filter(i => !sel || sel.has(i.type)).map(i => i.type)
                 : (o?.rfq_service_type ? [o.rfq_service_type] : []);
-            types.forEach(t => { if (!map.has(t)) map.set(t, { offerId: id, supplierName: o?.supplier?.name ?? `#${id}` }); });
+            types.forEach(t => { if (!map.has(t)) map.set(t, { offerId: id, supplierName: o?.supplier?.name ?? `${id}` }); });
         });
         return map;
     }
@@ -1328,8 +1328,8 @@
             if (drafts.length > 0) {
                 menu.innerHTML = drafts.map(p => `
                     <li><a class="dropdown-item" href="#"
-                           onclick="addSelectedOffersToProposal(${p.id}); return false;">
-                        #${p.id} — ${escHtml(p.title ?? t.show.proposals.default_title.replace(':id', p.id))}
+                           onclick="addSelectedOffersToProposal('${p.id}'); return false;">
+                        ${p.id} — ${escHtml(p.title ?? t.show.proposals.default_title.replace(':id', p.id))}
                     </a></li>`).join('');
                 wrapper.classList.remove('d-none');
             } else {
@@ -1446,7 +1446,7 @@
                             <span class="fw-bold text-gray-900 fs-5 text-truncate">
                                 ${escHtml(p.title ?? t.show.proposals.default_title.replace(':id', p.id))}
                             </span>
-                            <span class="badge badge-light-secondary fs-8 flex-shrink-0">#${p.id}</span>
+                            <span class="badge badge-light-secondary fs-8 flex-shrink-0">${p.id}</span>
                         </div>
                         <div class="text-muted fs-8 mb-2">
                             ${t.show.proposals.created.replace(':date', formatDate(p.created_at))}
@@ -1462,19 +1462,19 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2 mt-4 pt-3 border-top">
-                    <button class="btn btn-sm btn-light" onclick="openProposalDrawer(${p.id})">
+                    <button class="btn btn-sm btn-light" onclick="openProposalDrawer('${p.id}')">
                         <i class="ki-outline ${p.status === 'draft' ? 'ki-pencil' : 'ki-information-2'} fs-5 me-1"></i>${p.status === 'draft' ? t.show.proposals.edit : t.show.proposals.details}
                     </button>
                     ${canDelete ? `
-                    <button class="btn btn-sm btn-light-danger" onclick="deleteProposal(${p.id})">
+                    <button class="btn btn-sm btn-light-danger" onclick="deleteProposal('${p.id}')">
                         <i class="ki-outline ki-trash fs-5 me-1"></i>${t.show.proposals.delete}
                     </button>` : ''}
                     ${canRevoke ? `
-                    <button class="btn btn-sm btn-light-warning" onclick="cancelProposal(${p.id})">
+                    <button class="btn btn-sm btn-light-warning" onclick="cancelProposal('${p.id}')">
                         <i class="ki-outline ki-arrow-left fs-5 me-1"></i>${t.show.proposals.revoke}
                     </button>` : ''}
                     ${canSend ? `
-                    <button class="btn btn-sm btn-success ms-auto" onclick="openProposalPreviewModalById(${p.id})">
+                    <button class="btn btn-sm btn-success ms-auto" onclick="openProposalPreviewModalById('${p.id}')">
                         <i class="ki-outline ki-eye fs-5 me-1"></i>${t.show.proposals.send_preview}
                     </button>` : ''}
                 </div>
@@ -2087,7 +2087,7 @@
         if (!offerIds.length) return;
 
         const proposal = allProposals.find(p => p.id === proposalId);
-        const name     = proposal ? `#${proposal.id}` : `#${proposalId}`;
+        const name     = proposal ? `${proposal.id}` : `${proposalId}`;
 
         const errors  = [];
         let   added   = 0;
@@ -2444,7 +2444,7 @@
                     } else if (r.status !== 'cancelled' && r.status !== 'closed') {
                         linkBtns = `
                             <button class="btn btn-sm btn-icon btn-light-warning" title="${t.show.drfq.create_link}"
-                                    onclick="generateTokenInDrawer(${r.id}, ${s.id})">
+                                    onclick="generateTokenInDrawer('${r.id}', ${s.id})">
                                 <i class="ki-outline ki-key fs-4"></i>
                             </button>`;
                     }
@@ -3045,7 +3045,7 @@
                 </div>
                 ${isDraft ? `<button type="button" class="btn btn-icon btn-sm btn-light-danger flex-shrink-0"
                                      title="${t.show.dprop.delete_att}"
-                                     onclick="deleteProposalDrawerAttachment(${a.id}, ${proposalId}, ${isDraft})">
+                                     onclick="deleteProposalDrawerAttachment(${a.id}, '${proposalId}', ${isDraft})">
                                  <i class="ki-outline ki-trash fs-5"></i>
                              </button>` : ''}
             </div>`;
@@ -3490,7 +3490,7 @@
             ${attHtml}
             <div class="d-flex align-items-center justify-content-end gap-3 mt-4">
                 <span class="text-success fs-7 d-none" id="mat-saved-${o.id}"><i class="ki-outline ki-check-circle fs-5"></i> ${t.show.dprop.saved}</span>
-                <button type="button" class="btn btn-success" onclick="saveSharedMaterials(${o.id}, this)">
+                <button type="button" class="btn btn-success" onclick="saveSharedMaterials('${o.id}', this)">
                     <span class="indicator-label"><i class="ki-outline ki-check fs-4 me-1"></i>${t.show.dprop.mat_save}</span>
                     <span class="indicator-progress">${t.show.dprop.mat_save}... <span class="spinner-border spinner-border-sm align-middle ms-1"></span></span>
                 </button>

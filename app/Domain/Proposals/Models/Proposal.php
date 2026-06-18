@@ -8,6 +8,7 @@ use App\Domain\Offers\Models\Offer;
 use App\Domain\Proposals\Enums\ProposalStatus;
 use App\Domain\Requests\Models\TravelRequest;
 use App\Domain\Users\Models\User;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,10 @@ use Illuminate\Support\Carbon;
 
 class Proposal extends Model
 {
+    use HasPublicCode;
+
+    protected string $publicCodePrefix = 'C';
+
     protected $table = 'proposals';
 
     protected $fillable = [

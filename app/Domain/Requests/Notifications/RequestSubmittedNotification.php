@@ -37,7 +37,7 @@ class RequestSubmittedNotification extends BaseNotification
 
     protected function bellUrl(): ?string
     {
-        return url('/admin/requests/'.$this->request->id);
+        return url('/admin/requests/'.$this->request->public_code);
     }
 
     public function toMail(object $notifiable): MailMessage

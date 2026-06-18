@@ -12,7 +12,7 @@ class ProposalResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this->public_code,
             'request_id' => $this->request_id,
             'title' => $this->title,
             'description' => $this->description,
@@ -33,7 +33,7 @@ class ProposalResource extends JsonResource
             'operator' => new UserResource($this->whenLoaded('operator')),
             'offers' => OfferResource::collection($this->whenLoaded('offers')),
             'request' => $this->whenLoaded('request', fn () => [
-                'id' => $this->request->id,
+                'id' => $this->request->public_code,
                 'title' => $this->request->title,
                 'destination' => $this->request->destination ?? null,
                 'status' => $this->request->status->value,

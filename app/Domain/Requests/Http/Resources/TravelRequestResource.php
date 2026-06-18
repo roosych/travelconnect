@@ -14,7 +14,7 @@ class TravelRequestResource extends JsonResource
         $isAgency = $request->user()?->isAgency() ?? false;
 
         return [
-            'id'                  => $this->id,
+            'id'                  => $this->public_code,
             'title'               => $this->title,
             'destination'         => $this->destination,
             'travel_date_from'    => $this->travel_date_from?->toDateString(),
@@ -61,7 +61,7 @@ class TravelRequestResource extends JsonResource
                 }
 
                 $data = [
-                    'id'                 => $b->id,
+                    'id'                 => $b->public_code,
                     'status'             => $b->status->value,
                     'status_label'       => $isAgency ? $b->status->agencyLabel() : $b->status->operatorLabel(),
                     'status_badge_class' => $isAgency ? $b->status->agencyBadgeClass() : $b->status->operatorBadgeClass(),

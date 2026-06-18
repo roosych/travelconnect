@@ -118,7 +118,7 @@ return [
         'q_review_hint'          => 'Təkliflər operatordadır',
         'q_won_label'            => 'Qazanılanlar',
         'q_won_hint'             => 'Təklifləriniz seçilib',
-        'request_fallback'       => 'Sorğu #:id',
+        'request_fallback'       => 'Sorğu :id',
     ],
 
     // ── Agentlik paneli ─────────────────────────────────────────────────────
@@ -196,6 +196,6 @@ return [
         'q_payment_hint'     => 'Ödəniş gözləyən rezervasiyalar',
         'q_upcoming_label'   => 'Yaxınlaşan səfərlər',
         'q_upcoming_hint'    => 'Növbəti 14 gündə başlayır',
-        'booking_fallback'   => 'Rezervasiya #:id',
+        'booking_fallback'   => 'Rezervasiya :id',
     ],
 ];

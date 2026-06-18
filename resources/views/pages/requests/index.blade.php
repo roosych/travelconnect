@@ -291,7 +291,7 @@ function renderTable(requests, meta) {
         <table class="table align-middle table-row-dashed fs-6 gy-3">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="w-50px pe-2">#</th>
+                    <th class="w-100px pe-2">#</th>
                     <th class="min-w-220px">${t.index.cols.request_route}</th>
                     <th class="min-w-130px">${t.index.cols.services}</th>
                     <th class="min-w-120px">${t.index.cols.agency}</th>
@@ -451,8 +451,8 @@ function renderRow(r) {
     /* ---- main row ---- */
     const mainRow = `
         <tr data-id="${r.id}">
-            <td class="pe-2">
-                <a href="/admin/requests/${r.id}" class="text-gray-800 text-hover-primary fw-bold">#${r.id}</a>
+            <td class="w-100px pe-2">
+                <a href="/admin/requests/${r.id}" class="text-gray-800 text-hover-primary fw-bold">${r.id}</a>
             </td>
             <td>
                 <div class="d-flex align-items-center">
@@ -486,13 +486,13 @@ function renderRow(r) {
                 ${hasRfqs ? `
                 <button type="button"
                         data-toggle-rfqs="${r.id}"
-                        onclick="toggleRfqs(${r.id})"
+                        onclick="toggleRfqs('${r.id}')"
                         class="btn btn-icon btn-sm btn-light me-1"
                         title="${t.index.rfq_sub.title}">
                     <i class="ki-outline ki-arrow-down fs-5"></i>
                 </button>` : ''}
                 <button type="button"
-                        onclick="quickView(${r.id})"
+                        onclick="quickView('${r.id}')"
                         class="btn btn-icon btn-sm btn-light-primary"
                         title="${t.show.offers.quick_view}">
                     <i class="ki-outline ki-eye fs-4"></i>

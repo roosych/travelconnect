@@ -65,12 +65,12 @@ return [
         'load_error' => 'Не удалось загрузить предложения. Обновите страницу.',
         'empty'      => 'Предложения не найдены.',
         'cols' => [
+            'id'          => 'ID',
             'request'     => 'Заявка / Запрос поставщику',
             'supplier'    => 'Поставщик',
             'price'       => 'Цена',
             'status'      => 'Статус',
             'valid_until' => 'Действительно до',
-            'received'    => 'Получено',
             'actions'     => 'Действия',
         ],
         'pagination' => ':from–:to из :total',
@@ -81,14 +81,14 @@ return [
 
     // Дровер быстрого просмотра
     'drawer' => [
-        'default_title' => 'Предложение #:id',
+        'default_title' => 'Предложение :id',
         'no_supplier'   => 'Поставщик не указан.',
         'context'       => 'Контекст',
         'rfq'           => 'Запрос поставщику',
         'request'       => 'Заявка на тур',
         'deadline'      => 'Срок ответа: :date',
-        'rfq_ref'       => 'Запрос #:id',
-        'request_ref'   => 'Заявка #:id',
+        'rfq_ref'       => 'Запрос :id',
+        'request_ref'   => 'Заявка :id',
         'open_page'     => 'Открыть страницу',
         'reject'        => 'Отклонить',
         'error'         => 'Ошибка: :msg',
@@ -97,8 +97,8 @@ return [
     // Страница (show)
     'show' => [
         'title'                => 'Детали предложения',
-        'breadcrumb'           => 'Предложение #:id',
-        'offer_title'          => 'Предложение #:id',
+        'breadcrumb'           => 'Предложение :id',
+        'offer_title'          => 'Предложение :id',
         'add_to_proposal'      => 'Добавить в предложение',
         'reject'               => 'Отклонить',
         'supplier_card'        => 'Поставщик',
@@ -111,7 +111,7 @@ return [
         'context_unavailable'  => 'Данные недоступны.',
         'agency'               => 'Агентство',
         'request'              => 'Заявка',
-        'request_ref'          => 'Заявка #:id',
+        'request_ref'          => 'Заявка :id',
         'service_type'         => 'Тип услуги',
         'pax'                  => ':n чел.',
         'confirm_reject'       => 'Отклонить это предложение? Действие нельзя отменить.',

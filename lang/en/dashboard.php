@@ -118,7 +118,7 @@ return [
         'q_review_hint'          => 'Offers with the operator',
         'q_won_label'            => 'Won',
         'q_won_hint'             => 'Your offers were selected',
-        'request_fallback'       => 'Request #:id',
+        'request_fallback'       => 'Request :id',
     ],
 
     // ── Agency dashboard ────────────────────────────────────────────────────
@@ -196,6 +196,6 @@ return [
         'q_payment_hint'     => 'Bookings awaiting payment',
         'q_upcoming_label'   => 'Trips coming up',
         'q_upcoming_hint'    => 'Starting within the next 14 days',
-        'booking_fallback'   => 'Booking #:id',
+        'booking_fallback'   => 'Booking :id',
     ],
 ];

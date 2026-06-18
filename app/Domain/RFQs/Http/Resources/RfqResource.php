@@ -14,7 +14,7 @@ class RfqResource extends JsonResource
         $isSupplier = $user && $user->isSupplier();
 
         return [
-            'id'           => $this->id,
+            'id'           => $this->public_code,
             'title'        => $this->title,
             'description'  => $this->description,
             'service_type' => $this->service_type,
@@ -46,7 +46,7 @@ class RfqResource extends JsonResource
             'status_label'      => $isSupplier ? $this->status->supplierLabel()      : $this->status->operatorLabel(),
             'status_badge_class'=> $isSupplier ? $this->status->supplierBadgeClass() : $this->status->operatorBadgeClass(),
             'request'      => $this->whenLoaded('request', function () use ($isSupplier) {
-                $data = ['id' => $this->request->id];
+                $data = ['id' => $this->request->public_code];
                 // Agency request details are internal — not exposed to suppliers
                 if (! $isSupplier) {
                     $data['title']           = $this->request->title;
@@ -83,7 +83,7 @@ class RfqResource extends JsonResource
                 );
                 if (! $offer) return null;
                 return [
-                    'id'                => $offer->id,
+                    'id'                => $offer->public_code,
                     'status'            => $offer->status->value,
                     'status_label'      => $offer->status->supplierLabel(),
                     'status_badge_class'=> $offer->status->supplierBadgeClass(),

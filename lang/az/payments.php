@@ -53,7 +53,7 @@ return [
         'title'      => 'Hesablaşmalar',
         'subtitle'   => 'Qazandığınız sorğular üzrə ödənişlər',
         'empty'      => 'Hələ hesablaşma yoxdur.',
-        'booking'    => 'Bron #:id',
+        'booking'    => 'Bron :id',
         'load_error' => 'Hesablaşmaları yükləmək olmadı.',
     ],
 ];

@@ -257,7 +257,7 @@ const tc = @json(__('common'));
 const _PR = new Intl.PluralRules(@json(app()->getLocale()));
 function plural(n, forms) { return forms[_PR.select(n)] ?? forms.other ?? forms.one ?? ''; }
 
-const requestId = {{ $id }};
+const requestId = @json($id);
 let requestData  = null;
 
 // ── Statuses where uploading attachments is not allowed ───────────────────────
@@ -674,10 +674,10 @@ function proposalCard(p) {
     }
 
     const actionButtons = canAct ? `
-            <button class="btn btn-light-danger btn-sm" onclick="rejectProposal(${p.id})">
+            <button class="btn btn-light-danger btn-sm" onclick="rejectProposal('${p.id}')">
                 <i class="ki-outline ki-cross fs-7 me-1"></i>${L.reject}
             </button>
-            <button class="btn btn-success btn-sm" onclick="acceptProposal(${p.id})">
+            <button class="btn btn-success btn-sm" onclick="acceptProposal('${p.id}')">
                 <i class="ki-outline ki-check fs-7 me-1"></i>${L.accept}
             </button>` : '';
 
@@ -706,7 +706,7 @@ function proposalCard(p) {
                     <div class="d-flex align-items-center justify-content-between gap-4 flex-wrap">
                         <div class="min-w-0">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="fw-bolder text-gray-900 fs-6">#${p.id}</span>
+                                <span class="fw-bolder text-gray-900 fs-6">${p.id}</span>
                                 ${p.title ? `<span class="text-gray-600 fs-7">— ${esc(p.title)}</span>` : ''}
                             </div>
                             <div class="d-flex align-items-center gap-3 text-muted fs-8 mt-1 flex-wrap">
@@ -723,7 +723,7 @@ function proposalCard(p) {
                                 ${conversionLine}
                                 ${statusLine}
                             </div>
-                            <button class="btn btn-sm btn-icon btn-light" onclick="openProposalModal(${p.id})" title="${L.details}">
+                            <button class="btn btn-sm btn-icon btn-light" onclick="openProposalModal('${p.id}')" title="${L.details}">
                                 <i class="ki-outline ki-eye fs-6"></i>
                             </button>
                         </div>
@@ -851,10 +851,10 @@ async function openProposalModal(proposalId) {
 
     if (p.status === 'sent' && !p.is_expired) {
         footerEl.innerHTML += `
-            <button class="btn btn-light-danger" onclick="rejectProposal(${p.id}, true)">
+            <button class="btn btn-light-danger" onclick="rejectProposal('${p.id}', true)">
                 <i class="ki-outline ki-cross fs-5 me-1"></i>${L.reject}
             </button>
-            <button class="btn btn-success" onclick="acceptProposal(${p.id}, true)">
+            <button class="btn btn-success" onclick="acceptProposal('${p.id}', true)">
                 <i class="ki-outline ki-check fs-5 me-1"></i>${L.accept_full}
             </button>
         `;
@@ -1001,7 +1001,7 @@ function renderBookingBanner(r) {
                     <span class="badge ${b.status_badge_class}">${esc(b.status_label)}</span>
                 </div>
                 <div class="text-gray-600 fs-7">${tb.subtitle}</div>
-                <div class="text-muted fs-8 mt-1">#${b.id}${dates ? ` · ${esc(dates)}` : ''} · ${tb.created.replace(':date', fmtDate(b.created_at))}</div>
+                <div class="text-muted fs-8 mt-1">${b.id}${dates ? ` · ${esc(dates)}` : ''} · ${tb.created.replace(':date', fmtDate(b.created_at))}</div>
             </div>
             <div class="text-end">
                 <div class="text-muted fs-8">${tb.price}</div>

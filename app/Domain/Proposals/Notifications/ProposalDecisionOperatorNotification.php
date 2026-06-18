@@ -40,7 +40,7 @@ class ProposalDecisionOperatorNotification extends BaseNotification
 
     protected function bellUrl(): ?string
     {
-        return url('/admin/proposals/'.$this->proposal->id);
+        return url('/admin/proposals/'.$this->proposal->public_code);
     }
 
     public function toMail(object $notifiable): MailMessage

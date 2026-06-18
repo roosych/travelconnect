@@ -243,8 +243,8 @@ function renderRecentRequests(requests) {
 
         return `
             <tr>
-                <td class="pe-2">
-                    <a href="/admin/requests/${r.id}" class="text-gray-800 text-hover-primary fw-bold">#${r.id}</a>
+                <td class="w-100px pe-2">
+                    <a href="/admin/requests/${r.id}" class="text-gray-800 text-hover-primary fw-bold">${r.id}</a>
                 </td>
                 <td>
                     <a href="/admin/requests/${r.id}" class="fw-bold text-gray-800 text-hover-primary d-block">${escHtml(r.title ?? '—')}</a>
@@ -277,7 +277,7 @@ function renderRecentRequests(requests) {
         <table class="table align-middle table-row-dashed fs-6 gy-3">
             <thead>
                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                    <th class="w-50px pe-2">#</th>
+                    <th class="w-100px pe-2">#</th>
                     <th class="min-w-220px">${t.cols.title}</th>
                     <th class="min-w-120px">${t.cols.agency}</th>
                     <th class="min-w-60px text-center">${t.cols.pax}</th>

@@ -106,7 +106,7 @@
 
 @push('scripts')
 <script>
-const offerId = {{ $id }};
+const offerId = @json($id);
 
 // Локализация (suppliers.cabinet.offers.show.*). :id/:date — через .replace().
 const L = @json(__('suppliers.cabinet.offers.show'));

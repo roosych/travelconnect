@@ -195,7 +195,7 @@ class OfferService
             supplierId: $offer->supplier_id,
             offerId: $offer->id,
             fromStatus: $fromStatus,
-            rfqId: $offer->rfq_id,
+            rfqCode: $offer->rfq?->public_code,
         );
 
         return $offer;

@@ -17,7 +17,7 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'payable_type'      => ['required', 'string', 'in:booking'],
-            'payable_id'        => ['required', 'integer'],
+            'payable_id'        => ['required', 'string'],
             'direction'         => ['required', 'string', 'in:incoming,outgoing'],
             'counterparty_type' => ['required', 'string', 'in:agency,supplier'],
             'counterparty_id'   => ['required', 'integer'],

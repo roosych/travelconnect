@@ -93,7 +93,7 @@ return [
         'col_actions'  => 'Действия',
         'quick_view'   => 'Быстрый просмотр',
         'open_page'    => 'Открыть страницу',
-        'default_title' => 'Заявка #:id',
+        'default_title' => 'Заявка :id',
         'whole_country' => 'по стране в целом',
     ],
 
@@ -108,7 +108,7 @@ return [
         'col_status'    => 'Статус',
         'col_created'   => 'Создано',
         'col_open'      => 'Открыть',
-        'default_title' => 'КП #:id',
+        'default_title' => 'КП :id',
     ],
 
     // Вкладка «Сотрудники»

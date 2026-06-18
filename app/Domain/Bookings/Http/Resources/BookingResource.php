@@ -14,7 +14,7 @@ class BookingResource extends JsonResource
         $isAgency = $request->user()?->isAgency() ?? false;
 
         return [
-            'id' => $this->id,
+            'id' => $this->public_code,
             'confirmed_at' => $this->confirmed_at?->toIso8601String(),
             'travel_date_from' => $this->travel_date_from?->toDateString(),
             'travel_date_to' => $this->travel_date_to?->toDateString(),
@@ -49,10 +49,10 @@ class BookingResource extends JsonResource
             'agency' => new AgencyResource($this->whenLoaded('agency')),
             'operator' => new UserResource($this->whenLoaded('operator')),
             'proposal' => $this->whenLoaded('proposal', fn () => [
-                'id' => $this->proposal->id,
+                'id' => $this->proposal->public_code,
                 'title' => $this->proposal->title,
                 'request' => $this->proposal->relationLoaded('request') && $this->proposal->request ? [
-                    'id' => $this->proposal->request->id,
+                    'id' => $this->proposal->request->public_code,
                     'title' => $this->proposal->request->title,
                     'destination' => $this->proposal->request->destination,
                     'services_needed' => $this->proposal->request->services_needed ?? [],

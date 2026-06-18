@@ -33,7 +33,7 @@ return [
         'load_error' => 'Не удалось загрузить запросы.',
         'empty'      => 'Запросы не найдены.',
         'of'         => 'из',
-        'request_ref' => 'Заявка #:id',
+        'request_ref' => 'Заявка :id',
 
         'chips' => [
             'all'       => 'Все',
@@ -67,9 +67,9 @@ return [
     // ── Страница деталей (show) ────────────────────────────────────────────
     'show' => [
         'title'          => 'Детали запроса поставщику',
-        'breadcrumb'     => 'Запрос #:id',
-        'rfq_ref'        => 'Запрос #:id',
-        'request_ref'    => 'Заявка #:id',
+        'breadcrumb'     => 'Запрос :id',
+        'rfq_ref'        => 'Запрос :id',
+        'request_ref'    => 'Заявка :id',
         'created_label'  => 'Создан :date',
         'deadline_label' => 'Срок: :date',
         'requirements'   => 'Требования:',
@@ -89,7 +89,7 @@ return [
         'offers_title'      => 'Предложения поставщиков',
         'offers_load_error' => 'Не удалось загрузить предложения.',
         'offers_empty'      => 'Предложений пока не получено.',
-        'offer_ref'         => 'Предложение #:id',
+        'offer_ref'         => 'Предложение :id',
         'valid_until_short' => 'до :date',
         'total'             => 'Итого',
 

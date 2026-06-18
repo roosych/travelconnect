@@ -224,12 +224,12 @@
             const btns = [];
             if (o.status === 'received' || o.status === 'reviewed') {
                 btns.push(`<button class="btn btn-icon btn-sm btn-light-danger" title="${t.index.reject}"
-                               onclick="rejectOffer(${o.id}); return false;">
+                               onclick="rejectOffer('${o.id}'); return false;">
                                <i class="ki-outline ki-cross fs-4"></i>
                            </button>`);
             }
             btns.push(`<button class="btn btn-icon btn-sm btn-light-primary" title="${t.index.quick_view}"
-                           onclick="openOfferDrawer(${o.id}); return false;">
+                           onclick="openOfferDrawer('${o.id}'); return false;">
                            <i class="ki-outline ki-eye fs-4"></i>
                        </button>`);
             btns.push(`<a href="/admin/offers/${o.id}" class="btn btn-icon btn-sm btn-light" title="${t.index.open_page}">
@@ -238,6 +238,7 @@
 
             return `
             <tr>
+                <td class="w-100px pe-2"><a href="/admin/offers/${o.id}" class="fw-bold text-gray-800 text-hover-primary">${o.id}</a></td>
                 <td>
                     ${reqLink}
                     ${svcBadge}
@@ -257,7 +258,6 @@
                 <td class="text-muted fs-7">
                     ${o.valid_until ? `<i class="ki-outline ki-calendar fs-7 me-1"></i>${fmtDT(o.valid_until)}` : '—'}
                 </td>
-                <td class="text-muted fs-7">${formatDate(o.created_at)}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-1">${btns.join('')}</div>
                 </td>
@@ -268,12 +268,12 @@
             <table class="table align-middle table-row-dashed fs-6 gy-4">
                 <thead>
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                        <th class="w-100px pe-2">${t.index.cols.id}</th>
                         <th class="min-w-220px">${t.index.cols.request}</th>
                         <th class="min-w-180px">${t.index.cols.supplier}</th>
                         <th class="min-w-120px">${t.index.cols.price}</th>
                         <th class="min-w-110px">${t.index.cols.status}</th>
                         <th class="min-w-120px">${t.index.cols.valid_until}</th>
-                        <th class="min-w-100px">${t.index.cols.received}</th>
                         <th class="text-end min-w-100px">${t.index.cols.actions}</th>
                     </tr>
                 </thead>
@@ -530,7 +530,7 @@
         // Кнопки в footer
         const footerBtns = [];
         if (offer.status === 'received' || offer.status === 'reviewed') {
-            footerBtns.push(`<button class="btn btn-sm btn-light-danger" onclick="rejectOffer(${offer.id})">
+            footerBtns.push(`<button class="btn btn-sm btn-light-danger" onclick="rejectOffer('${offer.id}')">
                 <i class="ki-outline ki-cross-circle fs-5 me-1"></i>${t.drawer.reject}</button>`);
         }
         footerBtns.push(`<a href="/admin/offers/${offer.id}" class="btn btn-sm btn-light ms-auto">

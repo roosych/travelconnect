@@ -63,7 +63,7 @@ return [
     // ── Detal səhifəsi (show) ──────────────────────────────────────────────
     'show' => [
         'title'         => 'Bron detalları',
-        'breadcrumb'    => 'Bron #:id',
+        'breadcrumb'    => ':id',
         'proposal_card' => 'Kommersiya təklifi',
         'request_card'  => 'Tur sorğusu',
         'load_error'    => 'Bron detallarını yükləmək alınmadı.',
@@ -88,11 +88,11 @@ return [
 
         'proposal_unavailable' => 'Təklif məlumatı əlçatan deyil.',
         'proposal_label'       => 'Kommersiya təklifi',
-        'proposal_ref'         => 'Təklif #:id',
+        'proposal_ref'         => 'Təklif :id',
         'view_proposal'        => 'Təklifə bax',
 
         'request_unavailable' => 'Sorğu məlumatı əlçatan deyil.',
-        'request_ref'         => 'Sorğu #:id',
+        'request_ref'         => 'Sorğu :id',
         'deadline_label'      => 'Son tarix: :date',
         'travellers'          => ':n turist',
         'open_request'        => 'Sorğunu aç',
@@ -127,7 +127,7 @@ return [
             'no_offers'            => 'Təklifdə xidmət yoxdur',
             'supplier_price'       => 'təchizatçı: :price',
             'in_supplier_currency' => 'təchizatçı valyutasında: :amount',
-            'service_ref'          => 'Xidmət #:id',
+            'service_ref'          => 'Xidmət :id',
         ],
         'prop_status' => [
             'draft'    => 'Qaralama',
@@ -177,8 +177,8 @@ return [
     // ── Agentliyin rezervasiya təfərrüatı (agency show) ────────────────────
     'agency_show' => [
         'title'               => 'Rezervasiya təfərrüatı',
-        'breadcrumb'          => 'Rezervasiya #:id',
-        'request_fallback'    => 'Sorğu #:id',
+        'breadcrumb'          => ':id',
+        'request_fallback'    => 'Sorğu :id',
         'total'               => 'Yekun məbləğ',
         'trip_details'        => 'Səfər təfərrüatı',
         'proposal_title'      => 'Kommersiya təklifi',
@@ -211,13 +211,13 @@ return [
         'composition'      => 'Tərkib',
         'total_line'       => 'Yekun',
         'no_offers'        => 'Təklifdə xidmət yoxdur.',
-        'service_fallback' => 'Xidmət #:id',
+        'service_fallback' => 'Xidmət :id',
     ],
 
     // ── Sürətli baxış paneli ───────────────────────────────────────────────
     'drawer' => [
         'title_ph'     => 'Bron',
-        'ref'          => 'Bron #:id',
+        'ref'          => ':id',
         'load_error'   => 'Bronu yükləmək alınmadı.',
         'total'        => 'Yekun məbləğ',
         'for_agency'   => '· agentlik üçün :amount',
@@ -233,6 +233,6 @@ return [
         'net_short'    => 'maya',
         'notes'        => 'Qeydlər',
         'open_full'    => 'Tam aç',
-        'proposal_ref' => 'Təklif #:id',
+        'proposal_ref' => 'Təklif :id',
     ],
 ];

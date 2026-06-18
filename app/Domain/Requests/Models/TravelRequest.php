@@ -9,6 +9,7 @@ use App\Domain\Proposals\Models\Proposal;
 use App\Domain\Requests\Enums\RequestStatus;
 use App\Domain\RFQs\Models\Rfq;
 use App\Domain\Agencies\Models\Agency;
+use App\Support\HasPublicCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,7 +20,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class TravelRequest extends Model implements HasMedia
 {
+    use HasPublicCode;
     use InteractsWithMedia;
+
+    protected string $publicCodePrefix = 'R';
+
     protected $table = 'travel_requests';
 
     protected $fillable = [

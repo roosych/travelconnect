@@ -157,7 +157,7 @@
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <script>
-const bookingId = {{ $id }};
+const bookingId = @json($id);
 
 // Локализация (bookings.agency_show.*). :id/:n/:date — через .replace().
 const L  = @json(__('bookings.agency_show'));
@@ -320,7 +320,7 @@ function renderPayments(rows) {
                 : `<span class="badge badge-light-warning fs-9 ms-1">${PM.panel.awaiting}</span>`;
             // Своё ещё не подтверждённое можно удалить (для исправления).
             const delBtn = p.confirmed ? '' :
-                `<button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment(${p.id})"><i class="ki-outline ki-trash fs-6"></i></button>`;
+                `<button class="btn btn-icon btn-sm btn-light-danger" title="${PM.panel.delete}" onclick="deletePayment('${p.id}')"><i class="ki-outline ki-trash fs-6"></i></button>`;
             return `
             <div class="d-flex align-items-center gap-3 px-3 py-2 border border-dashed border-gray-300 rounded-2 mb-2">
                 <div class="flex-grow-1 min-w-0">

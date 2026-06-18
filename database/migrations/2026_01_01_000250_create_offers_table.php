@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id()->startingValue(1001);
+            $table->string('public_code')->unique();
             $table->foreignId('rfq_id')->constrained('rfqs');
             $table->foreignId('supplier_id')->constrained('users');
             $table->boolean('is_partial')->default(false);

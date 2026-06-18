@@ -65,12 +65,12 @@ return [
         'load_error' => 'Failed to load offers. Please refresh the page.',
         'empty'      => 'No offers found.',
         'cols' => [
+            'id'          => 'ID',
             'request'     => 'Request / Supplier RFQ',
             'supplier'    => 'Supplier',
             'price'       => 'Price',
             'status'      => 'Status',
             'valid_until' => 'Valid until',
-            'received'    => 'Received',
             'actions'     => 'Actions',
         ],
         'pagination' => ':from–:to of :total',
@@ -81,14 +81,14 @@ return [
 
     // Quick-view drawer
     'drawer' => [
-        'default_title' => 'Offer #:id',
+        'default_title' => 'Offer :id',
         'no_supplier'   => 'No supplier specified.',
         'context'       => 'Context',
         'rfq'           => 'Supplier request',
         'request'       => 'Tour request',
         'deadline'      => 'Response deadline: :date',
-        'rfq_ref'       => 'Request #:id',
-        'request_ref'   => 'Request #:id',
+        'rfq_ref'       => 'Request :id',
+        'request_ref'   => 'Request :id',
         'open_page'     => 'Open page',
         'reject'        => 'Reject',
         'error'         => 'Error: :msg',
@@ -97,8 +97,8 @@ return [
     // Page (show)
     'show' => [
         'title'                => 'Offer details',
-        'breadcrumb'           => 'Offer #:id',
-        'offer_title'          => 'Offer #:id',
+        'breadcrumb'           => 'Offer :id',
+        'offer_title'          => 'Offer :id',
         'add_to_proposal'      => 'Add to proposal',
         'reject'               => 'Reject',
         'supplier_card'        => 'Supplier',
@@ -111,7 +111,7 @@ return [
         'context_unavailable'  => 'Data unavailable.',
         'agency'               => 'Agency',
         'request'              => 'Request',
-        'request_ref'          => 'Request #:id',
+        'request_ref'          => 'Request :id',
         'service_type'         => 'Service type',
         'pax'                  => ':n pax',
         'confirm_reject'       => 'Reject this offer? This action cannot be undone.',
