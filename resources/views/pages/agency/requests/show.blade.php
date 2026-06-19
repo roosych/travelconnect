@@ -1045,9 +1045,13 @@ function renderRequest(r) {
     document.getElementById('info-deadline').textContent    = r.deadline_at ? (fmtDateTimeTz(r.deadline_at) + ' (' + tzOffsetLabel(r.deadline_at) + ')') : '—';
 
     const from = r.travel_date_from, to = r.travel_date_to;
-    document.getElementById('info-period').textContent = (from || to)
-        ? [from, to].filter(Boolean).map(fmtDate).join(' — ')
-        : '—';
+    const periodEl = document.getElementById('info-period');
+    if (from || to) {
+        const range = [from, to].filter(Boolean).map(fmtDate).join(' — ');
+        periodEl.innerHTML = escHtml(range) + stayDuration(from, to);
+    } else {
+        periodEl.textContent = '—';
+    }
 
     // Маршрут (сегменты) — заменяет общий список услуг (теперь услуги показаны по сегментам)
     renderRoute(r.legs || []);

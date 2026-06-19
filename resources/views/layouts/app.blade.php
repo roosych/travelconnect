@@ -250,6 +250,9 @@
                         {{-- ── Right navbar ── --}}
                         <div class="app-navbar flex-shrink-0" id="kt_app_header_navbar">
 
+                            {{-- 0. Живые часы (пояс пользователя) --}}
+                            @include('partials.header-clock', ['onDark' => true])
+
                             {{-- 1. Notifications --}}
                             <div class="app-navbar-item ms-1 ms-lg-3">
                                 <div class="btn btn-icon btn-custom btn-active-light-primary

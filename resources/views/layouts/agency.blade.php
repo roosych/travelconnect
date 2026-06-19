@@ -81,6 +81,9 @@
                         {{-- Navbar: CTA + user menu --}}
                         <div class="app-navbar flex-shrink-0" id="kt_app_header_navbar">
 
+                            {{-- Живые часы (пояс пользователя) --}}
+                            @include('partials.header-clock')
+
                             {{-- New Request CTA --}}
                             <div class="app-navbar-item ms-1 ms-lg-3">
                                 <a href="{{ route('agency.requests.create') }}" class="btn btn-success btn-sm">

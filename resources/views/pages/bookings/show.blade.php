@@ -512,6 +512,7 @@ function renderDetailCard(b) {
                     <div class="text-gray-500 fw-bold fs-8 text-uppercase mb-1">${t.drawer.travel_dates}</div>
                     <div class="fw-semibold text-gray-800">
                         ${formatDate(b.travel_date_from)} → ${formatDate(b.travel_date_to)}
+                        ${stayDuration(b.travel_date_from, b.travel_date_to)}
                     </div>
                 </div>` : ''}
                 ${b.pax_count ? `
@@ -625,6 +626,7 @@ function renderRequestCard(b) {
             <div class="d-flex align-items-center gap-2 text-muted fs-7">
                 <i class="ki-outline ki-calendar fs-5 text-gray-400"></i>
                 ${formatDate(b.travel_date_from)} → ${formatDate(b.travel_date_to)}
+                ${stayDuration(b.travel_date_from, b.travel_date_to)}
             </div>
 
             ${deadline}

@@ -275,7 +275,10 @@ function renderRow(r) {
                     ? `<div class="d-flex flex-column align-items-start gap-1">${services}</div>`
                     : '<span class="text-muted fs-8">—</span>'}
             </td>
-            <td><span class="fs-7">${dateRange}</span></td>
+            <td>
+                <div class="fs-7">${dateRange}</div>
+                ${stayDuration(r.travel_date_from, r.travel_date_to)}
+            </td>
             <td class="text-center">
                 ${r.pax_count != null
                     ? `<span class="fw-bold fs-5 text-gray-800">${r.pax_count}</span>`

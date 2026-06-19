@@ -20,6 +20,22 @@
         return new Date(d).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
+    // Длительность поездки иконками: ☀ дней / 🌙 ночей. Ночи = разница дат,
+    // дни = ночи + 1 (стандарт «5 дней 4 ночи»). Иконки тёмно-серые, цифры темнее.
+    // Возвращает пустую строку, если дат нет или они некорректны.
+    window.stayDuration = function (from, to) {
+        if (!from || !to) return '';
+        const a = new Date(from), b = new Date(to);
+        if (isNaN(a) || isNaN(b)) return '';
+        const nights = Math.round((b - a) / 86400000);
+        if (nights < 0) return '';
+        const days = nights + 1;
+        return `<span class="d-inline-flex align-items-center gap-2 fs-8 mt-1">`
+            + `<span class="fw-semibold text-gray-700"><i class="ki-outline ki-sun fs-7 text-gray-500 me-1"></i>${days}</span>`
+            + `<span class="fw-semibold text-gray-700"><i class="ki-outline ki-moon fs-7 text-gray-500 me-1"></i>${nights}</span>`
+            + `</span>`;
+    };
+
     window.formatDateTime = function (d) {
         if (!d) return '—';
         // Числовой формат ДД.ММ.ГГГГ, ЧЧ:ММ (без словесного месяца) — см. feedback по датам.

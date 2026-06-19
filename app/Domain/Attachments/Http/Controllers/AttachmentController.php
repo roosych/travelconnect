@@ -82,7 +82,7 @@ class AttachmentController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function index(Request $request, string $type, int $id): JsonResponse
+    public function index(Request $request, string $type, string $id): JsonResponse
     {
         $model = $this->resolveModel($type, $id);
         $this->authorizeModel($request->user(), $model);
@@ -95,7 +95,7 @@ class AttachmentController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $type, int $id): JsonResponse
+    public function store(Request $request, string $type, string $id): JsonResponse
     {
         $model = $this->resolveModel($type, $id);
         $this->authorizeModel($request->user(), $model);
@@ -252,11 +252,14 @@ class AttachmentController extends Controller
         return in_array($offer->status, [OfferStatus::Received, OfferStatus::Reviewed], true);
     }
 
-    private function resolveModel(string $type, int $id): Model
+    private function resolveModel(string $type, string $id): Model
     {
         abort_unless(array_key_exists($type, self::ALLOWED_TYPES), 404, 'Неизвестный тип сущности.');
 
-        $model = self::ALLOWED_TYPES[$type]::find($id);
+        // URL несёт public_code (R-…/Q-…/O-…/P-…), а не числовой PK — резолвим по
+        // ключу роутинга модели (getRouteKeyName = public_code), как остальные роуты.
+        $class = self::ALLOWED_TYPES[$type];
+        $model = $class::where((new $class)->getRouteKeyName(), $id)->first();
         abort_unless($model, 404);
 
         return $model;

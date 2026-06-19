@@ -941,6 +941,7 @@
                                     <div>
                                         <div class="text-muted fs-8">${t.show.info.period}</div>
                                         <div class="fw-semibold text-gray-800 fs-7 mt-1">${formatDate(req.travel_date_from)} — ${formatDate(req.travel_date_to)}</div>
+                                        ${stayDuration(req.travel_date_from, req.travel_date_to)}
                                     </div>
                                 </div>
                             </div>

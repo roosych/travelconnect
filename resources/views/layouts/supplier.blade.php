@@ -81,6 +81,9 @@
                         {{-- Navbar: user menu --}}
                         <div class="app-navbar flex-shrink-0" id="kt_app_header_navbar">
 
+                            {{-- Живые часы (пояс пользователя) --}}
+                            @include('partials.header-clock')
+
                             {{-- Notifications bell --}}
                             @include('partials.notification-bell')
 

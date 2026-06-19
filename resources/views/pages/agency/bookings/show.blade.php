@@ -515,7 +515,7 @@ function renderTripDetails(b) {
     const rows = [];
 
     const dates = (b.travel_date_from || b.travel_date_to)
-        ? `${formatDate(b.travel_date_from)} — ${formatDate(b.travel_date_to)}`
+        ? `${formatDate(b.travel_date_from)} — ${formatDate(b.travel_date_to)}${stayDuration(b.travel_date_from, b.travel_date_to)}`
         : '—';
 
     rows.push(detailRow('ki-calendar', L.trip.dates, dates));

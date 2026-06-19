@@ -131,19 +131,13 @@
                     <div id="qv-attachments" class="d-flex flex-wrap gap-3"></div>
                 </div>
 
-                {{-- Stats: suppliers / offers --}}
-                <div class="row g-4 mb-4">
-                    <div class="col-6">
-                        <div class="border border-dashed rounded p-4 text-center">
-                            <div class="fw-bold fs-2 text-primary" id="qv-suppliers-count">0</div>
-                            <div class="text-muted fs-7">{{ __('requests.qv.suppliers_notified') }}</div>
-                        </div>
+                {{-- Запросы поставщикам (RFQ): разбивка по услугам — статус, поставщики, предложения, срок --}}
+                <div class="mb-4">
+                    <div class="fw-bold text-gray-700 mb-2">
+                        <i class="ki-outline ki-questionnaire-tablet fs-6 me-1"></i>{{ __('requests.index.rfq_sub.title') }}
                     </div>
-                    <div class="col-6">
-                        <div class="border border-dashed rounded p-4 text-center">
-                            <div class="fw-bold fs-2 text-success" id="qv-offers-count">0</div>
-                            <div class="text-muted fs-7">{{ __('requests.qv.offers_received') }}</div>
-                        </div>
+                    <div id="qv-rfqs">
+                        <span class="spinner-border spinner-border-sm text-primary"></span>
                     </div>
                 </div>
 
@@ -445,9 +439,6 @@ function renderRow(r) {
         ? `${formatDate(r.travel_date_from)} <i class="ki-outline ki-arrow-right fs-8 mx-1"></i> ${formatDate(r.travel_date_to)}`
         : '—';
 
-    /* статистику (поставщики/предложения) показываем в квик-модалке и на странице заявки. */
-    const hasRfqs = (r.rfqs_count ?? 0) > 0;
-
     /* ---- main row ---- */
     const mainRow = `
         <tr data-id="${r.id}">
@@ -478,19 +469,12 @@ function renderRow(r) {
                     : '<span class="text-muted">—</span>'}
             </td>
             <td>
-                <span class="fs-7">${dateRange}</span>
+                <div class="fs-7">${dateRange}</div>
+                ${stayDuration(r.travel_date_from, r.travel_date_to)}
             </td>
             <td>${deadlineCell(r.deadline_at, ['booked','completed','cancelled'].includes(r.status), USER_TZ)}</td>
             <td>${statusBadge(r)}</td>
             <td class="text-end">
-                ${hasRfqs ? `
-                <button type="button"
-                        data-toggle-rfqs="${r.id}"
-                        onclick="toggleRfqs('${r.id}')"
-                        class="btn btn-icon btn-sm btn-light me-1"
-                        title="${t.index.rfq_sub.title}">
-                    <i class="ki-outline ki-arrow-down fs-5"></i>
-                </button>` : ''}
                 <button type="button"
                         onclick="quickView('${r.id}')"
                         class="btn btn-icon btn-sm btn-light-primary"
@@ -500,67 +484,25 @@ function renderRow(r) {
             </td>
         </tr>`;
 
-    /* ---- RFQ sub-row (collapsed by default) ---- */
-    const subRow = hasRfqs ? `
-        <tr id="rfq-sub-${r.id}" class="d-none">
-            <td colspan="9" class="pt-0 pb-4 px-5">
-                <div class="bg-light rounded px-5 py-4">
-                    <div class="text-gray-500 fw-bold fs-8 text-uppercase mb-3">${t.index.rfq_sub.title}</div>
-                    <div class="rfq-sub-content d-flex flex-wrap gap-2">
-                        <span class="spinner-border spinner-border-sm text-primary"></span>
-                    </div>
-                </div>
-            </td>
-        </tr>` : '';
-
-    return mainRow + subRow;
+    return mainRow;
 }
 
 /* ================================================================
-   RFQ SUB-ROW: TOGGLE + LAZY LOAD
+   RFQ BREAKDOWN (внутри квик-модалки)
 ================================================================ */
 
-async function toggleRfqs(id) {
-    const subRow = document.getElementById(`rfq-sub-${id}`);
-    const btn    = document.querySelector(`[data-toggle-rfqs="${id}"]`);
-    const icon   = btn.querySelector('i');
-
-    if (subRow.classList.contains('d-none')) {
-        subRow.classList.remove('d-none');
-        icon.className = 'ki-outline ki-arrow-up fs-5';
-
-        if (!_rfqCache[id]) {
-            try {
-                const res = await api.get(`/requests/${id}/rfqs?per_page=50`);
-                _rfqCache[id] = res.data ?? [];
-            } catch {
-                subRow.querySelector('.rfq-sub-content').innerHTML =
-                    `<span class="text-danger fs-7">${t.index.rfq_sub.load_error}</span>`;
-                return;
-            }
-        }
-
-        renderRfqSubRow(id, subRow);
-    } else {
-        subRow.classList.add('d-none');
-        icon.className = 'ki-outline ki-arrow-down fs-5';
-    }
-}
-
-function renderRfqSubRow(id, subRow) {
-    const rfqs    = _rfqCache[id] ?? [];
-    const content = subRow.querySelector('.rfq-sub-content');
-
-    if (rfqs.length === 0) {
-        content.innerHTML = `<span class="text-muted fs-7">${t.index.rfq_sub.empty}</span>`;
-        return;
+// Возвращает HTML с разбивкой запросов поставщикам (услуга/статус/поставщики/
+// предложения/срок) для блока qv-rfqs. Пусто → подсказка «запросов нет».
+function renderQvRfqs(rfqs) {
+    if (!rfqs || rfqs.length === 0) {
+        return `<span class="text-muted fs-7">${t.index.rfq_sub.empty}</span>`;
     }
 
     const rows = rfqs.map(rfq => {
         const sm = serviceMeta(rfq.service_type);
         const supCount   = rfq.suppliers?.length ?? 0;
         const offerCount = rfq.offer_count ?? rfq.offers?.length ?? 0;
-        const deadline   = rfq.deadline_at ? formatDate(rfq.deadline_at) : '—';
+        const deadline   = rfq.deadline_at ? qvDeadline(rfq.deadline_at) : '—';
 
         return `
             <tr>
@@ -586,7 +528,7 @@ function renderRfqSubRow(id, subRow) {
             </tr>`;
     }).join('');
 
-    content.innerHTML = `
+    return `
         <table class="table table-sm table-borderless mb-0">
             <thead>
                 <tr class="text-gray-400 fw-bold fs-8 text-uppercase">
@@ -635,8 +577,6 @@ async function quickView(id) {
         : '<span class="text-muted">—</span>';
     document.getElementById('qv-pax').textContent         = r.pax_count != null ? t.qv.pax_unit.replace(':n', r.pax_count) : '—';
     document.getElementById('qv-deadline').textContent    = qvDeadline(r.deadline_at);
-    document.getElementById('qv-suppliers-count').textContent = r.suppliers_notified_count ?? 0;
-    document.getElementById('qv-offers-count').textContent    = r.offers_count ?? 0;
     document.getElementById('qv-view-link').href = '/admin/requests/' + r.id;
 
     /* dates (период) */
@@ -663,6 +603,23 @@ async function quickView(id) {
     attEl.innerHTML  = '<span class="spinner-border spinner-border-sm text-primary"></span>';
 
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-quick-view')).show();
+
+    /* supplier requests (RFQ) — async load (с кэшем) */
+    const rfqEl = document.getElementById('qv-rfqs');
+    rfqEl.innerHTML = '<span class="spinner-border spinner-border-sm text-primary"></span>';
+    if ((r.rfqs_count ?? 0) === 0) {
+        rfqEl.innerHTML = `<span class="text-muted fs-7">${t.index.rfq_sub.empty}</span>`;
+    } else {
+        try {
+            if (!_rfqCache[id]) {
+                const res = await api.get(`/requests/${id}/rfqs?per_page=50`);
+                _rfqCache[id] = res.data ?? [];
+            }
+            rfqEl.innerHTML = renderQvRfqs(_rfqCache[id]);
+        } catch {
+            rfqEl.innerHTML = `<span class="text-danger fs-7">${t.index.rfq_sub.load_error}</span>`;
+        }
+    }
 
     /* load attachments async */
     try {
