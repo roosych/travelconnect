@@ -14,10 +14,9 @@
 
     <div class="d-flex flex-column min-vh-100">
 
-        {{-- Logo --}}
+        {{-- App name --}}
         <div class="text-center pt-8 pb-4">
-            <img src="{{ asset('assets/media/logos/caspirex_rfq_logo.jpg') }}"
-                 alt="Caspirex" style="height:80px; width:auto;">
+            <span class="fs-2hx fw-bold text-gray-900">{{ config('app.name') }}</span>
         </div>
 
         {{-- Content --}}
@@ -37,6 +36,20 @@
     <script>var hostUrl = "{{ asset('assets/') }}/";</script>
     <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
+
+    {{-- Общие хелперы (SERVICE_LABELS, formatDate/Currency, …) — нужны странице оффера поставщика --}}
+    @include('partials.js-helpers')
+
+    <script>
+        // Глобальный лоадер кнопки (Metronic data-kt-indicator): у кнопки должны
+        // быть .indicator-label / .indicator-progress (без d-none — Metronic сам
+        // переключает видимость по data-kt-indicator). Зеркало кабинетных лейаутов.
+        window.btnLoading = function (btn, loading) {
+            if (!btn) return;
+            btn.disabled = loading;
+            btn.setAttribute('data-kt-indicator', loading ? 'on' : 'off');
+        };
+    </script>
 
     @stack('scripts')
 </body>

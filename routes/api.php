@@ -370,3 +370,15 @@ Route::get('/supplier/rfq/{token}', [SupplierPortalController::class, 'getByToke
     ->middleware('throttle:30,1');
 Route::post('/supplier/rfq/{token}/offer', [SupplierPortalController::class, 'submitOffer'])
     ->middleware('throttle:10,1');
+Route::post('/supplier/rfq/{token}/offer/{offerCode}/withdraw', [SupplierPortalController::class, 'withdrawOffer'])
+    ->middleware('throttle:10,1');
+Route::patch('/supplier/rfq/{token}/offer/{offerCode}', [SupplierPortalController::class, 'updateOffer'])
+    ->middleware('throttle:10,1');
+Route::delete('/supplier/rfq/{token}/offer/{offerCode}/attachment/{attachment}', [SupplierPortalController::class, 'deleteOfferAttachment'])
+    ->middleware('throttle:30,1');
+Route::get('/supplier/rfq/{token}/file/{attachment}', [SupplierPortalController::class, 'downloadSharedFile'])
+    ->middleware('throttle:60,1');
+Route::post('/supplier/rfq/{token}/temp-file', [SupplierPortalController::class, 'storeTempFile'])
+    ->middleware('throttle:30,1');
+Route::delete('/supplier/rfq/{token}/temp-file/{attachment}', [SupplierPortalController::class, 'deleteTempFile'])
+    ->middleware('throttle:30,1');
