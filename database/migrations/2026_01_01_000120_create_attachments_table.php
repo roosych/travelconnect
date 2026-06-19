@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->nullableMorphs('attachable'); // nullable: вложение может висеть без привязки (напр. при загрузке до сохранения)
-            $table->foreignId('uploader_id')->constrained('users');
+            // nullable: внешние загрузки (поставщик по token-ссылке без аккаунта) не имеют внутреннего юзера
+            $table->foreignId('uploader_id')->nullable()->constrained('users');
             $table->string('disk')->default('local');
             $table->string('path');
             $table->string('filename');

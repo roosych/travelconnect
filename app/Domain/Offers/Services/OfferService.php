@@ -99,6 +99,46 @@ class OfferService
     }
 
     /**
+     * Update a still-pending supplier offer in place (price/notes + its single line
+     * item). Used by the supplier token portal «edit» flow. Re-snapshots the AZN
+     * equivalent at the current rate, like recordOffer.
+     */
+    public function updateOffer(Offer $offer, array $data): Offer
+    {
+        if (! in_array($offer->status, [OfferStatus::Received, OfferStatus::Reviewed], true)) {
+            throw new BusinessRuleException(
+                "Предложение можно изменить только пока оно на рассмотрении. Текущий статус: {$offer->status->value}"
+            );
+        }
+
+        $currency     = strtoupper($offer->currency);
+        $exchangeRate = $this->cbar->getRateToAzn($currency);
+        $priceAzn     = $exchangeRate !== null ? round($data['unit_price'] * $exchangeRate, 2) : null;
+
+        return DB::transaction(function () use ($offer, $data, $priceAzn, $exchangeRate) {
+            $offer->update([
+                'unit_price'     => $data['unit_price'],
+                'unit_price_azn' => $priceAzn,
+                'exchange_rate'  => $exchangeRate,
+                'notes'          => $data['notes'] ?? null,
+            ]);
+
+            $item = $offer->items()->first();
+            if ($item !== null) {
+                $item->update([
+                    'name'                => $data['name'] ?? $item->type,
+                    'unit_price'          => $data['unit_price'],
+                    'unit_price_azn'      => $priceAzn,
+                    'exchange_rate'       => $exchangeRate,
+                    'supplier_service_id' => $data['supplier_service_id'] ?? null,
+                ]);
+            }
+
+            return $offer->fresh(['items']);
+        });
+    }
+
+    /**
      * Operator selects an offer and attaches it to a proposal.
      */
     public function select(Offer $offer, Proposal $proposal): Offer
