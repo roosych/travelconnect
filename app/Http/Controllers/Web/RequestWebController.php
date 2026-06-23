@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Domain\Requests\Models\TravelRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,10 @@ class RequestWebController extends Controller
 
     public function show(Request $request, string $id)
     {
+        // 404 up front for unknown codes, so the page shell isn't served for
+        // a non-existent request (the JS would otherwise just show a load error).
+        abort_unless(TravelRequest::where('public_code', $id)->exists(), 404);
+
         return view('pages.requests.show', [
             'id'           => $id,
             'userTimezone' => $request->user()->effectiveTimezone(),

@@ -9,7 +9,6 @@
 @php($mutedCls = $onDark ? 'text-white opacity-75' : 'text-gray-500')
 <div class="app-navbar-item d-none d-md-flex align-items-center me-2 me-lg-4"
      id="kt_header_clock" data-tz="{{ $clockTz }}" title="{{ $clockTz }}">
-    <i class="ki-outline ki-time fs-2 {{ $mutedCls }} me-2"></i>
     <div class="d-flex flex-column lh-1">
         <span class="fw-bold fs-6 {{ $timeCls }}" data-clock-time>--:--:--</span>
         <span class="fs-8 {{ $mutedCls }} mt-1" data-clock-date>—</span>

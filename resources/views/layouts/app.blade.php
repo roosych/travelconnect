@@ -272,15 +272,15 @@
                                 <div class="menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px"
                                      data-kt-menu="true">
                                     <div class="d-flex flex-stack px-8 py-5 border-bottom">
-                                        <h3 class="fw-bold text-gray-800 mb-0 fs-5">Уведомления</h3>
+                                        <h3 class="fw-bold text-gray-800 mb-0 fs-5">{{ __('notifications.bell.title') }}</h3>
                                         <span class="text-muted fs-7" id="notif-unread-label"></span>
                                     </div>
                                     <div class="scroll-y mh-350px" id="notif-list">
-                                        <div class="text-center py-10 text-muted fs-7">Загрузка...</div>
+                                        <div class="text-center py-10 text-muted fs-7">{{ __('notifications.bell.loading') }}</div>
                                     </div>
                                     <div class="py-3 text-center border-top">
                                         <a href="{{ route('admin.notifications.index') }}" class="btn btn-color-gray-600 btn-active-color-primary btn-sm fw-semibold">
-                                            Показать все
+                                            {{ __('notifications.bell.show_all') }}
                                             <i class="ki-outline ki-arrow-right fs-5 ms-1"></i>
                                         </a>
                                     </div>
@@ -676,7 +676,7 @@
                                                 <li class="breadcrumb-item">
                                                     <a href="{{ route('admin.dashboard') }}"
                                                        class="text-muted text-hover-primary">
-                                                        <i class="ki-outline ki-home fs-6 text-muted me-1"></i>Главная
+                                                        <i class="ki-outline ki-home fs-6 text-muted me-1"></i>{{ __('common.home') }}
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
@@ -877,13 +877,14 @@
 
 
         // ── Notifications ──────────────────────────────────────────────
+        const NBELL = @json(__('notifications.bell'));
         (async function loadNotifications() {
             function timeAgo(dateStr) {
                 const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-                if (diff < 60)   return diff + ' сек. назад';
-                if (diff < 3600) return Math.floor(diff / 60) + ' мин. назад';
-                if (diff < 86400) return Math.floor(diff / 3600) + ' ч. назад';
-                return Math.floor(diff / 86400) + ' д. назад';
+                if (diff < 60)   return NBELL.sec_ago.replace(':n', diff);
+                if (diff < 3600) return NBELL.min_ago.replace(':n', Math.floor(diff / 60));
+                if (diff < 86400) return NBELL.hour_ago.replace(':n', Math.floor(diff / 3600));
+                return NBELL.day_ago.replace(':n', Math.floor(diff / 86400));
             }
 
             try {
@@ -901,10 +902,10 @@
                     badge.textContent = unread > 9 ? '9+' : unread;
                     badge.style.display = '';
                 }
-                label.textContent = unread > 0 ? unread + ' непрочитанных' : 'Всё прочитано';
+                label.textContent = unread > 0 ? NBELL.unread_count.replace(':n', unread) : NBELL.all_read;
 
                 if (!items.length) {
-                    list.innerHTML = `<div class="text-center py-10 text-muted fs-7">Уведомлений пока нет.</div>`;
+                    list.innerHTML = `<div class="text-center py-10 text-muted fs-7">${NBELL.empty}</div>`;
                     return;
                 }
 
@@ -937,7 +938,7 @@
                 });
             } catch {
                 document.getElementById('notif-list').innerHTML =
-                    `<div class="text-center py-8 text-muted fs-7">Не удалось загрузить уведомления.</div>`;
+                    `<div class="text-center py-8 text-muted fs-7">${NBELL.load_error}</div>`;
             }
         })();
     </script>
