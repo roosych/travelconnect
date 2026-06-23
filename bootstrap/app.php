@@ -22,8 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
         $middleware->throttleApi('api');
-        // Язык интерфейса для всех web-запросов (юзер → сессия → дефолт).
+        // Язык интерфейса (юзер → сессия → дефолт). И на web, и на API: API считает
+        // локализованные ярлыки (status_label и т.п.) на сервере.
         $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+        $middleware->api(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->alias([
