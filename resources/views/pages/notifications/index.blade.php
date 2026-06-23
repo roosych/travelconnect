@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Уведомления')
-@section('page-title', 'Уведомления')
+@section('title', __('notifications.feed.title'))
+@section('page-title', __('notifications.feed.title'))
 
 @section('breadcrumb')
-    <li class="breadcrumb-item text-muted">Уведомления</li>
+    <li class="breadcrumb-item text-muted">{{ __('notifications.feed.title') }}</li>
 @endsection
 
 @section('content')
@@ -14,16 +14,16 @@
     {{-- Category chips + unread toggle --}}
     <div class="card-header border-0 pt-6 pb-2 align-items-center gap-3 flex-wrap">
         <div class="d-flex align-items-center gap-2 flex-wrap" id="notif-chips">
-            <span class="text-muted fs-7 fw-semibold">Загрузка…</span>
+            <span class="text-muted fs-7 fw-semibold">{{ __('notifications.feed.loading') }}</span>
         </div>
         <div class="card-toolbar d-flex align-items-center gap-4">
             <label class="form-check form-switch form-check-custom form-check-solid d-inline-flex align-items-center gap-2 mb-0">
                 <input class="form-check-input" type="checkbox" id="unread-only"
                        style="width:38px;height:22px;cursor:pointer" />
-                <span class="fs-7 text-gray-700">Только непрочитанные</span>
+                <span class="fs-7 text-gray-700">{{ __('notifications.feed.unread_only') }}</span>
             </label>
             <button id="btn-mark-all" class="btn btn-sm btn-light-primary text-nowrap">
-                <i class="ki-outline ki-check-circle fs-4 me-1"></i>Прочитать все
+                <i class="ki-outline ki-check-circle fs-4 me-1"></i>{{ __('notifications.feed.mark_all') }}
             </button>
         </div>
     </div>
@@ -35,14 +35,17 @@
                 <i class="ki-outline ki-magnifier fs-3 position-absolute ms-4"></i>
                 <input type="text" id="notif-search"
                        class="form-control form-control-solid w-250px ps-12"
-                       placeholder="Поиск по тексту…" />
+                       placeholder="{{ __('notifications.feed.search_ph') }}" />
             </div>
         </div>
         <div class="card-toolbar d-flex align-items-center flex-nowrap gap-2">
-            <input type="text" id="notif-from" class="form-control form-control-sm form-control-solid w-125px" placeholder="С даты" />
-            <span class="text-muted">—</span>
-            <input type="text" id="notif-to" class="form-control form-control-sm form-control-solid w-125px" placeholder="По дату" />
-            <button id="btn-clear-dates" class="btn btn-sm btn-icon btn-light d-none flex-shrink-0" title="Сбросить даты">
+            <div class="d-flex align-items-center position-relative">
+                <i class="ki-outline ki-calendar fs-3 position-absolute ms-3"></i>
+                <input type="text" id="notif-range" readonly
+                       class="form-control form-control-sm form-control-solid w-225px ps-10"
+                       placeholder="{{ __('notifications.feed.date_range_ph') }}" />
+            </div>
+            <button id="btn-clear-dates" class="btn btn-sm btn-icon btn-light d-none flex-shrink-0" title="{{ __('notifications.feed.clear_dates') }}">
                 <i class="ki-outline ki-cross fs-4"></i>
             </button>
         </div>
@@ -62,6 +65,9 @@
     // Operator categories (value/label/icon) injected from the server.
     const CATEGORIES = @json($categories);
     const CAT_META = Object.fromEntries(CATEGORIES.map(c => [c.value, c]));
+
+    // Localized strings for this page (lang/*/notifications.php → feed.*).
+    const t = @json(__('notifications.feed'));
 
     let currentPage     = 1;
     let currentCategory = '';
@@ -89,7 +95,7 @@
             renderChips(data.meta);
             renderFeed(data.data ?? [], data.meta);
         } catch (e) {
-            feed.innerHTML = `<div class="alert alert-danger">Не удалось загрузить уведомления.</div>`;
+            feed.innerHTML = `<div class="alert alert-danger">${t.load_error}</div>`;
         }
     }
 
@@ -105,25 +111,31 @@
         currentStatus = this.checked ? 'unread' : '';
         loadFeed(1);
     });
-    // Date range — flatpickr (global, from the Metronic plugins bundle). One input
-    // each (no altInput, to keep the inline row aligned): the field shows d.m.Y,
-    // while the API param is formatted to Y-m-d. The pickers constrain each other
-    // so "to" can't precede "from".
-    const _fpBase = { dateFormat: 'd.m.Y', allowInput: false, disableMobile: true };
+    // Date range — single flatpickr input in range mode (global, from the Metronic
+    // plugins bundle). The field shows "d.m.Y — d.m.Y"; API params are Y-m-d.
+    // We reload only when a full range is picked (2 dates) or fully cleared (0).
     const _ymd = d => d ? flatpickr.formatDate(d, 'Y-m-d') : '';
-    const _fromFp = flatpickr('#notif-from', {
-        ..._fpBase,
-        onChange: (sel) => { currentFrom = _ymd(sel[0]); _toFp.set('minDate', sel[0] || null); toggleClearDates(); loadFeed(1); },
-    });
-    const _toFp = flatpickr('#notif-to', {
-        ..._fpBase,
-        onChange: (sel) => { currentTo = _ymd(sel[0]); _fromFp.set('maxDate', sel[0] || null); toggleClearDates(); loadFeed(1); },
+    const _rangeFp = flatpickr('#notif-range', {
+        mode: 'range',
+        dateFormat: 'd.m.Y',
+        allowInput: false,
+        disableMobile: true,
+        onChange: (sel) => {
+            if (sel.length === 2) {
+                currentFrom = _ymd(sel[0]);
+                currentTo   = _ymd(sel[1]);
+                toggleClearDates();
+                loadFeed(1);
+            } else if (sel.length === 0) {
+                currentFrom = currentTo = '';
+                toggleClearDates();
+                loadFeed(1);
+            }
+            // sel.length === 1 → waiting for the second date, no reload yet
+        },
     });
     byId('btn-clear-dates').addEventListener('click', () => {
-        _fromFp.clear(false);          // false → don't fire onChange (avoid double reload)
-        _toFp.clear(false);
-        _fromFp.set('maxDate', null);
-        _toFp.set('minDate', null);
+        _rangeFp.clear(false);         // false → don't fire onChange (avoid double reload)
         currentFrom = currentTo = '';
         toggleClearDates();
         loadFeed(1);
@@ -139,15 +151,15 @@
 
     // ── Mark all read (scoped to the selected category if any) ───────────────
     byId('btn-mark-all').addEventListener('click', async function () {
-        const scopeLabel = currentCategory ? `«${CAT_META[currentCategory]?.label ?? currentCategory}»` : 'все уведомления';
-        if (!confirm(`Отметить ${scopeLabel} как прочитанные?`)) return;
+        const scopeLabel = currentCategory ? `«${CAT_META[currentCategory]?.label ?? currentCategory}»` : t.scope_all;
+        if (!confirm(t.mark_all_confirm.replace(':scope', scopeLabel))) return;
         try {
             const params = currentCategory ? `?category=${encodeURIComponent(currentCategory)}` : '';
             await api.patch(`/notifications/read-all${params}`);
-            showToast('Отмечено как прочитанное.');
+            showToast(t.marked_read);
             loadFeed(currentPage);
         } catch {
-            showToast('Не удалось обновить.', 'error');
+            showToast(t.update_error, 'error');
         }
     });
 
@@ -157,12 +169,12 @@
         const byCat  = counts.by_category ?? {};
 
         const chips = [
-            chipHtml('', 'Все', 'secondary', counts.all ?? 0),
+            chipHtml('', t.all, 'secondary', counts.all ?? 0),
             ...CATEGORIES.map(c => chipHtml(c.value, c.label, 'primary', byCat[c.value] ?? 0, c.icon)),
         ].join('');
 
         const unreadBadge = (meta?.unread_total ?? 0) > 0
-            ? `<span class="badge badge-light-danger fs-8 ms-2">${meta.unread_total} непрочитанных</span>`
+            ? `<span class="badge badge-light-danger fs-8 ms-2">${t.unread_count.replace(':n', meta.unread_total)}</span>`
             : '';
 
         byId('notif-chips').innerHTML = chips + unreadBadge;
@@ -185,7 +197,7 @@
             feed.innerHTML = `
                 <div class="text-center py-12">
                     <i class="ki-outline ki-notification-bing fs-3x text-gray-300 mb-4 d-block"></i>
-                    <span class="text-muted fs-6">Уведомлений не найдено.</span>
+                    <span class="text-muted fs-6">${t.empty}</span>
                 </div>`;
             return;
         }
@@ -265,7 +277,7 @@
 
         return `
         <div class="d-flex justify-content-between align-items-center pt-4 px-1">
-            <div class="text-muted fs-7">${from}–${to} из ${total}</div>
+            <div class="text-muted fs-7">${from}–${to} ${t.pagination_of} ${total}</div>
             <ul class="pagination pagination-sm mb-0">
                 <li class="page-item ${cur === 1 ? 'disabled' : ''}">
                     <a class="page-link" href="#" onclick="event.preventDefault();loadFeed(${cur - 1})"><i class="ki-outline ki-arrow-left fs-7"></i></a>
@@ -279,24 +291,26 @@
     }
 
     // ── Date / time helpers ───────────────────────────────────────────────────
+    const _LOCALE = window.APP_LOCALE || 'ru';
+
     function dayLabel(key) {
         if (!key) return '';
         const d = new Date(key + 'T00:00:00');
         const today = new Date(); today.setHours(0,0,0,0);
         const diff = Math.round((today - d) / 86400000);
-        if (diff === 0) return 'Сегодня';
-        if (diff === 1) return 'Вчера';
-        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        if (diff === 0) return t.today;
+        if (diff === 1) return t.yesterday;
+        return d.toLocaleDateString(_LOCALE, { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
     function timeLabel(iso) {
         if (!iso) return '';
         const d = new Date(iso);
         const diff = Math.floor((Date.now() - d) / 1000);
-        if (diff < 60)    return diff + ' сек. назад';
-        if (diff < 3600)  return Math.floor(diff / 60) + ' мин. назад';
-        if (diff < 86400) return Math.floor(diff / 3600) + ' ч. назад';
-        return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        if (diff < 60)    return t.sec_ago.replace(':n', diff);
+        if (diff < 3600)  return t.min_ago.replace(':n', Math.floor(diff / 60));
+        if (diff < 86400) return t.hour_ago.replace(':n', Math.floor(diff / 3600));
+        return d.toLocaleTimeString(_LOCALE, { hour: '2-digit', minute: '2-digit' });
     }
 
     // escHtml comes from partials/js-helpers.blade.php.

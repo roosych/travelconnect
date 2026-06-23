@@ -64,6 +64,8 @@ class RequestController extends Controller
 
     public function show(Request $request, string $id)
     {
+        abort_unless(TravelRequest::where('public_code', $id)->exists(), 404);
+
         return view('pages.agency.requests.show', [
             'id'           => $id,
             'userTimezone' => $request->user()->effectiveTimezone(),

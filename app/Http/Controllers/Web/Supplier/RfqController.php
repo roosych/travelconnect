@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Supplier;
 
+use App\Domain\Requests\Models\TravelRequest;
 use App\Domain\RFQs\Models\Rfq;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -24,6 +25,8 @@ class RfqController extends Controller
         if (! $requestId) {
             return redirect()->route('supplier.rfqs.index');
         }
+
+        abort_unless(TravelRequest::where('public_code', $requestId)->exists(), 404);
 
         $supplier     = $request->user()->suppliers()->first();
         $userTimezone = $request->user()->effectiveTimezone();
